@@ -19,7 +19,7 @@ namespace TfsBuildExtensions.Activities.FileSystem
         /// The filename where the content will be written
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible), Description("File Name")]
-        [RequiredArgument()]
+        [RequiredArgument]
         public InArgument<string> FileName { get; set; }
 
         /// <summary>
@@ -46,16 +46,12 @@ namespace TfsBuildExtensions.Activities.FileSystem
         /// <param name="context">the activity context</param>
         protected override void Execute(CodeActivityContext context)
         {
-            string fileName;
-            bool createFile, autoNewLine;
-            string content;
+            string fileName = this.FileName.Get(context);
+            bool createFile = this.Create.Get(context);
+            string content = this.Content.Get(context);
+            bool autoNewLine = this.AutoNewLine.Get(context);
 
-            fileName = this.FileName.Get(context);
-            createFile = this.Create.Get(context);
-            content = this.Content.Get(context);
-            autoNewLine = this.AutoNewLine.Get(context);
-
-            if (String.IsNullOrWhiteSpace(fileName))
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 throw new ArgumentException("You have to define the FileName");
             }

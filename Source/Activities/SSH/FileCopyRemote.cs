@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.SSH
 {
-    using System;
     using System.Activities;
     using System.ComponentModel;
     using System.IO;
@@ -232,7 +231,7 @@ namespace TfsBuildExtensions.Activities.SSH
                 var source = this.Source.Get(this.ActivityContext);
                 var target = this.Target.Get(this.ActivityContext);
 
-                if (String.IsNullOrWhiteSpace(source))
+                if (string.IsNullOrWhiteSpace(source))
                 {
                     LogBuildError("You have to specify the source where the files will be copied from");
 
@@ -241,7 +240,7 @@ namespace TfsBuildExtensions.Activities.SSH
                     return;
                 }
 
-                if (String.IsNullOrWhiteSpace(target))
+                if (string.IsNullOrWhiteSpace(target))
                 {
                     LogBuildError("You have to specify the target where the files will be copied to");
 
@@ -377,7 +376,7 @@ namespace TfsBuildExtensions.Activities.SSH
                 if (string.IsNullOrEmpty(toolsPath))
                 {
                     context.TrackBuildWarning("can't determine PuTTy tools path. Will rely on path");
-                    toolsPath = String.Empty;
+                    toolsPath = string.Empty;
                 }
 
                 this.ToolCommandPath.Set(context, Path.Combine(toolsPath, "pscp.exe"));
@@ -392,7 +391,7 @@ namespace TfsBuildExtensions.Activities.SSH
             /// <returns>The value if true an empty string otherwise</returns>
             private static string GetStringIfTrue(bool condition, string value)
             {
-                return condition ? value : String.Empty;
+                return condition ? value : string.Empty;
             }
 
             /// <summary>

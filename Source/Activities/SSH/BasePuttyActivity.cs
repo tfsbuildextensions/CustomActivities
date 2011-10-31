@@ -145,7 +145,6 @@ namespace TfsBuildExtensions.Activities.SSH
         /// semantic is valid.
         /// </summary>
         /// <returns>The activity code that will validate the parameters</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         protected abstract Activity GetParametersValidationBody();
 
         /// <summary>
@@ -239,7 +238,6 @@ namespace TfsBuildExtensions.Activities.SSH
             };
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         private Activity GetInvokeRemoteCommandBody()
         {
             var logFileLocationVariable = new Variable<string> { Name = "Log File Location" };
@@ -500,11 +498,11 @@ namespace TfsBuildExtensions.Activities.SSH
                     return null;
                 }
 
-                if (String.IsNullOrEmpty(buildDetail.LogLocation) == false)
+                if (string.IsNullOrEmpty(buildDetail.LogLocation) == false)
                 {
                     logDirectory = buildDetail.LogLocation;
                 }
-                else if (String.IsNullOrEmpty(buildDetail.DropLocation) == false)
+                else if (string.IsNullOrEmpty(buildDetail.DropLocation) == false)
                 {
                     logDirectory = Path.Combine(buildDetail.DropLocation, @"logs");
                 }
@@ -541,12 +539,12 @@ namespace TfsBuildExtensions.Activities.SSH
             {
                 var fileName = this.RegistryHostFileName.Get(this.ActivityContext);
 
-                if (String.IsNullOrWhiteSpace(fileName))
+                if (string.IsNullOrWhiteSpace(fileName))
                 {
                     return;
                 }
 
-                LogBuildMessage(String.Format("Loading know hosts file from {0}", fileName), BuildMessageImportance.Normal);
+                LogBuildMessage(string.Format("Loading know hosts file from {0}", fileName));
 
                 using (var autoTracker = new AutoFileTrackerFromSourceControl(this.ActivityContext.GetExtension<TfsTeamProjectCollection>()))
                 {
@@ -555,7 +553,7 @@ namespace TfsBuildExtensions.Activities.SSH
 
                     if ((errorCode = BasePuttyActivity.RegisterKnownHosts.RegisterKnownHostsWithFile(knowHostRegistryFile)) != 0) 
                     {
-                        this.LogBuildError(String.Format("Failed to register the hosts from file {0} with errorcode: {1}", fileName, errorCode));
+                        this.LogBuildError(string.Format("Failed to register the hosts from file {0} with errorcode: {1}", fileName, errorCode));
                     }
                 }
             }
@@ -573,7 +571,7 @@ namespace TfsBuildExtensions.Activities.SSH
                 using (var process = new System.Diagnostics.Process())
                 {
                     process.StartInfo.FileName = "reg.exe";
-                    process.StartInfo.Arguments = String.Format("import {0}", knowHostRegistryFile);
+                    process.StartInfo.Arguments = string.Format("import {0}", knowHostRegistryFile);
                     process.StartInfo.CreateNoWindow = true;
                     process.StartInfo.ErrorDialog = false;
                     process.StartInfo.UseShellExecute = false;

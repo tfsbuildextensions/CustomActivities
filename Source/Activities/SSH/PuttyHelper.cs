@@ -33,7 +33,7 @@ namespace TfsBuildExtensions.Activities.SSH
                 }
             }
 
-            return toolsPath ?? String.Empty;
+            return toolsPath ?? string.Empty;
         }
     }
 }
