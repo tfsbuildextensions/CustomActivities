@@ -1,0 +1,31 @@
+﻿<Activity mc:Ignorable="sap" x:Class="TestWorkflow.Test" sap:VirtualizedContainerService.HintSize="273,240" mva:VisualBasic.Settings="Assembly references and imported namespaces for internal implementation" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client" xmlns:mtbw="clr-namespace:Microsoft.TeamFoundation.Build.Workflow;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mv="clr-namespace:Microsoft.VisualBasic;assembly=System" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:s1="clr-namespace:System;assembly=System" xmlns:s2="clr-namespace:System;assembly=System.Xml" xmlns:s3="clr-namespace:System;assembly=System.Core" xmlns:s4="clr-namespace:System;assembly=System.ServiceModel" xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities" xmlns:sad="clr-namespace:System.Activities.Debugger;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System" xmlns:scg1="clr-namespace:System.Collections.Generic;assembly=System.ServiceModel" xmlns:scg2="clr-namespace:System.Collections.Generic;assembly=System.Core" xmlns:scg3="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:si="clr-namespace:System.IO;assembly=mscorlib" xmlns:sl="clr-namespace:System.Linq;assembly=System.Core" xmlns:st="clr-namespace:System.Text;assembly=mscorlib" xmlns:w="clr-namespace:WorkflowUtils;assembly=WorkflowUtils" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <sap:WorkflowViewStateService.ViewState>
+    <scg3:Dictionary x:TypeArguments="x:String, x:Object">
+      <x:Boolean x:Key="ShouldCollapseAll">True</x:Boolean>
+      <x:Boolean x:Key="ShouldExpandAll">False</x:Boolean>
+    </scg3:Dictionary>
+  </sap:WorkflowViewStateService.ViewState>
+  <Sequence sad:XamlDebuggerXmlReader.FileName="C:\w\OEMIT\Dev\Build\Build\Tools\WorkflowUtils\TestWorkflow\Test.xaml" sap:VirtualizedContainerService.HintSize="233,200">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="mtbc:IBuildDetail" Name="outBuild" />
+      <Variable x:TypeArguments="mtbc:IBuildDetail" Name="outBuild2" />
+      <Variable x:TypeArguments="x:Boolean" Name="isBuildRunning" />
+      <Variable x:TypeArguments="x:Boolean" Name="isSourceChanged" />
+      <Variable x:TypeArguments="scg3:List(x:String)" Default="[New List(Of String)]" Name="exceptions" />
+      <Variable x:TypeArguments="x:Boolean" Name="isBuildLaunched" />
+      <Variable x:TypeArguments="scg3:Dictionary(x:String, x:String)" Default="[New Dictionary(Of String, String)]" Name="properties" />
+      <Variable x:TypeArguments="x:Boolean" Name="DatabaseExists" />
+      <Variable x:TypeArguments="mtbc:IQueuedBuild" Name="queuedBuild" />
+      <Variable x:TypeArguments="x:Object" Default="[New Object()]" Name="packagingType" />
+      <Variable x:TypeArguments="x:Boolean" Default="False" Name="hasPackagingType" />
+      <Variable x:TypeArguments="scg3:IDictionary(x:String, x:Object)" Name="arguments" />
+      <Variable x:TypeArguments="x:String" Default="http://msitvstf:8080/tfs/lcait" Name="teamFoundationServer" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg3:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg3:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <WriteLine sap:VirtualizedContainerService.HintSize="211,61" Text="Test activites here and display results as needed: " />
+  </Sequence>
+</Activity>

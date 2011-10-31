@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeMetricsReport Version="10.0">
+  <Targets>
+    <Target Name="C:\Builds\1\Demo\CodeMetricsBuild\Binaries\ClassLibrary1.dll">
+      <Modules>
+        <Module Name="ClassLibrary1.dll" AssemblyVersion="1.0.0.0" FileVersion="1.0.0.0">
+          <Metrics>
+            <Metric Name="MaintainabilityIndex" Value="85" />
+            <Metric Name="CyclomaticComplexity" Value="3" />
+            <Metric Name="ClassCoupling" Value="0" />
+            <Metric Name="DepthOfInheritance" Value="1" />
+            <Metric Name="LinesOfCode" Value="5" />
+          </Metrics>
+          <Namespaces>
+            <Namespace Name="ClassLibrary1">
+              <Metrics>
+                <Metric Name="MaintainabilityIndex" Value="85" />
+                <Metric Name="CyclomaticComplexity" Value="3" />
+                <Metric Name="ClassCoupling" Value="0" />
+                <Metric Name="DepthOfInheritance" Value="1" />
+                <Metric Name="LinesOfCode" Value="5" />
+              </Metrics>
+              <Types>
+                <Type Name="Class1">
+                  <Metrics>
+                    <Metric Name="MaintainabilityIndex" Value="85" />
+                    <Metric Name="CyclomaticComplexity" Value="3" />
+                    <Metric Name="ClassCoupling" Value="0" />
+                    <Metric Name="DepthOfInheritance" Value="1" />
+                    <Metric Name="LinesOfCode" Value="5" />
+                  </Metrics>
+                  <Members>
+                    <Member Name="SimpleMethod(int) : int" File="c:\Builds\1\Demo\CodeMetricsBuild\Sources\ClassLibrary1\Class1.cs" Line="11">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="77" />
+                        <Metric Name="CyclomaticComplexity" Value="2" />
+                        <Metric Name="ClassCoupling" Value="0" />
+                        <Metric Name="LinesOfCode" Value="4" />
+                      </Metrics>
+                    </Member>
+                    <Member Name="Class1()">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="100" />
+                        <Metric Name="CyclomaticComplexity" Value="1" />
+                        <Metric Name="ClassCoupling" Value="0" />
+                        <Metric Name="LinesOfCode" Value="1" />
+                      </Metrics>
+                    </Member>
+                  </Members>
+                </Type>
+              </Types>
+            </Namespace>
+          </Namespaces>
+        </Module>
+      </Modules>
+    </Target>
+    <Target Name="C:\Builds\1\Demo\CodeMetricsBuild\Binaries\CodeMetricsTest.exe">
+      <Modules>
+        <Module Name="CodeMetricsTest.exe" AssemblyVersion="1.0.0.0" FileVersion="1.0.0.0">
+          <Metrics>
+            <Metric Name="MaintainabilityIndex" Value="88" />
+            <Metric Name="CyclomaticComplexity" Value="7" />
+            <Metric Name="ClassCoupling" Value="8" />
+            <Metric Name="DepthOfInheritance" Value="9" />
+            <Metric Name="LinesOfCode" Value="12" />
+          </Metrics>
+          <Namespaces>
+            <Namespace Name="CodeMetricsTest">
+              <Metrics>
+                <Metric Name="MaintainabilityIndex" Value="88" />
+                <Metric Name="CyclomaticComplexity" Value="7" />
+                <Metric Name="ClassCoupling" Value="8" />
+                <Metric Name="DepthOfInheritance" Value="9" />
+                <Metric Name="LinesOfCode" Value="12" />
+              </Metrics>
+              <Types>
+                <Type Name="App">
+                  <Metrics>
+                    <Metric Name="MaintainabilityIndex" Value="91" />
+                    <Metric Name="CyclomaticComplexity" Value="3" />
+                    <Metric Name="ClassCoupling" Value="5" />
+                    <Metric Name="DepthOfInheritance" Value="3" />
+                    <Metric Name="LinesOfCode" Value="4" />
+                  </Metrics>
+                  <Members>
+                    <Member Name="InitializeComponent() : void" File="c:\Builds\1\Demo\CodeMetricsBuild\Sources\CodeMetricsTest\obj\x86\Debug\App.g.cs" Line="47">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="92" />
+                        <Metric Name="CyclomaticComplexity" Value="1" />
+                        <Metric Name="ClassCoupling" Value="3" />
+                        <Metric Name="LinesOfCode" Value="1" />
+                      </Metrics>
+                    </Member>
+                    <Member Name="Main() : void">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="83" />
+                        <Metric Name="CyclomaticComplexity" Value="1" />
+                        <Metric Name="ClassCoupling" Value="3" />
+                        <Metric Name="LinesOfCode" Value="2" />
+                      </Metrics>
+                    </Member>
+                    <Member Name="App()">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="100" />
+                        <Metric Name="CyclomaticComplexity" Value="1" />
+                        <Metric Name="ClassCoupling" Value="1" />
+                        <Metric Name="LinesOfCode" Value="1" />
+                      </Metrics>
+                    </Member>
+                  </Members>
+                </Type>
+                <Type Name="MainWindow">
+                  <Metrics>
+                    <Metric Name="MaintainabilityIndex" Value="84" />
+                    <Metric Name="CyclomaticComplexity" Value="4" />
+                    <Metric Name="ClassCoupling" Value="7" />
+                    <Metric Name="DepthOfInheritance" Value="9" />
+                    <Metric Name="LinesOfCode" Value="8" />
+                  </Metrics>
+                  <Members>
+                    <Member Name="MainWindow()" File="c:\Builds\1\Demo\CodeMetricsBuild\Sources\CodeMetricsTest\MainWindow.xaml.cs" Line="22">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="91" />
+                        <Metric Name="CyclomaticComplexity" Value="1" />
+                        <Metric Name="ClassCoupling" Value="1" />
+                        <Metric Name="LinesOfCode" Value="2" />
+                      </Metrics>
+                    </Member>
+                    <Member Name="InitializeComponent() : void" File="c:\Builds\1\Demo\CodeMetricsBuild\Sources\CodeMetricsTest\obj\x86\Debug\MainWindow.g.cs" Line="49">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="73" />
+                        <Metric Name="CyclomaticComplexity" Value="2" />
+                        <Metric Name="ClassCoupling" Value="3" />
+                        <Metric Name="LinesOfCode" Value="5" />
+                      </Metrics>
+                    </Member>
+                    <Member Name="IComponentConnector.Connect(int, object) : void">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="95" />
+                        <Metric Name="CyclomaticComplexity" Value="1" />
+                        <Metric Name="ClassCoupling" Value="2" />
+                        <Metric Name="LinesOfCode" Value="1" />
+                      </Metrics>
+                    </Member>
+                  </Members>
+                </Type>
+              </Types>
+            </Namespace>
+          </Namespaces>
+        </Module>
+      </Modules>
+    </Target>
+  </Targets>
+</CodeMetricsReport>

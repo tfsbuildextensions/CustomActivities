@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProductVersion>10.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CDF9FF31-B9DA-411E-B50E-38F9C4FA33E3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>TfsBuildExtensions.Activities</RootNamespace>
+    <AssemblyName>TfsBuildExtensions.Activities</AssemblyName>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\BuildBinaries\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>..\BuildBinaries\TfsBuildExtensions.Activities.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>..\BuildBinaries\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DebugType>pdbonly</DebugType>
+    <DocumentationFile>..\BuildBinaries\TfsBuildExtensions.Activities.xml</DocumentationFile>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\Common\TFSBuildExtensions.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\Common\TFSBuildExtensionsPublic.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Build.Workflow, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.TeamFoundation.Client, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.VersionControl.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Activities" />
+    <Reference Include="System.Activities.Presentation" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\v1.0\System.Management.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activities" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Common\BaseActivity.cs">
+      <Link>BaseActivity.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\BaseCodeActivity.cs">
+      <Link>BaseCodeActivity.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\BaseCodeActivityGeneric.cs">
+      <Link>BaseCodeActivityGeneric.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\BaseRemoteCodeActivity.cs">
+      <Link>BaseRemoteCodeActivity.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\FailingBuildException.cs">
+      <Link>FailingBuildException.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\IBaseActivityMinimumArguments.cs">
+      <Link>IBaseActivityMinimumArguments.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\StringExtension.cs">
+      <Link>StringExtension.cs</Link>
+    </Compile>
+    <Compile Include="ClickOnce\ClickOnceDeployment.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\CodeMetrics.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\ICodeMetricsLogger.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\IMetricsLogger.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\MetricsInvoker.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\MetricsLogger.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\MetricsReport.designer.cs" />
+    <Compile Include="CodeQuality\NUnit\NUnit.cs" />
+    <Compile Include="CodeQuality\NUnit\SimpleCommandLineBuilder.cs" />
+    <Compile Include="CodeQuality\StatLight\StatLight.cs" />
+    <Compile Include="CodeQuality\FxCop.cs" />
+    <Compile Include="Communication\Email.cs" />
+    <Compile Include="Communication\Twitter.cs" />
+    <Compile Include="Compression\Zip.cs" />
+    <Compile Include="FileSystem\WriteToFile.cs" />
+    <Compile Include="FileSystem\File.cs" />
+    <Compile Include="FileSystem\RoboCopy.cs" />
+    <Compile Include="Framework\AssemblyInfo\AssemblyInfo.cs" />
+    <Compile Include="Framework\AssemblyInfo\AssemblyInfoFile.cs" />
+    <Compile Include="Framework\DateAndTime.cs" />
+    <Compile Include="Framework\ExpandVariables.cs" />
+    <Compile Include="Framework\Guid.cs" />
+    <Compile Include="InternalActivities\LogBuildError.cs" />
+    <Compile Include="InternalActivities\LogBuildMessage.cs" />
+    <Compile Include="Management\Wmi.cs" />
+    <Compile Include="Scripting\PowerShell\InvokePowershellCommand.cs" />
+    <Compile Include="Scripting\PowerShell\IUtilitiesForPowerShellActivity.cs" />
+    <Compile Include="Scripting\PowerShell\UtilitiesForPowerShellActivity.cs" />
+    <Compile Include="Scripting\PowerShell\WorkflowPsHost.cs" />
+    <Compile Include="Scripting\PowerShell\WorkflowPsHostUi.cs" />
+    <Compile Include="Scripting\PowerShell\WorkflowRawPsHostUi.cs" />
+    <Compile Include="SharePoint\SharePointDeployment.cs" />
+    <Compile Include="SharePoint\SharePointDeploymentStatus.cs" />
+    <Compile Include="SqlServer\ExecuteEventArgs.cs" />
+    <Compile Include="SqlServer\SqlScriptLoader.cs" />
+    <Compile Include="SqlServer\SqlExecute.cs" />
+    <Compile Include="SSH\BasePuttyActivity.cs" />
+    <Compile Include="SSH\FileCopyRemote.cs" />
+    <Compile Include="SSH\InvokeRemoteScript.cs" />
+    <Compile Include="SSH\PuttyHelper.cs" />
+    <Compile Include="SSH\SSHAuthentication.cs" />
+    <Compile Include="SSH\SSHCopyProtocol.cs" />
+    <Compile Include="TeamFoundationServer\BuildReport\BuildReport.cs" />
+    <Compile Include="TeamFoundationServer\BuildWorkspace.cs" />
+    <Compile Include="TeamFoundationServer\CompareLabels.cs" />
+    <Compile Include="TeamFoundationServer\ExecuteWorkflow.cs" />
+    <Compile Include="TeamFoundationServer\GetBuild.cs" />
+    <Compile Include="TeamFoundationServer\GetBuildController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TeamFoundationServer\GetBuildDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TeamFoundationServer\GetBuildDetail.cs" />
+    <Compile Include="TeamFoundationServer\GetBuildServer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TeamFoundationServer\GetChangeset.cs" />
+    <Compile Include="TeamFoundationServer\GetChangesetItems.cs" />
+    <Compile Include="TeamFoundationServer\GetLastGoodBuild.cs" />
+    <Compile Include="TeamFoundationServer\GetLatestBuildDetail.cs" />
+    <Compile Include="TeamFoundationServer\GetLatestChangeset.cs" />
+    <Compile Include="TeamFoundationServer\GetLocalWorkspace.cs" />
+    <Compile Include="TeamFoundationServer\GetMSBuildProperties.cs" />
+    <Compile Include="TeamFoundationServer\GetPendingChanges.cs" />
+    <Compile Include="TeamFoundationServer\GetVersionControlLabel.cs" />
+    <Compile Include="TeamFoundationServer\GetWebAccessUrl.cs" />
+    <Compile Include="TeamFoundationServer\IsBuildRunning.cs" />
+    <Compile Include="TeamFoundationServer\IsSourceChanged.cs" />
+    <Compile Include="TeamFoundationServer\QueryBuildAgentStatus.cs" />
+    <Compile Include="TeamFoundationServer\QueueBuild.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TeamFoundationServer\SetBuildAgentStatus.cs" />
+    <Compile Include="TeamFoundationServer\StopBuild.cs" />
+    <Compile Include="TeamFoundationServer\TFBaseCodeActivity.cs" />
+    <Compile Include="TeamFoundationServer\TfsSource.cs" />
+    <Compile Include="TeamFoundationServer\WorkItem.cs" />
+    <Compile Include="TemplateNewActivity.cs" />
+    <Compile Include="Hello.cs" />
+    <Compile Include="ActivityResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ActivityResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="TeamFoundationServer\TfsVersion.cs" />
+    <Compile Include="Virtualization\Utilities\OtherResourceType.cs" />
+    <Compile Include="Virtualization\Utilities\ResourceSubType.cs" />
+    <Compile Include="Virtualization\Utilities\ResourceType.cs" />
+    <Compile Include="Virtualization\Utilities\ReturnCode.cs" />
+    <Compile Include="Virtualization\Utilities\Utility.cs" />
+    <Compile Include="Virtualization\HyperV.cs" />
+    <Compile Include="Virtualization\HyperVException.cs" />
+    <Compile Include="VisualStudio\VSVersionNotSupportedException.cs" />
+    <Compile Include="VisualStudio\VSVersionInternal.cs" />
+    <Compile Include="VisualStudio\VSSolution.cs" />
+    <Compile Include="VisualStudio\VSHelper.cs" />
+    <Compile Include="VisualStudio\VB6.cs" />
+    <Compile Include="VisualStudio\VBPProject.cs" />
+    <Compile Include="VisualStudio\VSDevEnvAction.cs" />
+    <Compile Include="VisualStudio\VSVersion.cs" />
+    <Compile Include="VisualStudio\VSDevEnv.cs" />
+    <None Include="CodeQuality\CodeMetrics\MetricsReport.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ActivityResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ActivityResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
+      <Link>Properties\CodeAnalysis.Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TfsUtilities\TfsUtilities.csproj">
+      <Project>{BDD3B7A5-223A-460D-B48B-F28F7B79473A}</Project>
+      <Name>TfsUtilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssemblyReferences\Ionic.Zip.dll" />
+    <EmbeddedResource Include="CodeQuality\StatLight\StatLightToMSTest.xslt" />
+    <EmbeddedResource Include="CodeQuality\NUnit\NUnitToMSTest.xslt" />
+    <EmbeddedResource Include="TeamFoundationServer\BuildReport\DefaultTransform.xslt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Workflow.Targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
+</Project>

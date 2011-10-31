@@ -1,0 +1,133 @@
+﻿<Activity mc:Ignorable="sap" x:Class="TfsBuild.Process" this:Process.AgentSettings="[New Microsoft.TeamFoundation.Build.Workflow.Activities.AgentSettings(New System.TimeSpan(4, 0, 0), New System.TimeSpan(0, 0, 0))]" this:Process.MSBuildPlatform="[Microsoft.TeamFoundation.Build.Workflow.Activities.ToolPlatform.Auto]" this:Process.DoNotDownloadBuildType="[False]" this:Process.LogFilePerProject="[False]" this:Process.RecursionType="[Microsoft.TeamFoundation.VersionControl.Client.RecursionType.OneLevel]" this:Process.Verbosity="[Microsoft.TeamFoundation.Build.Workflow.BuildVerbosity.Normal]" this:Process.SupportedReasons="All" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client" xmlns:mtbw="clr-namespace:Microsoft.TeamFoundation.Build.Workflow;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mtvc="clr-namespace:Microsoft.TeamFoundation.VersionControl.Client;assembly=Microsoft.TeamFoundation.VersionControl.Client" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:s1="clr-namespace:System;assembly=mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns:s2="clr-namespace:System;assembly=System.Core" xmlns:s3="clr-namespace:System;assembly=System" xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" xmlns:sa1="clr-namespace:System.Activities;assembly=System.Activities" xmlns:sad="clr-namespace:System.Activities.Debugger;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sma="clr-namespace:System.Management.Automation;assembly=System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" xmlns:sma1="clr-namespace:System.Management.Automation;assembly=System.Management.Automation" xmlns:ss="clr-namespace:System.ServiceProcess;assembly=System.ServiceProcess, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" xmlns:ta="clr-namespace:TfsBuildExtensions.Activities;assembly=TfsBuildExtensions.Activities" xmlns:this="clr-namespace:TfsBuild" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="ConfigurationFolderPath" Type="InArgument(x:String)" />
+    <x:Property Name="AgentSettings" Type="InArgument(mtbwa:AgentSettings)" />
+    <x:Property Name="MSBuildArguments" Type="InArgument(x:String)" />
+    <x:Property Name="MSBuildPlatform" Type="InArgument(mtbwa:ToolPlatform)" />
+    <x:Property Name="DoNotDownloadBuildType" Type="InArgument(x:Boolean)" />
+    <x:Property Name="LogFilePerProject" Type="InArgument(x:Boolean)" />
+    <x:Property Name="SourcesSubdirectory" Type="InArgument(x:String)" />
+    <x:Property Name="BinariesSubdirectory" Type="InArgument(x:String)" />
+    <x:Property Name="TestResultsSubdirectory" Type="InArgument(x:String)" />
+    <x:Property Name="RecursionType" Type="InArgument(mtvc:RecursionType)" />
+    <x:Property Name="Verbosity" Type="InArgument(mtbw:BuildVerbosity)" />
+    <x:Property Name="Metadata" Type="mtbw:ProcessParameterMetadataCollection" />
+    <x:Property Name="SupportedReasons" Type="mtbc:BuildReason" />
+  </x:Members>
+  <this:Process.ConfigurationFolderPath>
+    <InArgument x:TypeArguments="x:String" />
+  </this:Process.ConfigurationFolderPath>
+  <this:Process.MSBuildArguments>
+    <InArgument x:TypeArguments="x:String" />
+  </this:Process.MSBuildArguments>
+  <this:Process.SourcesSubdirectory>
+    <InArgument x:TypeArguments="x:String" />
+  </this:Process.SourcesSubdirectory>
+  <this:Process.BinariesSubdirectory>
+    <InArgument x:TypeArguments="x:String" />
+  </this:Process.BinariesSubdirectory>
+  <this:Process.TestResultsSubdirectory>
+    <InArgument x:TypeArguments="x:String" />
+  </this:Process.TestResultsSubdirectory>
+  <this:Process.Metadata>
+    <mtbw:ProcessParameterMetadataCollection />
+  </this:Process.Metadata>
+  <sap:VirtualizedContainerService.HintSize>502,836</sap:VirtualizedContainerService.HintSize>
+  <mva:VisualBasic.Settings>Assembly references and imported namespaces serialized as XML namespaces</mva:VisualBasic.Settings>
+  <sap:WorkflowViewStateService.ViewState>
+    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+      <x:Boolean x:Key="ShouldCollapseAll">True</x:Boolean>
+    </scg:Dictionary>
+  </sap:WorkflowViewStateService.ViewState>
+  <Sequence DisplayName="Upgrade Build Process" sad:XamlDebuggerXmlReader.FileName="D:\Projects\teambuild2010contrib\MAIN\Source\Activities.Tests\Demonstration Workflows\InvokePowerShellDemo.xaml" sap:VirtualizedContainerService.HintSize="462,796" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="mtbc:IBuildDetail" Name="BuildDetail" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <mtbwa:AgentScope DisplayName="Run On Agent" sap:VirtualizedContainerService.HintSize="440,672" MaxExecutionTime="[AgentSettings.MaxExecutionTime]" MaxWaitTime="[AgentSettings.MaxWaitTime]" ReservationSpec="[AgentSettings.GetAgentReservationSpec()]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+      <mtbwa:AgentScope.Variables>
+        <Variable x:TypeArguments="x:String" Name="buildDirectory" />
+        <Variable x:TypeArguments="sma1:PSObject[]" Modifiers="Mapped" Name="ScriptOutput" />
+        <Variable x:TypeArguments="mtvc:Workspace" Name="buildWorkspace" />
+        <Variable x:TypeArguments="x:String" Name="SourcesDirectory" />
+        <Variable x:TypeArguments="x:String" Default="[BuildDetail.BuildNumber]" Name="WorkspaceName" />
+      </mtbwa:AgentScope.Variables>
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsPinned">True</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+      <TryCatch sap:VirtualizedContainerService.HintSize="418,51">
+        <TryCatch.Try>
+          <Sequence sap:VirtualizedContainerService.HintSize="400,147.2">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <ctbwa:InvokePowerShellCommand DisplayName="Invoke Inline Script" sap:VirtualizedContainerService.HintSize="200,22.4" Result="[ScriptOutput]" Script="get-service | foreach { Write-Warning $_.Name }" xmlns:ctbwa="clr-namespace:TfsBuildExtensions.Activities;assembly=TfsBuildExtensions.Activities" />
+          </Sequence>
+        </TryCatch.Try>
+        <TryCatch.Catches>
+          <Catch x:TypeArguments="sma1:RuntimeException" sap:VirtualizedContainerService.HintSize="403.2,22.4">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                <x:Boolean x:Key="IsPinned">False</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <ActivityAction x:TypeArguments="sma1:RuntimeException">
+              <ActivityAction.Argument>
+                <DelegateInArgument x:TypeArguments="sma1:RuntimeException" Name="exception" />
+              </ActivityAction.Argument>
+              <mtbwa:WriteBuildError sap:VirtualizedContainerService.HintSize="396.8,75.2" Message="Invoke PowerShell Script and Write Host Failed'" />
+            </ActivityAction>
+          </Catch>
+        </TryCatch.Catches>
+      </TryCatch>
+      <Assign x:TypeArguments="x:String" DisplayName="Initialize Sources Directory" sap:VirtualizedContainerService.HintSize="418,22" To="[SourcesDirectory]" Value="[string.Format(&quot;{0}\Sources&quot;, BuildDirectory)]" />
+      <TryCatch sap:VirtualizedContainerService.HintSize="418,395">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsPinned">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+        <TryCatch.Try>
+          <Sequence sap:VirtualizedContainerService.HintSize="400,208">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                <x:Boolean x:Key="IsPinned">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <mtbwa:CreateWorkspace BuildDirectory="[BuildDirectory]" Comment="[&quot;Workspace Created by Team Build&quot;]" DisplayName="Create Workspace" sap:VirtualizedContainerService.HintSize="200,22" Name="[WorkspaceName]" Result="[BuildWorkspace]" SourcesDirectory="[SourcesDirectory]" />
+            <mtbwa:SyncWorkspace DisplayName="Get Workspace Content" sap:VirtualizedContainerService.HintSize="200,22" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" Workspace="[buildWorkspace]" />
+          </Sequence>
+        </TryCatch.Try>
+        <TryCatch.Catches>
+          <Catch x:TypeArguments="sma1:RuntimeException" sap:VirtualizedContainerService.HintSize="404,21">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                <x:Boolean x:Key="IsPinned">False</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <ActivityAction x:TypeArguments="sma1:RuntimeException">
+              <ActivityAction.Argument>
+                <DelegateInArgument x:TypeArguments="sma1:RuntimeException" Name="exception" />
+              </ActivityAction.Argument>
+              <mtbwa:WriteBuildError sap:VirtualizedContainerService.HintSize="398,75" Message="Invoke PowerShell Script and Populate Failed'" />
+            </ActivityAction>
+          </Catch>
+        </TryCatch.Catches>
+        <TryCatch.Finally>
+          <mtbwa:DeleteWorkspace DeleteLocalItems="True" sap:VirtualizedContainerService.HintSize="400,100" Name="[WorkspaceName]" />
+        </TryCatch.Finally>
+      </TryCatch>
+    </mtbwa:AgentScope>
+  </Sequence>
+</Activity>

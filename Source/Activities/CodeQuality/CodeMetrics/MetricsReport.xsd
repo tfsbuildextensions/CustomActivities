@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!-- Main report definition -->
+  <xs:element name="CodeMetricsReport">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Targets" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="Version" type="xs:double" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <!-- Type containers -->
+  <xs:element name="Targets">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Target" minOccurs="1" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Modules">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Module" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Namespaces">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Namespace" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Types">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Type" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Members">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Member" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>  
+  </xs:element>
+  
+  <!-- Target types -->
+  <xs:element name="Target">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Modules" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="Name" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Module">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Metrics" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="Namespaces" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="Types" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="Name" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Namespace">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Metrics" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="Types" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="Members" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="Name" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Type">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Metrics" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="Members" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="Name" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Member">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Metrics" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="Name" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+    
+  <!-- Metric definitions -->
+  <xs:element name="Metrics">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Metric" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Metric">
+    <xs:complexType>
+      <xs:attribute name="Name" type="xs:string" use="required" />
+      <xs:attribute name="Value" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

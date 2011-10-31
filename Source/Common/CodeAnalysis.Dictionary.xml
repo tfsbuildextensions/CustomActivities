@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Dictionary>
+  <Words>
+    <Recognized>
+      <Word>Changeset</Word>
+      <Word>Changesets</Word>
+      <Word>Tfs</Word>
+      <Word>Maths</Word>
+      <Word>Suse</Word>
+    </Recognized>
+    <Unrecognized>
+      <Word>StyleCop</Word>
+      <Word>SourceFiles</Word>
+    </Unrecognized>
+    <Compound>
+      <Term CompoundAlternate="StyleCop">Stylecop</Term>
+      <Term CompoundAlternate="SourceFiles">Sourcefiles</Term>
+    </Compound>
+    <!--<DiscreteExceptions>
+      <Term>...</Term>
+    </DiscreteExceptions>-->
+  </Words>
+  <Acronyms>
+    <CasingExceptions>
+      <Acronym>AWS</Acronym>
+	  <Acronym>SSH</Acronym>
+    </CasingExceptions>
+  </Acronyms>
+</Dictionary>

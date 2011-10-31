@@ -1,0 +1,53 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)' ==''">Release|Any CPU</Configuration>
+        <WorkspaceFolder Condition="'$(WorkspaceFolder)' == ''">D:\Projects\FreeToDev</WorkspaceFolder>
+        <CustomActivitiesFolder Condition="'$(CustomActivitiesFolder)' == ''">$(WorkspaceFolder)\BuildProcessTemplates\CustomActivities</CustomActivitiesFolder>
+    </PropertyGroup>
+    <ItemGroup>
+        <FilesToCheckout Include="$(CustomActivitiesFolder)\TFSBuildExtensions.*"/>
+    </ItemGroup>
+    <Target Name="PreCheckin" DependsOnTargets="StyleCop;
+                                                Compile"/>
+    <Target Name="FullBuild" DependsOnTargets="StyleCop;
+                                            Compile;
+                                            UpdateSourceControl;
+                                            BuildChm"/>
+    <Target Name="StyleCop">
+        <Message Text="$(MSBuildProjectDirectory)\..\Settings.StyleCop"/>
+        <ItemGroup>
+            <StyleCopFiles Include="$(MSBuildProjectDirectory)\..\**\*.cs" Exclude="$(MSBuildProjectDirectory)\..\**\*.designer.cs;$(MSBuildProjectDirectory)\..\Activities.StyleCop.Tests\TestFiles\*.*;$(MSBuildProjectDirectory)\..\Activities.Tests\VisualStudio\VSDevEnvSample\**\*.*;$(MSBuildProjectDirectory)\..\Buildbinaries\**\*.*"/>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.CodeQuality.StyleCop TaskAction="Scan" SourceFiles="@(StyleCopFiles)" ShowOutput="true" ForceFullAnalysis="true" CacheResults="false" logFile="StyleCopLog.txt" SettingsFile="$(MSBuildProjectDirectory)\..\Settings.StyleCop">
+            <Output TaskParameter="Succeeded" PropertyName="AllPassed"/>
+            <Output TaskParameter="ViolationCount" PropertyName="Violations"/>
+            <Output TaskParameter="FailedFiles" ItemName="Failures"/>
+        </MSBuild.ExtensionPack.CodeQuality.StyleCop>
+        <Message Text="...StyleCop complete. $(Violations) violations"/>
+        <Warning Condition="'$(Violations)' != '0'" Text="Stylecop Failed: $(Violations) violations" />
+    </Target>
+    <Target Name="Compile">
+        <MSBuild.ExtensionPack.VisualStudio.VSDevEnv FilePath="..\TFSBuildExtensions.sln" Version="10.0" Configuration="$(Configuration)" Rebuild="true">
+            <Output TaskParameter="ExitCode" PropertyName="Exit" />
+        </MSBuild.ExtensionPack.VisualStudio.VSDevEnv>
+        <Message Text="ExitCode: $(Exit)"/>
+    </Target>
+    <Target Name="BuildChm" Condition="$(BuildChm) != 'false'">
+        <MSBuild Projects="..\..\Documentation\TFSBuildExtensionsHelp.shfbproj" ContinueOnError="true"/>
+    </Target>
+    <Target Name="CleanupBuildBinaries">
+        <ItemGroup>
+            <FilesToDelete Include="..\BuildBinaries\*test*;..\BuildBinaries\*.xml;..\BuildBinaries\*CodeAnalysis*;..\BuildBinaries\*accessor*"/>
+        </ItemGroup>
+        <Microsoft.Build.Tasks.Delete Files="@(FilesToDelete)"/>
+    </Target>
+    <Target Name="UpdateSourceControl">
+        <ItemGroup>
+            <NewAssemblies Include="..\BuildBinaries\TFSBuildExtensions*.dll;..\BuildBinaries\TFSBuildExtensions*.pdb" Exclude="..\BuildBinaries\*Test*;..\BuildBinaries\*_Accessor*;;..\BuildBinaries\*.instr.*"/>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkout" ItemCol="@(FilesToCheckout)" WorkingDirectory="$(WorkspaceFolder)" Version="2010"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="@(NewAssemblies)" DestinationFolder="$(CustomActivitiesFolder)"/>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemCol="@(FilesToCheckout)" WorkingDirectory="$(WorkspaceFolder)" Version="2010"/>
+    </Target>
+</Project>
