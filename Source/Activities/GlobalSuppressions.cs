@@ -233,3 +233,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "scp", Scope = "member", Target = "TfsBuildExtensions.Activities.SSH.SSHCopyProtocol.#scp")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "sftp", Scope = "member", Target = "TfsBuildExtensions.Activities.SSH.SSHCopyProtocol.#sftp")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Scope = "member", Target = "TfsBuildExtensions.Activities.SSH.BasePuttyActivity.#GetInvokeRemoteCommandBody()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope = "member", Target = "TfsBuildExtensions.Activities.Framework.ExpandVariables.#Inputs")]

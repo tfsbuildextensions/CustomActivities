@@ -18,33 +18,33 @@ namespace TfsBuildExtensions.Activities.Framework
     using TfsBuildExtensions.Activities;
 
     /// <summary>
-    /// Expands variables of the form $(variable) in the string to their corresponding values and returns the new string.
+    /// Expands variables of the form $(variable) in the specified inputs to their corresponding values.
     /// </summary>
     /// <remarks>
     /// User variables specifed using the <see cref="Variables"/> have precedence over environment variables and build 
     /// variables.
     /// </remarks>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class ExpandVariables : BaseCodeActivity<string>
+    public sealed class ExpandVariables : BaseCodeActivity<IEnumerable<string>>
     {
         #region Fields
 
         // variable match regex
-        private static readonly Regex variableRegex = new Regex(@"\$\(([^)]+)\)", RegexOptions.Singleline);
+        private static readonly Regex variableRegex = new Regex(@"\$\(([^)]+)\)", RegexOptions.Singleline | RegexOptions.Compiled);
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Sets the input string to expand.
+        /// Sets the input strings to expand.
         /// </summary>
         /// <remarks>
         /// This property is <b>required.</b>
         /// </remarks>
         [RequiredArgument]
-        [Description("The input string to expand.")]
-        public InArgument<string> Input { get; set; }
+        [Description("The input strings to expand.")]
+        public InArgument<IEnumerable<string>> Inputs { get; set; }
 
         /// <summary>
         /// Set to <b>true</b> to add build variables to expand.
@@ -116,15 +116,15 @@ namespace TfsBuildExtensions.Activities.Framework
         /// <returns>
         /// The activity result.
         /// </returns>
-        protected override string InternalExecute()
+        protected override IEnumerable<string> InternalExecute()
         {
-            // get input
-            var input = this.Input.Get(this.ActivityContext);
-            if (string.IsNullOrEmpty(input))
+            // get inputs
+            var inputs = this.Inputs.Get(this.ActivityContext);
+            if (inputs == null || !inputs.Any())
             {
-                this.LogBuildWarning("No variable expanded, input string is null or empty.");
+                this.LogBuildWarning("No variable expanded, input strings is null or empty.");
 
-                return input;
+                return inputs;
             }
 
             // get variables
@@ -155,24 +155,31 @@ namespace TfsBuildExtensions.Activities.Framework
             }
 
             // find and replace variables
-            var output = new StringBuilder(input);
+            var outputs = new List<string>();
 
-            var matches = variableRegex.Matches(input);
-            for (var i = matches.Count - 1; i >= 0; --i)
+            foreach (var input in inputs)
             {
-                if (matches[i].Success)
-                {
-                    var value = default(string);
-                    if ((userVariables != null && userVariables.TryGetValue(matches[i].Groups[1].Value, out value)) || buildVariables.TryGetValue(matches[i].Groups[1].Value, out value) || envVariables.TryGetValue(matches[i].Groups[1].Value, out value))
-                    {
-                        output.Replace(matches[i].Value, value, matches[i].Index, matches[i].Length);
+                var output = new StringBuilder(input);
 
-                        this.LogBuildMessage("Expanded variable " + matches[i].Value + " to '" + value + "'.");
+                var matches = variableRegex.Matches(input);
+                for (var i = matches.Count - 1; i >= 0; --i)
+                {
+                    if (matches[i].Success)
+                    {
+                        var value = default(string);
+                        if ((userVariables != null && userVariables.TryGetValue(matches[i].Groups[1].Value, out value)) || buildVariables.TryGetValue(matches[i].Groups[1].Value, out value) || envVariables.TryGetValue(matches[i].Groups[1].Value, out value))
+                        {
+                            output.Replace(matches[i].Value, value, matches[i].Index, matches[i].Length);
+
+                            this.LogBuildMessage("Expanded variable " + matches[i].Value + " to '" + value + "'.");
+                        }
                     }
                 }
+
+                outputs.Add(output.ToString());
             }
 
-            return output.ToString();
+            return outputs;
         }
 
         #endregion
