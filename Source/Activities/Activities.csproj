@@ -164,6 +164,7 @@
     <Compile Include="SSH\InvokeRemoteScript.cs" />
     <Compile Include="SSH\PuttyHelper.cs" />
     <Compile Include="SSH\SSHAuthentication.cs" />
+    <Compile Include="SSH\SSHAuthenticationType.cs" />
     <Compile Include="SSH\SSHCopyProtocol.cs" />
     <Compile Include="TeamFoundationServer\BuildReport\BuildReport.cs" />
     <Compile Include="TeamFoundationServer\BuildWorkspace.cs" />

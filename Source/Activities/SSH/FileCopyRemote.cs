@@ -117,7 +117,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// <param name="toolsPathVariable">The PuTTY location + executable (pscp) that will perform the copy operation</param>
         /// <param name="toolArgumentsVariable">the parameters to be passed to the pscp so the copy of files is performed</param>
         /// <returns>The activity that will construct the command + parameters needed to perform the copy</returns>
-        protected override Activity GetCallingParametersBody(Variable<string> toolsPathVariable, Variable<string> toolArgumentsVariable)
+        protected override Activity CreateCallingParametersBody(Variable<string> toolsPathVariable, Variable<string> toolArgumentsVariable)
         {
             return new GetPscpCallingParameters
             {
@@ -150,7 +150,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// </para>
         /// </summary>
         /// <returns>The activity code that will validate the parameters</returns>
-        protected override Activity GetParametersValidationBody()
+        protected override Activity CreateParametersValidationBody()
         {
             return new ValidatePscpParametersActivityInternal
             {
@@ -421,9 +421,8 @@ namespace TfsBuildExtensions.Activities.SSH
                 var auth = this.Authentication.Get(context);
                 
                 return string.Format(
-                    "-l {0} -pw {1} -{2} {3} {4} {5} {6} -batch -noagent {7} {8}",
-                    auth.User,
-                    auth.Password,
+                    "{0} -{1} {2} {3} {4} {5} -batch -noagent {6} {7}",
+                    PuttyHelper.GetAuthenticationParameters(auth),                    
                     this.Protocol.Get(context),
                     GetStringIfTrue(this.Unsafe, context, "-unsafe"),
                     GetStringIfTrue(this.EnableCompression, context, "-C"),

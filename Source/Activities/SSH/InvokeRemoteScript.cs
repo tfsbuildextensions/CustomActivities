@@ -56,7 +56,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// </para>
         /// </summary>
         /// <returns>The activity code that will validate the parameters</returns>
-        protected override Activity GetParametersValidationBody()
+        protected override Activity CreateParametersValidationBody()
         {
             return new ValidatePlinkParametersActivityInternal
             {
@@ -80,7 +80,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// <param name="toolsPathVariable">The PuTTY location + executable (plink) that will perform the remote call operation</param>
         /// <param name="toolArgumentsVariable">the parameters to be passed to the plink so command is remotely invoked</param>
         /// <returns>the activity</returns>
-        protected override Activity GetCallingParametersBody(Variable<string> toolsPathVariable, Variable<string> toolArgumentsVariable)
+        protected override Activity CreateCallingParametersBody(Variable<string> toolsPathVariable, Variable<string> toolArgumentsVariable)
         {
             return new GetPlinkCallingParameters
             {
@@ -181,9 +181,8 @@ namespace TfsBuildExtensions.Activities.SSH
                 var host = this.Host.Get(context);
 
                 return string.Format(
-                    "-l {0} -pw {1} -ssh -batch -noagent {2} {3}",
-                    auth.User,
-                    auth.Password,
+                    "{0} -ssh -batch -noagent {1} {2}",
+                    PuttyHelper.GetAuthenticationParameters(auth),
                     host,
                     this.Command.Get(context));
             }

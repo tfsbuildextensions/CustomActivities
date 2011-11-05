@@ -13,6 +13,8 @@ namespace TfsBuildExtensions.Activities.SSH
     using Microsoft.TeamFoundation.Build.Workflow.Activities;
     using Microsoft.TeamFoundation.Build.Workflow.Tracking;
     using Microsoft.TeamFoundation.Client;
+    using Microsoft.TeamFoundation.VersionControl.Client;
+    using Microsoft.TeamFoundation.VersionControl.Common;
     using TfsBuildExtensions.Activities.FileSystem;
     using TfsBuildExtensions.Activities.Internal;
     using TfsBuildExtensions.TfsUtilities;
@@ -137,7 +139,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// <param name="toolArgumentsVariable">The workflow variable that will hold the parameters to be passed to the executable</param>
         /// <returns>the activity code that will return the variables used to call the 
         /// putty executable that will perform the required action</returns>
-        protected abstract Activity GetCallingParametersBody(Variable<string> toolsPathVariable, Variable<string> toolArgumentsVariable);
+        protected abstract Activity CreateCallingParametersBody(Variable<string> toolsPathVariable, Variable<string> toolArgumentsVariable);
 
         /// <summary>
         /// This method is responsable for returning an activity that will validate if the
@@ -145,20 +147,20 @@ namespace TfsBuildExtensions.Activities.SSH
         /// semantic is valid.
         /// </summary>
         /// <returns>The activity code that will validate the parameters</returns>
-        protected abstract Activity GetParametersValidationBody();
+        protected abstract Activity CreateParametersValidationBody();
 
         /// <summary>
         /// Creates the code for executing putty activity
         /// </summary>
         /// <returns>The code of the activity to be executed</returns>
         protected override Activity CreateInternalBody()
-        {            
+        {
             return new Sequence
             {
                 Activities =
                 {
                     this.CreateBaseParametersValidationParametersBody(),
-                    this.GetParametersValidationBody(),
+                    this.CreateParametersValidationBody(),
                     
                     // Are the parameters valid? then proceed.
                     new @If
@@ -173,7 +175,7 @@ namespace TfsBuildExtensions.Activities.SSH
                             
                             Activities = 
                             {
-                                this.GetInvokeRemoteCommandBody()
+                                this.CreateInvokeRemoteCommandBody()
                             }
                         }                
                     }
@@ -217,7 +219,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// </summary>
         /// <param name="message">The message to log</param>
         /// <returns>The activity</returns>
-        private Activity GetOperationFailedBody(string message)
+        private Activity CreateOperationFailedBody(string message)
         {
             return new Sequence
             {
@@ -238,11 +240,13 @@ namespace TfsBuildExtensions.Activities.SSH
             };
         }
 
-        private Activity GetInvokeRemoteCommandBody()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Extracting methods would be no gain and make the core more unreadable")]
+        private Activity CreateInvokeRemoteCommandBody()
         {
             var logFileLocationVariable = new Variable<string> { Name = "Log File Location" };
             var puttyCommandPathVariable = new Variable<string> { Name = "Putty Command Path" };
             var puttyArgumentsVariable = new Variable<string> { Name = "Putty Arguments" };
+            var privateKeyVariable = new Variable<string> { Name = "Putty Private Key File Location" };
 
             var errorHandlerArgument = new DelegateInArgument<string>();
             var stdOutputHandlerArgument = new DelegateInArgument<string>();
@@ -250,12 +254,23 @@ namespace TfsBuildExtensions.Activities.SSH
             // gets the location of the logfile (if any), gets the parameters to execute the appropriate putty command and invokes it
             return new Sequence
             {
-                Variables = { puttyCommandPathVariable, puttyArgumentsVariable, logFileLocationVariable },
+                Variables = { puttyCommandPathVariable, puttyArgumentsVariable, logFileLocationVariable, privateKeyVariable },
 
                 Activities =
                 {             
-                    this.GetLogFileBody(logFileLocationVariable),                                        
-                    this.GetCallingParametersBody(puttyCommandPathVariable, puttyArgumentsVariable),
+                    this.CreateLogFileBody(logFileLocationVariable),
+
+                    new DownloadKeyFileIfNecessary 
+                    {
+                        Authentication = new InArgument<SSHAuthentication>(env => this.Authentication.Get(env)),
+                                                
+                        IgnoreExceptions = new InArgument<bool>(env => this.IgnoreExceptions.Get(env)),
+                        FailBuildOnError = new InArgument<bool>(env => this.FailBuildOnError.Get(env)),
+                        LogExceptionStack = new InArgument<bool>(env => this.LogExceptionStack.Get(env)),
+                        TreatWarningsAsErrors = new InArgument<bool>(env => this.TreatWarningsAsErrors.Get(env))
+                    },
+
+                    this.CreateCallingParametersBody(puttyCommandPathVariable, puttyArgumentsVariable),
 
                     new RegisterKnownHosts 
                     {
@@ -318,6 +333,11 @@ namespace TfsBuildExtensions.Activities.SSH
                         }
                     },
 
+                    new DeletePrivateKeyTemporaryFile
+                    {
+                        Authentication = new InArgument<SSHAuthentication>(env => this.Authentication.Get(env))
+                    },
+
                     // IF output log file exists then create the link on the build detail report
                     new @If
                     {
@@ -332,7 +352,7 @@ namespace TfsBuildExtensions.Activities.SSH
                     new @If
                     {
                         Condition = new InArgument<bool>(env => this.ErrorCode.GetLocation(env) != null && this.ErrorCode.GetLocation(env).Value != 0),
-                        Then = this.GetOperationFailedBody("Calling putty failed.")                                    
+                        Then = this.CreateOperationFailedBody("Calling putty failed.")                                    
                     }
                 }
             };
@@ -343,7 +363,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// </summary>
         /// <param name="logFileLocationVariable">The variable where the complete log file path will be stored</param>
         /// <returns>The activity</returns>
-        private GetLogFile GetLogFileBody(Variable<string> logFileLocationVariable)
+        private GetLogFile CreateLogFileBody(Variable<string> logFileLocationVariable)
         {
             return new GetLogFile
             {
@@ -355,7 +375,8 @@ namespace TfsBuildExtensions.Activities.SSH
         /// <summary>
         /// Validates the parameters of the main activity.
         /// The hosts is mandatory        
-        /// Username/password also mandatory
+        /// Username/password(key) also mandatory(if using usr/pwd authentication)
+        /// key is mandatory (if using private key authentication)
         /// <para></para>
         /// If the parameters are invalid logs a build error message
         /// </summary>
@@ -382,15 +403,31 @@ namespace TfsBuildExtensions.Activities.SSH
             protected override void InternalExecute()
             {
                 var auth = this.Authentication.Get(this.ActivityContext);
+                bool error = false;
 
-                if (string.IsNullOrEmpty(auth.User) || string.IsNullOrEmpty(auth.Password))
+                switch (auth.AuthType)
                 {
-                    LogBuildError("You have to specify the username/password to authenticate on the remote host");
+                    case SSHAuthenticationType.UserNamePassword:
+                        if (string.IsNullOrWhiteSpace(auth.User) || string.IsNullOrWhiteSpace(auth.Key))
+                        {
+                            LogBuildError("You have to specify the username/password (key) to authenticate on the remote host");
+                            error = true;
+                        }
 
-                    this.HasErrors.Set(this.ActivityContext, true);
+                        break;
+                    case SSHAuthenticationType.PrivateKey:
+                        if (string.IsNullOrWhiteSpace(auth.User) || string.IsNullOrWhiteSpace(auth.Key))
+                        {
+                            LogBuildError("You have to specify the username and private key file (key) to authenticate on the remote host");
+                            error = true;
+                        }
 
-                    return;
+                        break;
+                    default:
+                        throw new NotImplementedException("Unknown authentication type");
                 }
+
+                this.HasErrors.Set(this.ActivityContext, error);
             }
         }
 
@@ -526,6 +563,60 @@ namespace TfsBuildExtensions.Activities.SSH
         }
 
         [ActivityTracking(ActivityTrackingOption.None)]
+        private sealed class DeletePrivateKeyTemporaryFile : BaseCodeActivity
+        {
+            [RequiredArgument()]
+            public InArgument<SSHAuthentication> Authentication { get; set; }
+
+            protected override void InternalExecute()
+            {
+                var auth = this.Authentication.Get(this.ActivityContext);
+
+                if (auth.AuthType == SSHAuthenticationType.PrivateKey &&
+                    String.IsNullOrWhiteSpace(auth.PrivateKeyFileLocation) == false && VersionControlPath.IsServerItem(auth.Key))
+                {
+                    try
+                    {
+                        if (System.IO.File.Exists(auth.PrivateKeyFileLocation))
+                        {
+                            System.IO.File.Delete(auth.PrivateKeyFileLocation);
+                        }
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        LogBuildWarning(String.Format("Failed to delete file {0}", auth.PrivateKeyFileLocation));
+                    }
+                }
+            }
+        }
+
+        [ActivityTracking(ActivityTrackingOption.None)]
+        private sealed class DownloadKeyFileIfNecessary : BaseCodeActivity
+        {
+            [RequiredArgument()]
+            public InArgument<SSHAuthentication> Authentication { get; set; }
+
+            protected override void InternalExecute()
+            {
+                var auth = this.Authentication.Get(this.ActivityContext);
+
+                if (auth.AuthType == SSHAuthenticationType.PrivateKey)
+                {
+                    auth.PrivateKeyFileLocation = auth.Key;
+
+                    if (VersionControlPath.IsServerItem(auth.Key))
+                    {
+                        var vcs = this.ActivityContext.GetExtension<TfsTeamProjectCollection>().GetService<VersionControlServer>();
+
+                        auth.PrivateKeyFileLocation = Path.GetTempFileName();
+
+                        vcs.DownloadFile(auth.Key, auth.PrivateKeyFileLocation);
+                    }
+                }
+            }
+        }
+
+        [ActivityTracking(ActivityTrackingOption.None)]
         private sealed class RegisterKnownHosts : BaseCodeActivity
         {
             /// <summary>
@@ -551,7 +642,7 @@ namespace TfsBuildExtensions.Activities.SSH
                     int errorCode;
                     var knowHostRegistryFile = autoTracker.GetFile(fileName);
 
-                    if ((errorCode = BasePuttyActivity.RegisterKnownHosts.RegisterKnownHostsWithFile(knowHostRegistryFile)) != 0) 
+                    if ((errorCode = BasePuttyActivity.RegisterKnownHosts.RegisterKnownHostsWithFile(knowHostRegistryFile)) != 0)
                     {
                         this.LogBuildError(string.Format("Failed to register the hosts from file {0} with errorcode: {1}", fileName, errorCode));
                     }
