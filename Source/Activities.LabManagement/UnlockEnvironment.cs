@@ -65,10 +65,10 @@ namespace TfsBuildExtensions.Activities.LabManagement
 			//-- Calculate the full path to the target file...
 			string strTargetFile = Path.Combine(lockingUncShare, environmentName);
 
-			//-- If the File Already Exists, we fail...  We should not be unlocking a an environment that is not locked...
-			if (File.Exists(strTargetFile))
+      //-- If the File Already doesn't Exists, the environment is unlocked...      
+			if (!File.Exists(strTargetFile))
 			{
-				context.SetValue(this.Success, false);
+				context.SetValue(this.Success, true);
 			}
 
 			//-- Create a file with our build number inside it...

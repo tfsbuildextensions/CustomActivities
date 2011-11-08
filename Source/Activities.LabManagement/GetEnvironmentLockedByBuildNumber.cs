@@ -49,8 +49,8 @@ namespace TfsBuildExtensions.Activities.LabManagement
 			//-- Calculate the full path to the target file...
 			string strTargetFile = Path.Combine(lockingUncShare, environmentName);
 
-			//-- If the File Already Exists, there is no lock, so return null...
-			if (File.Exists(strTargetFile))
+			//-- If the File Doesn't Exist, there is no lock, so return null...
+			if (!File.Exists(strTargetFile))
 			{
 				context.SetValue(this.BuildNumber, null);
 			}

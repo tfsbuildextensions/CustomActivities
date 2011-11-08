@@ -62,6 +62,20 @@ namespace TfsBuildExtensions.Activities.LabManagement
 			//-- If the File Already Exists, we fail...
 			if (File.Exists(targetFile))
 			{
+        //-- Already Locked, lets see who has it locked...
+        using (StreamReader oReader = new StreamReader(targetFile))
+        {
+          string strFileContents = oReader.ReadToEnd();
+
+          //-- Was the environment locked by our build number?
+          if (strFileContents.Equals(buildNumber, StringComparison.OrdinalIgnoreCase))
+          {
+            //-- Yes, indicate that we have locked it...
+            context.SetValue(this.Success, true);
+          }
+        }
+
+        //-- Lock file exists, but this build is not the one that locked it...
 				context.SetValue(this.Success, false);
 			}
 
