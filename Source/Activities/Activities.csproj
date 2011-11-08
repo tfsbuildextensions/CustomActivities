@@ -189,6 +189,7 @@
     <Compile Include="TeamFoundationServer\GetLocalWorkspace.cs" />
     <Compile Include="TeamFoundationServer\GetMSBuildProperties.cs" />
     <Compile Include="TeamFoundationServer\GetPendingChanges.cs" />
+    <Compile Include="TeamFoundationServer\GetValueFromRegistry.cs" />
     <Compile Include="TeamFoundationServer\GetVersionControlLabel.cs" />
     <Compile Include="TeamFoundationServer\GetWebAccessUrl.cs" />
     <Compile Include="TeamFoundationServer\IsBuildRunning.cs" />
@@ -264,6 +265,13 @@
     <EmbeddedResource Include="CodeQuality\StatLight\StatLightToMSTest.xslt" />
     <EmbeddedResource Include="CodeQuality\NUnit\NUnitToMSTest.xslt" />
     <EmbeddedResource Include="TeamFoundationServer\BuildReport\DefaultTransform.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\..\temp\demo\agille\root\BuildProcessTemplates\DefaultTemplate -READREGISTRY.xaml">
+      <Link>TeamFoundationServer\DefaultTemplate -READREGISTRY.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Workflow.Targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
