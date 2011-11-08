@@ -266,13 +266,6 @@
     <EmbeddedResource Include="CodeQuality\NUnit\NUnitToMSTest.xslt" />
     <EmbeddedResource Include="TeamFoundationServer\BuildReport\DefaultTransform.xslt" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\..\..\..\temp\demo\agille\root\BuildProcessTemplates\DefaultTemplate -READREGISTRY.xaml">
-      <Link>TeamFoundationServer\DefaultTemplate -READREGISTRY.xaml</Link>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Workflow.Targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
 </Project>
