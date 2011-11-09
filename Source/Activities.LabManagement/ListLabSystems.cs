@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ListEnvironments.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="ListLabSystems.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.LabManagement
 {
@@ -15,10 +15,10 @@ namespace TfsBuildExtensions.Activities.LabManagement
      */
 
     /// <summary>
-    /// An activity that lists TFS Lab Management Lab Environments based on tag filters.
+    /// An activity that lists TFS Lab Management Lab Systems based on tag filters.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class ListEnvironments : CodeActivity
+    public sealed class ListLabSystems : CodeActivity
     {
         /// <summary>
         /// Specifies the filter criteria to match environments. The tags are to be specified as name-value
@@ -28,9 +28,9 @@ namespace TfsBuildExtensions.Activities.LabManagement
         public InArgument<string[]> Tags { get; set; }
 
         /// <summary>
-        /// Defines the returned names of matching lab environments.
+        /// Defines the returned names of matching lab systems.
         /// </summary>
-        public OutArgument<string[]> LabEnvironments { get; set; }
+        public OutArgument<string[]> LabSystems { get; set; }
 
         /// <summary>
         /// Execute the ListEnvironment build activity.
@@ -46,24 +46,27 @@ namespace TfsBuildExtensions.Activities.LabManagement
 
             var filterTags = context.GetValue(this.Tags);
 
-            var matchingEnvironments = new List<string>();
+            var matchingLabSystems = new List<string>();
             foreach (var environment in environments)
             {
-                foreach (var filterTag in filterTags)
+                foreach (var labSystem in environment.LabSystems)
                 {
-                    var tagParts = filterTag.Split('=');
-                    if (tagParts.Length == 2)
+                    foreach (var filterTag in filterTags)
                     {
-                        string environmentTag = null;
-                        if (environment.CustomProperties.TryGetValue(tagParts[0], out environmentTag) && environmentTag.Equals(tagParts[1]))
+                        var tagParts = filterTag.Split('=');
+                        if (tagParts.Length == 2)
                         {
-                            matchingEnvironments.Add(environment.Name);
+                            string labTag = null;
+                            if (labSystem.CustomProperties.TryGetValue(tagParts[0], out labTag) && labTag.Equals(tagParts[1]))
+                            {
+                                matchingLabSystems.Add(environment.Name);
+                            }
                         }
                     }
                 }
             }
 
-            context.SetValue(this.LabEnvironments, matchingEnvironments.ToArray());
+            context.SetValue(this.LabSystems, matchingLabSystems.ToArray());
         }
     }
 }
