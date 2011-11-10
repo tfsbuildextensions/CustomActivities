@@ -7,7 +7,6 @@ namespace TfsBuildExtensions.Activities.LabManagement
 	using System;
 	using System.Activities;
 	using System.IO;
-	using System.Threading;
 	using Microsoft.TeamFoundation.Build.Client;
 
 	/*
@@ -66,9 +65,9 @@ namespace TfsBuildExtensions.Activities.LabManagement
 			if (File.Exists(targetFile))
 			{
         //-- Already Locked, lets see who has it locked...
-        using (StreamReader oReader = new StreamReader(targetFile))
+        using (StreamReader reader = new StreamReader(targetFile))
         {
-          string strFileContents = oReader.ReadToEnd();
+          string strFileContents = reader.ReadToEnd();
 
           //-- Was the environment locked by our build number?
           if (strFileContents.Equals(buildNumber, StringComparison.OrdinalIgnoreCase))
@@ -82,17 +81,14 @@ namespace TfsBuildExtensions.Activities.LabManagement
 				context.SetValue(this.Success, false);
 			}
 
-      Thread.Sleep(2500);
-
       try
       {
         //-- Create a file with our build number inside it...
-        using (StreamWriter oWriter = File.CreateText(tempFileName))
+        using (StreamWriter writer = File.CreateText(tempFileName))
         {
-          oWriter.Write(buildNumber);
+          writer.Write(buildNumber);
+          writer.Flush();
         }
-
-        Thread.Sleep(2500);
 
         //-- If the File does not exist, rename the .lock file...
         if (!File.Exists(targetFile))
