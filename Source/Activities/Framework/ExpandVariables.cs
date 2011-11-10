@@ -161,17 +161,20 @@ namespace TfsBuildExtensions.Activities.Framework
             {
                 var output = new StringBuilder(input);
 
-                var matches = variableRegex.Matches(input);
-                for (var i = matches.Count - 1; i >= 0; --i)
+                if (input != null)
                 {
-                    if (matches[i].Success)
+                    var matches = variableRegex.Matches(input);
+                    for (var i = matches.Count - 1; i >= 0; --i)
                     {
-                        var value = default(string);
-                        if ((userVariables != null && userVariables.TryGetValue(matches[i].Groups[1].Value, out value)) || buildVariables.TryGetValue(matches[i].Groups[1].Value, out value) || envVariables.TryGetValue(matches[i].Groups[1].Value, out value))
+                        if (matches[i].Success)
                         {
-                            output.Replace(matches[i].Value, value, matches[i].Index, matches[i].Length);
+                            var value = default(string);
+                            if ((userVariables != null && userVariables.TryGetValue(matches[i].Groups[1].Value, out value)) || buildVariables.TryGetValue(matches[i].Groups[1].Value, out value) || envVariables.TryGetValue(matches[i].Groups[1].Value, out value))
+                            {
+                                output.Replace(matches[i].Value, value, matches[i].Index, matches[i].Length);
 
-                            this.LogBuildMessage("Expanded variable " + matches[i].Value + " to '" + value + "'.");
+                                this.LogBuildMessage("Expanded variable " + matches[i].Value + " to '" + value + "'.");
+                            }
                         }
                     }
                 }
