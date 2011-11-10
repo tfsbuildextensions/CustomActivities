@@ -59,6 +59,9 @@ namespace TfsBuildExtensions.Activities.LabManagement
 			//-- Calculate the full path to the target file...
 			string targetFile = Path.Combine(lockingUncShare, environmentName);
 
+      //-- Calculate a TempFile name that will be unique to this build...
+		  string tempFileName = targetFile + "_" + buildNumber + ".Lock";
+
 			//-- If the File Already Exists, we fail...
 			if (File.Exists(targetFile))
 			{
@@ -79,31 +82,45 @@ namespace TfsBuildExtensions.Activities.LabManagement
 				context.SetValue(this.Success, false);
 			}
 
-			//-- Create a file with our build number inside it...
-			using (StreamWriter writer = File.CreateText(targetFile))
-			{
-				writer.Write(buildNumber);
-			}
+      Thread.Sleep(2500);
 
-			//-- Give the environment time to settle...
-			Thread.Sleep(2500);
+      try
+      {
+        //-- Create a file with our build number inside it...
+        using (StreamWriter oWriter = File.CreateText(tempFileName))
+        {
+          oWriter.Write(buildNumber);
+        }
 
-			//-- Check to make sure that we are the ones that ended up locking the environment...
-			//-- Create a file with our build number inside it...
-			using (StreamReader reader = new StreamReader(targetFile))
-			{
-				string strFileContents = reader.ReadToEnd();
+        Thread.Sleep(2500);
 
-				//-- Was the environment locked by our build number?
-				if (!strFileContents.Equals(buildNumber, StringComparison.OrdinalIgnoreCase))
-				{
-					//-- No, the environment was not locked by this build...
-					context.SetValue(this.Success, false);
-				}
-			}
+        //-- If the File does not exist, rename the .lock file...
+        if (!File.Exists(targetFile))
+        {
+          File.Move(tempFileName, targetFile);
 
-			//-- If we made it here, the file was created...
-			context.SetValue(this.Success, true);
+          //-- We have successfully Locked the environment...
+          context.SetValue(this.Success, true);
+
+        }
+        else
+        {
+          //-- Lock File Now Exists, so we cannot lock this environment...
+          context.SetValue(this.Success, false);
+        }
+      }
+      catch (Exception)
+      {
+        //-- We could not lock the build, or there was some other issue...
+        context.SetValue(this.Success, false);
+      }
+      finally
+      {
+        if (File.Exists(tempFileName))
+        {
+          File.Delete(tempFileName);
+        }
+      }
 		}
 	}
 }
