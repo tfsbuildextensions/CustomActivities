@@ -97,6 +97,7 @@
     <Compile Include="LockEnvironment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnlockEnvironment.cs" />
+    <Compile Include="WaitForEnvironmentToBecomeAvailable.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
