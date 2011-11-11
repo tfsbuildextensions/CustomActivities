@@ -1,7 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="GetStorageServiceProperties.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="GetStorageProperties.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-namespace TfsBuildExtensions.Activities.Azure.StorageServices
+namespace TfsBuildExtensions.Activities.Azure.StorageAccounts
 {
     using System.Activities;
     using System.ServiceModel;
@@ -12,7 +12,7 @@ namespace TfsBuildExtensions.Activities.Azure.StorageServices
     /// Get the properties of a storage service account.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class GetStorageServiceProperties : BaseAzureActivity
+    public class GetStorageProperties : BaseAzureActivity
     {
         /// <summary>
         /// Gets or sets the Azure service name.

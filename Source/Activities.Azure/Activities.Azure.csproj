@@ -76,7 +76,13 @@
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AffinityGroups\GetAffinityGroup.cs" />
+    <Compile Include="AffinityGroups\GetAffinityGroups.cs" />
     <Compile Include="BaseAzureActivity.cs" />
+    <Compile Include="Certificates\AddCertificate.cs" />
+    <Compile Include="Certificates\RemoveCertificate.cs" />
+    <Compile Include="Certificates\GetCertificate.cs" />
+    <Compile Include="Certificates\GetCertificates.cs" />
     <Compile Include="Common\GetOperationStatus.cs" />
     <Compile Include="ConfigurationConstants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -90,17 +96,20 @@
     <Compile Include="HostedServices\SetDeploymentStatus.cs" />
     <Compile Include="HostedServices\GetHostedService.cs" />
     <Compile Include="HostedServices\GetDeployment.cs" />
+    <Compile Include="Locations\GetLocations.cs" />
     <Compile Include="Model\CertificateConfiguration.cs" />
     <Compile Include="Model\HostedServiceContext.cs" />
     <Compile Include="Model\DeploymentInfoContext.cs" />
     <Compile Include="Model\ManagementOperationContext.cs" />
     <Compile Include="Model\RoleConfiguration.cs" />
     <Compile Include="Model\RoleInstance.cs" />
+    <Compile Include="OperatingSystems\GetOSFamilies.cs" />
+    <Compile Include="OperatingSystems\GetOSVersions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StorageServices\GetStorageServiceProperties.cs" />
-    <Compile Include="StorageServices\NewStorageKey.cs" />
-    <Compile Include="StorageServices\GetStorageServices.cs" />
-    <Compile Include="StorageServices\GetStorageKeys.cs" />
+    <Compile Include="StorageAccounts\GetStorageProperties.cs" />
+    <Compile Include="StorageAccounts\NewStorageKey.cs" />
+    <Compile Include="StorageAccounts\GetStorageAccounts.cs" />
+    <Compile Include="StorageAccounts\GetStorageKeys.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
@@ -117,6 +126,7 @@
       <Name>Activities</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

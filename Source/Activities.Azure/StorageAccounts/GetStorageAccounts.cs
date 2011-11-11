@@ -1,7 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="GetStorageServices.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="GetStorageAccounts.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-namespace TfsBuildExtensions.Activities.Azure.StorageServices
+namespace TfsBuildExtensions.Activities.Azure.StorageAccounts
 {
     using System.Activities;
     using System.ServiceModel;
@@ -12,7 +12,7 @@ namespace TfsBuildExtensions.Activities.Azure.StorageServices
     /// Get a list of storage services for a subscription.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class GetStorageServices : BaseAzureActivity
+    public class GetStorageAccounts : BaseAzureActivity
     {
         /// <summary>
         /// Gets or sets the storage service list.

@@ -1,7 +1,7 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="GetStorageKeys.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-namespace TfsBuildExtensions.Activities.Azure.StorageServices
+namespace TfsBuildExtensions.Activities.Azure.StorageAccounts
 {
     using System.Activities;
     using System.ServiceModel;
