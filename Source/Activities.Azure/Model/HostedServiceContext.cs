@@ -15,6 +15,7 @@
 // organization, product, domain name, email address, logo, person,
 // places, or events is intended or should be inferred.
 // ----------------------------------------------------------------------------------
+#pragma warning disable 1591
 namespace TfsBuildExtensions.Activities.Azure.Model
 {
     using System;

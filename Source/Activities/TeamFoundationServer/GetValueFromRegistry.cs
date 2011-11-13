@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.TeamFoundationServer
 {
-    using System;
     using System.Activities;
     using System.ComponentModel;
     using Microsoft.TeamFoundation.Build.Client;
@@ -30,7 +29,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// Gets or sets the path of the registration entry we
         /// want to read
         /// </summary>
-        [RequiredArgument()]
+        [RequiredArgument]
         [Description("Reads the specified path from the registry (first will try the collection registry and if not defined the configuration registry")]
         [Category("Registry")]
         public InArgument<string> Path { get; set; }
@@ -45,14 +44,13 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <returns>The key value from the registry</returns>
         protected override string InternalExecute()
         {
-            string value;
             var path = this.Path.Get(this.ActivityContext);
             var defaultValue = this.DefaultValue.Get(this.ActivityContext);
 
             var tfs = this.ActivityContext.GetExtension<TfsTeamProjectCollection>();
             var service = tfs.GetService<ITeamFoundationRegistry>();
 
-            value = service.GetValue<string>(path);
+            string value = service.GetValue<string>(path);
 
             // If not found on the collection than try to read if from the configuration registry
             if (value == null)
@@ -66,7 +64,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
             if (value == null)
             {
-                this.LogBuildError(String.Format("Can't find value for path {0} and no default value has been set. Make sure the value exists and/or the user {1} has permissions to read it.", path, tfs.AuthorizedIdentity.DisplayName));
+                this.LogBuildError(string.Format("Can't find value for path {0} and no default value has been set. Make sure the value exists and/or the user {1} has permissions to read it.", path, tfs.AuthorizedIdentity.DisplayName));
             }
 
             return value;

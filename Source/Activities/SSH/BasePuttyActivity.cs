@@ -565,15 +565,14 @@ namespace TfsBuildExtensions.Activities.SSH
         [ActivityTracking(ActivityTrackingOption.None)]
         private sealed class DeletePrivateKeyTemporaryFile : BaseCodeActivity
         {
-            [RequiredArgument()]
+            [RequiredArgument]
             public InArgument<SSHAuthentication> Authentication { get; set; }
 
             protected override void InternalExecute()
             {
                 var auth = this.Authentication.Get(this.ActivityContext);
 
-                if (auth.AuthType == SSHAuthenticationType.PrivateKey &&
-                    String.IsNullOrWhiteSpace(auth.PrivateKeyFileLocation) == false && VersionControlPath.IsServerItem(auth.Key))
+                if (auth.AuthType == SSHAuthenticationType.PrivateKey && string.IsNullOrWhiteSpace(auth.PrivateKeyFileLocation) == false && VersionControlPath.IsServerItem(auth.Key))
                 {
                     try
                     {
@@ -584,7 +583,7 @@ namespace TfsBuildExtensions.Activities.SSH
                     }
                     catch (FileNotFoundException)
                     {
-                        LogBuildWarning(String.Format("Failed to delete file {0}", auth.PrivateKeyFileLocation));
+                        LogBuildWarning(string.Format("Failed to delete file {0}", auth.PrivateKeyFileLocation));
                     }
                 }
             }
@@ -593,7 +592,7 @@ namespace TfsBuildExtensions.Activities.SSH
         [ActivityTracking(ActivityTrackingOption.None)]
         private sealed class DownloadKeyFileIfNecessary : BaseCodeActivity
         {
-            [RequiredArgument()]
+            [RequiredArgument]
             public InArgument<SSHAuthentication> Authentication { get; set; }
 
             protected override void InternalExecute()

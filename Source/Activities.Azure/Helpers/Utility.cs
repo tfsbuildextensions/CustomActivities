@@ -15,18 +15,20 @@
 //// organization, product, domain name, email address, logo, person,
 //// places, or events is intended or should be inferred.
 //// ----------------------------------------------------------------------------------
-
+#pragma warning disable 1591
 namespace TfsBuildExtensions.Activities.Azure.Helpers
 {
     using System.IO;
     using Microsoft.Samples.WindowsAzure.ServiceManagement;
 
+    /// <summary>
+    /// Utility
+    /// </summary>
     public static class Utility
     {
         public static string GetConfiguration(string configurationPath)
         {
             var configuration = string.Join(string.Empty, File.ReadAllLines(configurationPath));
-
             return ServiceManagementHelper.EncodeToBase64String(configuration);
         }
     }
