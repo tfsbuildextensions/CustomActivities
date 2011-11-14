@@ -46,14 +46,17 @@ namespace TfsBuildExtensions.Activities.ClickOnce
         /// <summary>
         /// Get File Path
         /// </summary>
-        [RequiredArgument]
         public InArgument<string> CertFilePath { get; set; }
 
         /// <summary>
         /// Certificate Password
         /// </summary>
-        [RequiredArgument]
         public InArgument<string> CertPassword { get; set; }
+
+        /// <summary>
+        /// Manifest Certificate Thumbprint / Hash
+        /// </summary>
+        public InArgument<string> ManifestCertificateThumbprint { get; set; }
 
         /// <summary>
         /// Publish Location
@@ -106,6 +109,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             string publisher = this.Publisher.Get(this.ActivityContext);
             bool onlineOnly = this.OnlineOnly.Get(this.ActivityContext);
             string targetFrameworkVersion = this.TargetFrameworkVersion.Get(this.ActivityContext);
+            string manifestCertificateThumbprint = this.ManifestCertificateThumbprint.Get(this.ActivityContext);
 
             try
             {
@@ -122,31 +126,29 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 // Copy Files from bin folder to publish location
                 CopyDirectory(binLocation, toFile, true);
 
+                string manifestCertificateThumbprintArg = !string.IsNullOrEmpty(manifestCertificateThumbprint) ? "-CertHash " + manifestCertificateThumbprint : string.Empty;
+                string certFilePathArg = !string.IsNullOrEmpty(certFilePath) ? "-CertFilePath " + certFilePath : string.Empty;
+                string certPasswordArg = !string.IsNullOrEmpty(certPassword) ? "-Password " + certPassword : string.Empty;
+
                 // Create Application Manifest
                 string args = "-New Application -Processor x86 -ToFile \"" + toFile + "\\" + applicationName + ".exe.manifest\" -name " + applicationName + " -Version " + version + " -FromDirectory \"" + toFile + "\"";
                 RunMage(mageFilePath, args);
 
                 // Sign Application Manifest
-                args = "-Sign \"" + toFile + "\\" + applicationName + ".exe.manifest\" -CertFile " + certFilePath + " -Password " + certPassword;
+                args = "-Sign \"" + toFile + "\\" + applicationName + ".exe.manifest\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg;
                 RunMage(mageFilePath, args);
 
                 // rename all files to have a .deploy
                 RenameFiles(toFile);
 
                 // Sign Application Manifest
-                args = "-Sign \"" + toFile + "\\" + applicationName + ".exe.manifest\" -CertFile " + certFilePath + " -Password " + certPassword;
+                args = "-Sign \"" + toFile + "\\" + applicationName + ".exe.manifest\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg;
                 RunMage(mageFilePath, args);
 
                 CreateDeploymentManifest(version, applicationName, publishLocation, targetFrameworkVersion);
 
-                // Create Deployment Manifest
-                // string providerUrl = "\"" + installLocation + "\\Application Files\\" + applicationName + "_" + version + "\\" + applicationName + ".exe.manifest\"";
-                // string providerUrl = installLocation + "/" + applicationName + ".application";
-                // args = "-New Deployment -Processor x86 -Install " + (!onlineOnly).ToString() + " -Publisher " + publisher + " -ProviderUrl " + providerUrl + " -AppManifest \"" + toFile + "\\" + applicationName + ".exe.manifest\" -ToFile \"" + publishLocation + "\\" + applicationName + ".application\"";
-                // RunMage(mageFilePath, args);
-
                 // Sign Deployment Manifest
-                args = "-Sign \"" + publishLocation + "\\" + applicationName + ".application\" -CertFile \"" + certFilePath + "\" -Password " + certPassword;
+                args = "-Sign \"" + publishLocation + "\\" + applicationName + ".application\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg;
                 RunMage(mageFilePath, args);
 
                 // Copy Deploy Manifest to parent folder
@@ -177,6 +179,9 @@ namespace TfsBuildExtensions.Activities.ClickOnce
 
             foreach (string file in Directory.GetFiles(sourcePath))
             {
+                if (file.EndsWith(".manifest") || file.EndsWith(".application"))
+                    continue;
+
                 string dest = Path.Combine(destPath, Path.GetFileName(file));
                 File.Copy(file, dest, overwrite);
             }

@@ -37,6 +37,7 @@ namespace TfsBuildExtensions.Activities.Tests.ClickOnce
             workflow.MageFilePath = @"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\Mage.exe";
             workflow.CertFilePath = @"c:\tfs\test2\CustomBuildSource\CustomBuildArtifacts\TestApp\TestApp_TemporaryKey.pfx";
             workflow.CertPassword = "Mike";
+            workflow.ManifestCertificateThumbprint = "9C6B1A418C9DF9E42F31AE811B659F4773FF6AA3";
             workflow.PublishLocation = @"\\dlvrn2010md\builddropfolder\testc1";
             workflow.InstallLocation = "http://localhost:8055/Testclickonce2";
             workflow.Publisher = "CompanyA";
