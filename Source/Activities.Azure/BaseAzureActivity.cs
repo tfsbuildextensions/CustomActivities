@@ -33,7 +33,7 @@ namespace TfsBuildExtensions.Activities.Azure
         /// <summary>
         /// Reference to the Azure client certificate loaded from the local store.
         /// </summary>
-        protected X509Certificate2 Certificate { get; set; }
+        protected X509Certificate2 ManagementCertificate { get; set; }
 
         /// <summary>
         /// WCF binding to the Azure service.
@@ -72,7 +72,7 @@ namespace TfsBuildExtensions.Activities.Azure
         protected sealed override void InternalExecute()
         {
             // Find the certficate from the local store
-            this.Certificate = this.FindCertificate();
+            this.ManagementCertificate = this.FindCertificate();
 
             // Setup the WCF channel to the Azure Management Service
             if (this.Channel == null)
@@ -142,7 +142,7 @@ namespace TfsBuildExtensions.Activities.Azure
                 this.ServiceEndpoint = ConfigurationConstants.ServiceEndpoint;
             }
 
-            return ServiceManagementHelper.CreateServiceManagementChannel(this.ServiceBinding, new Uri(this.ServiceEndpoint), this.Certificate);
+            return ServiceManagementHelper.CreateServiceManagementChannel(this.ServiceBinding, new Uri(this.ServiceEndpoint), this.ManagementCertificate);
         }
 
         /// <summary>

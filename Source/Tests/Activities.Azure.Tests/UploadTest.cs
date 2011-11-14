@@ -9,7 +9,7 @@ namespace TfsBuildExtensions.Activities.Azure.Tests
     using Microsoft.Samples.WindowsAzure.ServiceManagement;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TfsBuildExtensions.Activities.Azure.HostedServices;
-    using TfsBuildExtensions.Activities.Azure.StorageServices;
+    using TfsBuildExtensions.Activities.Azure.StorageAccounts;
 
     [TestClass]
     public class UploadTest

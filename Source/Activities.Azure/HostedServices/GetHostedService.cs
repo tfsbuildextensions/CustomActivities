@@ -43,7 +43,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                 var ctx = new HostedServiceContext(hostedService);
                 ctx.SubscriptionId = this.SubscriptionId.Get(this.ActivityContext);
                 ctx.ServiceName = this.ServiceName.Get(this.ActivityContext);
-                ctx.Certificate = this.Certificate;
+                ctx.Certificate = this.ManagementCertificate;
 
                 this.ServiceContext.Set(this.ActivityContext, ctx);
             }
