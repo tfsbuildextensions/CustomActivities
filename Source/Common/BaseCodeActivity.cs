@@ -103,7 +103,7 @@ namespace TfsBuildExtensions.Activities
         /// Also can fail the build if the FailBuildOnError flag is set
         /// </summary>
         /// <param name="errorMessage">Message to save</param>
-        protected void LogBuildError(string errorMessage)
+        protected internal void LogBuildError(string errorMessage)
         {
             Debug.WriteLine(string.Format("BuildError: {0}", errorMessage));
             if (this.FailBuildOnError.Get(this.ActivityContext))
@@ -121,7 +121,7 @@ namespace TfsBuildExtensions.Activities
         /// Logs a message as a build warning
         /// </summary>
         /// <param name="warningMessage">Message to save</param>
-        protected void LogBuildWarning(string warningMessage)
+        protected internal void LogBuildWarning(string warningMessage)
         {
             if (this.TreatWarningsAsErrors.Get(this.ActivityContext))
             {
@@ -139,7 +139,7 @@ namespace TfsBuildExtensions.Activities
         /// </summary>
         /// <param name="message">The message to save</param>
         /// <param name="importance">The verbosity importance of the message</param>
-        protected void LogBuildMessage(string message, BuildMessageImportance importance = BuildMessageImportance.Normal)
+        protected internal void LogBuildMessage(string message, BuildMessageImportance importance = BuildMessageImportance.Normal)
         {
             this.ActivityContext.TrackBuildMessage(message, importance);
             Debug.WriteLine(string.Format("BuildMessage: {0}", message));

@@ -47,6 +47,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         public InArgument<IEnumerable<string>> FilesToProcess { get; set; }
 
         /// <summary>
+        /// Optional: Which files that should be ignored. Can be a list of files or file match patterns.
+        /// </summary>
+        [Description("Which files that should be ignored. Can be a list of files or file match patterns.")]
+        public InArgument<IEnumerable<string>> FilesToIgnore { get; set; }
+
+        /// <summary>
         /// Optional: Name of the generated metrics result file. Should end with .xml
         /// </summary>
         [Description("Optional: Name of the generated metrics result file. Default Metrics.xml")]
@@ -86,6 +92,46 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         [RequiredArgument]
         public InArgument<int> CyclomaticComplexityWarningThreshold { get; set; }
 
+        /// <summary>
+        /// Overrides the global thresholds for the Assembly Metric Level by specific one.  
+        /// When a level is not overrides (value of 0), the global thresholds are used.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Raise this exception if the string contains a part that is not an integer.
+        /// </exception>
+        [Description("Optional: Overrides the global thresholds for the Assembly Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
+        public InArgument<String> AssemblyThresholdsString { get; set; }
+
+        /// <summary>
+        /// Overrides the global thresholds for the Namespace Metric Level by specific one.  
+        /// When a level is not overrides (value of 0), the global thresholds are used.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Raise this exception if the string contains a part that is not an integer.
+        /// </exception>
+        [Description("Optional: Overrides the global thresholds for the Namespace Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
+        public InArgument<String> NamespaceThresholdsString { get; set; }
+
+        /// <summary>
+        /// Overrides the global thresholds for the Assembly Metric Level by specific one.  
+        /// When a level is not overrides (value of 0), the global thresholds are used.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Raise this exception if the string contains a part that is not an integer.
+        /// </exception>
+        [Description("Optional: Overrides the global thresholds for the Type Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
+        public InArgument<String> TypeThresholdsString { get; set; }
+
+        /// <summary>
+        /// Overrides the global thresholds for the Assembly Metric Level by specific one.  
+        /// When a level is not overrides (value of 0), the global thresholds are used.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Raise this exception if the string contains a part that is not an integer.
+        /// </exception>
+        [Description("Optional: Overrides the global thresholds for the Member Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
+        public InArgument<String> MemberThresholdsString { get; set; }
+         
         private IBuildDetail BuildDetail { get; set; }
 
         /// <summary>
@@ -125,19 +171,19 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 foreach (var module in target.Modules)
                 {
                     var moduleNode = AddTextNode("Module: " + module.Name, targetNode);
-                    this.ProcessMetrics(module.Name, module.Metrics, moduleNode);
+                    this.ProcessMetrics(module.Name, module.Metrics, moduleNode, CodeMetricsThresholds.GetForAssembly(this, this.ActivityContext));
                     foreach (var ns in module.Namespaces)
                     {
                         var namespaceNode = AddTextNode("Namespace: " + ns.Name, moduleNode);
-                        this.ProcessMetrics(ns.Name, ns.Metrics, namespaceNode);
+                        this.ProcessMetrics(ns.Name, ns.Metrics, namespaceNode, CodeMetricsThresholds.GetForNamespace(this, this.ActivityContext));
                         foreach (var type in ns.Types)
                         {
                             var typeNode = AddTextNode("Type: " + type.Name, namespaceNode);
-                            this.ProcessMetrics(type.Name, type.Metrics, typeNode); 
+                            this.ProcessMetrics(type.Name, type.Metrics, typeNode, CodeMetricsThresholds.GetForType(this, this.ActivityContext)); 
                             foreach (var member in type.Members)
                             {
                                 var memberNode = AddTextNode("Member: " + member.Name, typeNode);
-                                this.ProcessMetrics(member.Name, member.Metrics, memberNode); 
+                                this.ProcessMetrics(member.Name, member.Metrics, memberNode, CodeMetricsThresholds.GetForMember(this, this.ActivityContext), type.Name); 
                             }
                         }
                     }
@@ -164,12 +210,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 return false;
             }
 
-            if (this.FilesToProcess.Get(this.ActivityContext) == null || this.FilesToProcess.Get(this.ActivityContext).Count() == 0)
-            {
-                this.FilesToProcess.Set(this.ActivityContext, new List<string> { "*.dll", "*.exe" });
-            }
-
-            string metricsExeArguments = this.FilesToProcess.Get(this.ActivityContext).Aggregate(string.Empty, (current, file) => current + string.Format(" /f:\"{0}\\{1}\"", this.BinariesDirectory.Get(this.ActivityContext), file));
+            string metricsExeArguments = GetFilesToProcess().Aggregate(string.Empty, (current, file) => current + string.Format(" /f:\"{0}\"", file));
             metricsExeArguments += string.Format(" /out:\"{0}\"", output);
             if (this.SearchGac.Get(this.ActivityContext))
             {
@@ -215,46 +256,73 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             return true;
         }
 
+        private IEnumerable<string> GetFilesToProcess()
+        {
+            var metricsFiles = new CodeMetricsFilesToProcess(this, this.ActivityContext);
+            return metricsFiles.Get();
+        }
+
         /// <summary>
         /// Analyzes the resulting metrics file and compares the Maintainability Index and Cyclomatic Complexity against the threshold values
         /// </summary>
         /// <param name="member">Name of the member (namespace, module, type...)</param>
         /// <param name="metrics">The metrics for this member</param>
         /// <param name="parent">The parent node in the build log</param>
-        private void ProcessMetrics(string member, IEnumerable<Metric> metrics, IBuildInformationNode parent)
+        /// <param name="thresholds"> The thresholds for this level, member</param>
+        private void ProcessMetrics(string member, IEnumerable<Metric> metrics, IBuildInformationNode parent, SpecificMetricThresholds thresholds)
+        {
+            ProcessMetrics(member, metrics, parent, thresholds, string.Empty);
+        }
+
+        /// <summary>
+        /// Analyzes the resulting metrics file and compares the Maintainability Index and Cyclomatic Complexity against the threshold values
+        /// </summary>
+        /// <param name="member">Name of the member (namespace, module, type...)</param>
+        /// <param name="metrics">The metrics for this member</param>
+        /// <param name="parent">The parent node in the build log</param>
+        /// <param name="thresholds"> The thresholds for this level, member</param>
+        /// <param name="memberRootDesc"></param>
+        private void ProcessMetrics(string member, IEnumerable<Metric> metrics, IBuildInformationNode parent, SpecificMetricThresholds thresholds, string memberRootDesc)
         {
             foreach (var metric in metrics)
             {
                 int metricValue;
                 if (metric != null && !string.IsNullOrEmpty(metric.Value) && int.TryParse(metric.Value, out metricValue))
                 {
-                    if (metric.Name == MaintainabilityIndex && Convert.ToInt32(metric.Value) < this.MaintainabilityIndexErrorThreshold.Get(this.ActivityContext))
+                    if (metric.Name == MaintainabilityIndex && Convert.ToInt32(metric.Value) < thresholds.MaintainabilityIndexErrorThreshold)
                     {
                         this.FailCurrentBuild();
-                        LogBuildError(string.Format("{0} for {1} is {2} which is below threshold ({3})", MaintainabilityIndex, member, metric.Value, this.MaintainabilityIndexErrorThreshold.Get(this.ActivityContext)));
+                        LogBuildError(string.Format("{0} for {1} is {2} which is below threshold ({3}){4}", MaintainabilityIndex, member, metric.Value, thresholds.MaintainabilityIndexErrorThreshold, GetMemberRootForOutput(memberRootDesc)));
                     }
 
-                    if (metric.Name == MaintainabilityIndex && metricValue < this.MaintainabilityIndexWarningThreshold.Get(this.ActivityContext))
+                    if (metric.Name == MaintainabilityIndex && metricValue < thresholds.MaintainabilityIndexWarningThreshold)
                     {
                         this.PartiallyFailCurrentBuild();
-                        LogBuildError(string.Format("{0} for {1} is {2} which is below threshold ({3})", MaintainabilityIndex, member, metric.Value, this.MaintainabilityIndexWarningThreshold.Get(this.ActivityContext)));
+                        LogBuildError(string.Format("{0} for {1} is {2} which is below threshold ({3}){4}", MaintainabilityIndex, member, metric.Value, thresholds.MaintainabilityIndexWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
                     }
 
-                    if (metric.Name == CyclomaticComplexity && metricValue > this.CyclomaticComplexityErrorThreshold.Get(this.ActivityContext))
+                    if (metric.Name == CyclomaticComplexity && metricValue > thresholds.CyclomaticComplexityErrorThreshold)
                     {
                         this.FailCurrentBuild();
-                        this.LogBuildError(string.Format("{0} for {1} is {2} which is above threshold ({3})", CyclomaticComplexity, member, metric.Value, this.CyclomaticComplexityErrorThreshold.Get(this.ActivityContext)));
+                        this.LogBuildError(string.Format("{0} for {1} is {2} which is above threshold ({3}){4}", CyclomaticComplexity, member, metric.Value, thresholds.CyclomaticComplexityErrorThreshold, GetMemberRootForOutput(memberRootDesc)));
                     }
 
-                    if (metric.Name == CyclomaticComplexity && metricValue > this.CyclomaticComplexityWarningThreshold.Get(this.ActivityContext))
+                    if (metric.Name == CyclomaticComplexity && metricValue > thresholds.CyclomaticComplexityWarningThreshold)
                     {
                         this.PartiallyFailCurrentBuild();
-                        this.LogBuildError(string.Format("{0} for {1} is {2} which is above threshold ({3})", CyclomaticComplexity, member, metric.Value, this.CyclomaticComplexityWarningThreshold.Get(this.ActivityContext)));
+                        this.LogBuildError(string.Format("{0} for {1} is {2} which is above threshold ({3}){4}", CyclomaticComplexity, member, metric.Value, thresholds.CyclomaticComplexityWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
                     }
 
                     AddTextNode(metric.Name + ": " + metric.Value, parent);
                 }
             }
+        }
+
+        private string GetMemberRootForOutput(string memberRootDesc)
+        {
+            if (!string.IsNullOrWhiteSpace(memberRootDesc))
+                return string.Format(" [Root:{0}]", memberRootDesc);
+            return string.Empty;
         }
 
         private void PartiallyFailCurrentBuild()
