@@ -49,7 +49,7 @@ namespace TfsBuildExtensions.Activities.CodeMetrics
         /// <returns>A MetricsInvoker instance </returns>
         public static MetricsInvoker Create(IEnumerable<string> filesToProcess, string rootPath, string output, IMetricsLogger logger)
         {
-            string metricsExePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\metrics.exe");
+            string metricsExePath = Path.Combine(CodeQuality.CodeMetrics.ProgramFilesX86(), @"Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\metrics.exe");
             if (!File.Exists(metricsExePath))
             {
                 logger.LogError("Could not locate " + metricsExePath + ". Please download Visual Studio Code Metrics PowerTool 10.0 at http://www.microsoft.com/downloads/en/details.aspx?FamilyID=edd1dfb0-b9fe-4e90-b6a6-5ed6f6f6e615");

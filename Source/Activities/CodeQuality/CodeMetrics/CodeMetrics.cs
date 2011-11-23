@@ -200,11 +200,25 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         {
             base.CacheMetadata(metadata);
             metadata.RequireExtension(typeof(IBuildDetail));
-        } 
+        }
+
+        /// <summary>
+        /// Path to Program Files environment directory.
+        /// </summary>
+        /// <returns>Path to Program Files directory (C:\Program Files or C:\Program Files (x86)).</returns>
+        public static string ProgramFilesX86()
+        {
+            if (8 == IntPtr.Size || (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
+            {
+                return Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+            }
+
+            return Environment.GetEnvironmentVariable("ProgramFiles");
+        }
 
         private bool RunCodeMetrics(string output)
         {
-            string metricsExePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\metrics.exe");
+            string metricsExePath = Path.Combine(ProgramFilesX86(), @"Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\metrics.exe");
             if (!File.Exists(metricsExePath))
             {
                 LogBuildError("Could not locate " + metricsExePath + ". Please download Visual Studio Code Metrics PowerTool 10.0 at http://www.microsoft.com/downloads/en/details.aspx?FamilyID=edd1dfb0-b9fe-4e90-b6a6-5ed6f6f6e615");
