@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\TFSLOCAL\Demo\BuildProcessTemplates\CustomActivities\</OutputPath>
+    <OutputPath>..\BuildBinaries\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <RunCodeAnalysis>false</RunCodeAnalysis>
