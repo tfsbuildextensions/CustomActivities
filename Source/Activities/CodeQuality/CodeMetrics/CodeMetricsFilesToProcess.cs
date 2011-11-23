@@ -65,7 +65,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 _activityProxy.LogBuildMessage(file);
         }
 
-        private bool IsNotEmpty(IEnumerable<string> files)
+        private static bool IsNotEmpty(IEnumerable<string> files)
         {
             return (files != null && files.Any());
         }

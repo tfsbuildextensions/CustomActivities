@@ -22,7 +22,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     /// <example>
     /// <code lang="xml"><![CDATA[
     /// <!-- Run Code Metrics for SampleApp.exe and SampleLibrary.dll -->    
-    /// <tac:CodeMetrics FailBuildOnError="{x:Null}" TreatWarningsAsErrors="{x:Null}" BinariesDirectory="[BinariesDirectory]" CyclomaticComplexityErrorTreshold="15" CyclomaticComplexityWarningTreshold="10" FilesToProcess="[New List(Of String)(New String() {&quot;SampleApp.exe&quot;, &quot;SampleLibrary.dll&quot;})]" GeneratedFileName="Metrics.xml" LogExceptionStack="True" MaintainabilityIndexErrorTreshold="40" MaintainabilityIndexWarningTreshold="90" />
+    /// <tac:CodeMetrics FailBuildOnError="{x:Null}" TreatWarningsAsErrors="{x:Null}" BinariesDirectory="[BinariesDirectory]" CyclomaticComplexityErrorThreshold="15" CyclomaticComplexityWarningThreshold="10" FilesToProcess="[New List(Of String)(New String() {&quot;SampleApp.exe&quot;, &quot;SampleLibrary.dll&quot;})]" GeneratedFileName="Metrics.xml" LogExceptionStack="True" MaintainabilityIndexErrorThreshold="40" MaintainabilityIndexWarningThreshold="90" />
     /// ]]></code>    
     /// </example>
     /// </summary>
@@ -85,6 +85,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// </summary>
         [RequiredArgument]
         public InArgument<int> CyclomaticComplexityErrorThreshold { get; set; }
+                               
 
         /// <summary>
         /// Threshold value for what Cyclomatic Complexity should partially fail the build
@@ -224,6 +225,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.Arguments = metricsExeArguments;
+                proc.StartInfo.WorkingDirectory = BinariesDirectory.Get(this.ActivityContext);
                 this.LogBuildMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
 
