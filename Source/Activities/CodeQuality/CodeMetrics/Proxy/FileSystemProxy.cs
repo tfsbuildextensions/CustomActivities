@@ -9,6 +9,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Proxy
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// IFileSystemProxy
+    /// </summary>
     public interface IFileSystemProxy
     {
         /// <summary>
