@@ -1,57 +1,31 @@
 // -----------------------------------------------------------------------
 // <copyright file="ActivityContextProxy.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 // -----------------------------------------------------------------------
-
-using System;
-using System.Activities;
-using System.Collections.Generic;
-using Microsoft.TeamFoundation.Build.Client;
-
+#pragma warning disable 1591
 namespace TfsBuildExtensions.Activities.CodeQuality.History
 {
+    using System.Activities;
+    using Microsoft.TeamFoundation.Build.Client;
+
     /// <summary>
     /// Provides access to an activity's context without any direct references (decoupling concerns)
     /// </summary>
     public interface IActivityContextProxy
     {
-        /// <summary>
-        /// Returns the <see cref="CodeMetricsHistory.Enabled"/> values for the current context.
-        /// </summary>
         bool Enabled { get; }
 
-        /// <summary>
-        /// Returns the <see cref="CodeMetricsHistory.SourceFileName"/> values for the current context.
-        /// </summary>
         string SourceFileName { get; }
 
-        /// <summary>
-        /// Returns the <see cref="CodeMetricsHistory.HistoryDirectory"/> values for the current context.
-        /// </summary>
         string HistoryDirectory { get; }
 
-        /// <summary>
-        /// Returns the <see cref="CodeMetricsHistory.HistoryFileName"/> values for the current context.
-        /// </summary>
         string HistoryFileName { get; }
 
-        /// <summary>
-        /// Returns the <see cref="IBuildDetail"/> for the current context.
-        /// </summary>
         IBuildDetail BuildDetail { get; }
 
-        /// <summary>
-        /// Returns the <see cref="CodeMetricsHistory.HowManyFilesToKeepInDirectory"/> values for the current context.
-        /// </summary>
-        Int16 HowManyFilesToKeepInDirectory { get; }
+        short HowManyFilesToKeepInDirectory { get; }
 
-        /// <summary>
-        /// Call the <see cref="BaseCodeActivity.LogBuildError"/> method
-        /// </summary>
         void LogBuildError(string errorMessage);
 
-        /// <summary>
-        /// Call the <see cref="BaseCodeActivity.LogBuildMessage"/> method
-        /// </summary>
         void LogBuildMessage(string msg);
     }
 
@@ -60,26 +34,20 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
     /// </summary>
     public class ActivityContextProxy : IActivityContextProxy
     {
-        private readonly CodeMetricsHistory _activity;
-        private readonly CodeActivityContext _context;
+        private readonly CodeMetricsHistory activity;
+        private readonly CodeActivityContext context;
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public ActivityContextProxy(CodeMetricsHistory activity, CodeActivityContext context)
         {
-            _activity = activity;
-            _context = context;
+            this.activity = activity;
+            this.context = context;
         }
 
-        /// <summary>
-        /// Returns the <see cref="CodeMetricsHistory.Enabled"/> values for the current context.
-        /// </summary>
         public bool Enabled
         {
             get
             {
-                return _activity.Enabled.Get(_context);
+                return this.activity.Enabled.Get(this.context);
             }
         }
 
@@ -90,7 +58,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
         {
             get
             {
-                return _activity.SourceFileName.Get(_context);
+                return this.activity.SourceFileName.Get(this.context);
             }
         }
 
@@ -101,7 +69,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
         {
             get
             {
-                return _activity.HistoryDirectory.Get(_context);
+                return this.activity.HistoryDirectory.Get(this.context);
             }
         }
 
@@ -112,18 +80,18 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
         {
             get
             {
-                return _activity.HistoryFileName.Get(_context);
+                return this.activity.HistoryFileName.Get(this.context);
             }
         }
 
         /// <summary>
         /// Returns the <see cref="CodeMetricsHistory.HowManyFilesToKeepInDirectory"/> values for the current context.
         /// </summary>
-        public Int16 HowManyFilesToKeepInDirectory
+        public short HowManyFilesToKeepInDirectory
         {
             get
             {
-                return _activity.HowManyFilesToKeepInDirectory.Get(_context);
+                return this.activity.HowManyFilesToKeepInDirectory.Get(this.context);
             }
         }
 
@@ -134,24 +102,18 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
         {
             get
             {
-                return _context.GetExtension<IBuildDetail>();
+                return this.context.GetExtension<IBuildDetail>();
             }
         }
 
-        /// <summary>
-        /// Call the <see cref="BaseCodeActivity.LogBuildError"/> method
-        /// </summary>
         public void LogBuildError(string errorMessage)
         {
-            _activity.LogBuildError(errorMessage);
+            this.activity.LogBuildError(errorMessage);
         }
 
-        /// <summary>
-        /// Call the <see cref="BaseCodeActivity.LogBuildMessage"/> method
-        /// </summary>
         public void LogBuildMessage(string msg)
         {
-            _activity.LogBuildMessage(msg);
+            this.activity.LogBuildMessage(msg);
         }
     }
 }

@@ -39,7 +39,7 @@
     <CodeAnalysisRuleSet>..\Common\TFSBuildExtensions.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.TeamFoundation.Build.Workflow, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PrivateAssemblies\Microsoft.TeamFoundation.Build.Workflow.dll</HintPath>
@@ -87,6 +87,10 @@
     <Compile Include="ConfigurationConstants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\Utility.cs" />
+    <Compile Include="HostedServices\ChangeDeploymentConfiguration.cs" />
+    <Compile Include="HostedServices\UpgradeDeployment.cs" />
+    <Compile Include="HostedServices\ReimageRoleInstance.cs" />
+    <Compile Include="HostedServices\RebootRoleInstance.cs" />
     <Compile Include="HostedServices\SwapDeployment.cs" />
     <Compile Include="HostedServices\GetHostedServiceProperties.cs" />
     <Compile Include="HostedServices\GetHostedServices.cs" />

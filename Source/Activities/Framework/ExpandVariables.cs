@@ -21,7 +21,7 @@ namespace TfsBuildExtensions.Activities.Framework
     /// Expands variables of the form $(variable) in the specified inputs to their corresponding values.
     /// </summary>
     /// <remarks>
-    /// User variables specifed using the <see cref="Variables"/> have precedence over environment variables and build 
+    /// Variables names are case incensitive and user variables specifed using the <see cref="Variables"/> have precedence over environment and build 
     /// variables.
     /// </remarks>
     [BuildActivity(HostEnvironmentOption.All)]
@@ -127,10 +127,10 @@ namespace TfsBuildExtensions.Activities.Framework
                 return inputs;
             }
 
-            // get variables
-            var userVariables = this.Variables.Get(this.ActivityContext);
+            // get variables (copy userVariables to put them inside a case insensitive dictionary)
+            var userVariables = this.Variables.Get(this.ActivityContext) != null ? new Dictionary<string, string>(this.Variables.Get(this.ActivityContext), StringComparer.OrdinalIgnoreCase) : default(Dictionary<string, string>);
 
-            var buildVariables = new Dictionary<string, string>();
+            var buildVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (this.IncludeBuildVariables.Get(this.ActivityContext))
             {
                 var buildAgent = this.ActivityContext.GetExtension<IBuildAgent>();
@@ -143,9 +143,11 @@ namespace TfsBuildExtensions.Activities.Framework
                 buildVariables["TeamProject"] = buildDetail.BuildDefinition.TeamProject;
                 buildVariables["DropLocation"] = buildDetail.DropLocation;
                 buildVariables["BuildAgent"] = buildAgent != null ? buildAgent.Name : string.Empty;
+                buildVariables["BuildAgentName"] = buildAgent != null ? buildAgent.Name : string.Empty; // Same as BuildAgent but more consistent with TFS naming convention
+                buildVariables["BuildAgentId"] = buildAgent != null ? LinkingUtilities.DecodeUri(buildAgent.Uri.AbsoluteUri).ToolSpecificId : string.Empty;
             }
 
-            var envVariables = new Dictionary<string, string>();
+            var envVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (this.IncludeEnvironmentVariables.Get(this.ActivityContext))
             {
                 foreach (var entry in Environment.GetEnvironmentVariables().Cast<DictionaryEntry>())

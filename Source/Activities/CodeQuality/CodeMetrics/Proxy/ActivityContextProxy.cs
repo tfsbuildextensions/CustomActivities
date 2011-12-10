@@ -1,35 +1,23 @@
 // -----------------------------------------------------------------------
 // <copyright file="ActivityContextProxy.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 // -----------------------------------------------------------------------
-
-using System.Activities;
-using System.Collections.Generic;
-
+#pragma warning disable 1591
 namespace TfsBuildExtensions.Activities.CodeQuality.Proxy
 {
+    using System.Activities;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Provides access to an activity's context without any direct references (decoupling concerns)
     /// </summary>
     public interface IActivityContextProxy
     {
-        /// <summary>
-        /// Returns the <see cref="CodeMetrics.FilesToProcess"/> values for the current context.
-        /// </summary>
         IEnumerable<string> FilesToProcess { get; }
 
-        /// <summary>
-        /// Returns the <see cref="CodeMetrics.FilesToIgnore"/> values for the current context.
-        /// </summary>
         IEnumerable<string> FilesToIgnore { get; }
 
-        /// <summary>
-        /// Returns the <see cref="CodeMetrics.BinariesDirectory"/> values for the current context.
-        /// </summary>
         string BinariesDirectory { get; }
 
-        /// <summary>
-        /// Call the <see cref="BaseCodeActivity.LogBuildMessage"/> method.
-        /// </summary>
         void LogBuildMessage(string msg);
     }
 
@@ -38,26 +26,20 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Proxy
     /// </summary>
     public class ActivityContextProxy : IActivityContextProxy
     {
-        private readonly CodeMetrics _activity;
-        private readonly CodeActivityContext _context;
+        private readonly CodeMetrics activity;
+        private readonly CodeActivityContext context;
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public ActivityContextProxy(CodeMetrics activity, CodeActivityContext context)
         {
-            _activity = activity;
-            _context = context;
+            this.activity = activity;
+            this.context = context;
         }
 
-        /// <summary>
-        /// Returns the <see cref="CodeMetrics.FilesToProcess"/> values for the current context.
-        /// </summary>
         public IEnumerable<string> FilesToProcess
         {
             get
             {
-                return _activity.FilesToProcess.Get(_context);
+                return this.activity.FilesToProcess.Get(this.context);
             }
         }
 
@@ -68,7 +50,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Proxy
         {
             get
             {
-                return _activity.FilesToIgnore.Get(_context);
+                return this.activity.FilesToIgnore.Get(this.context);
             }
         }
 
@@ -79,16 +61,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Proxy
         {
             get
             {
-                return _activity.BinariesDirectory.Get(_context);
+                return this.activity.BinariesDirectory.Get(this.context);
             }
         }
 
-        /// <summary>
-        /// Call the <see cref="BaseCodeActivity.LogBuildMessage"/> method.
-        /// </summary>
         public void LogBuildMessage(string msg)
         {
-            _activity.LogBuildMessage(msg);
+            this.activity.LogBuildMessage(msg);
         }
     }
 }

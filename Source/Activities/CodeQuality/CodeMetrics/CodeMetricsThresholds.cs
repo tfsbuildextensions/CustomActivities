@@ -1,11 +1,9 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="CodeMetricsThresholds.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-
-using System.Activities;
-
 namespace TfsBuildExtensions.Activities.CodeQuality
 {
+    using System.Activities;
 
     /// <summary>
     /// Class to manage the various thresholds used by the CodeMetrics activity.
@@ -18,18 +16,21 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
             return ApplyGlobalThresholdsWhenSpecificsMissing(thresholds, activity, context);
         }
+
         public static SpecificMetricThresholds GetForNamespace(CodeMetrics activity, CodeActivityContext context)
         {
             var thresholds = GetThresholdsByLevel(activity, context).Namespace;
 
             return ApplyGlobalThresholdsWhenSpecificsMissing(thresholds, activity, context);
         }
+
         public static SpecificMetricThresholds GetForType(CodeMetrics activity, CodeActivityContext context)
         {
             var thresholds = GetThresholdsByLevel(activity, context).Type;
 
             return ApplyGlobalThresholdsWhenSpecificsMissing(thresholds, activity, context);
         }
+
         public static SpecificMetricThresholds GetForMember(CodeMetrics activity, CodeActivityContext context)
         {
             var thresholds = GetThresholdsByLevel(activity, context).Member;
@@ -59,7 +60,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         private static int ReplaceWhenSpecificMissing(int threshold, InArgument<int> globalThreshold, CodeActivityContext context)
         {
-            return (threshold <= 0 ? globalThreshold.Get(context) : threshold);
+            return threshold <= 0 ? globalThreshold.Get(context) : threshold;
         }
     }
 }

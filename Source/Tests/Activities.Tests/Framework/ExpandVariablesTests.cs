@@ -6,7 +6,6 @@ namespace TfsBuildExtensions.Activities.Tests
     using System;
     using System.Activities;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using Microsoft.TeamFoundation;
     using Microsoft.TeamFoundation.Build.Client;
@@ -93,7 +92,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual("My user var: value1/value2", ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual("My user var: value1/value2", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -114,7 +113,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual("My user var: $(Value1)", ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual("My user var: $(Value1)", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -135,7 +134,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual("My user var: $(Value1)", ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual("My user var: $(Value1)", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -159,7 +158,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual("My user var: -1", ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual("My user var: -1", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -181,7 +180,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual("My user var: [TEMP]", ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual("My user var: [TEMP]", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         #endregion
@@ -205,7 +204,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual("My temp dir: $(TMP)", ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual("My temp dir: $(TMP)", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -226,7 +225,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual("My temp dir: " + Environment.GetEnvironmentVariable("TMP"), ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual("My temp dir: " + Environment.GetEnvironmentVariable("TMP"), ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         #endregion
@@ -250,7 +249,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual("My build number: $(BuildNumber)", ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual("My build number: $(BuildNumber)", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -273,7 +272,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual(buildDetail.Object.BuildNumber, ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual(buildDetail.Object.BuildNumber, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -296,7 +295,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual(LinkingUtilities.DecodeUri(buildDetail.Object.Uri.ToString()).ToolSpecificId, ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual(LinkingUtilities.DecodeUri(buildDetail.Object.Uri.ToString()).ToolSpecificId, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -319,7 +318,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual(buildDetail.Object.BuildDefinition.Name, ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual(buildDetail.Object.BuildDefinition.Name, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -342,7 +341,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual(buildDetail.Object.BuildDefinition.Id, ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual(buildDetail.Object.BuildDefinition.Id, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -365,7 +364,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual(buildDetail.Object.BuildDefinition.TeamProject, ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual(buildDetail.Object.BuildDefinition.TeamProject, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -388,7 +387,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual(buildDetail.Object.DropLocation, ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual(buildDetail.Object.DropLocation, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -411,7 +410,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual(string.Empty, ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual(string.Empty, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         [TestMethod]
@@ -436,7 +435,103 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
-            Assert.AreEqual(buildAgent.Object.Name, ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
+            Assert.AreEqual(buildAgent.Object.Name, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
+        }
+
+        [TestMethod]
+        public void ExpandVariables_DoNotExpandBuildAgentNameWhenExecuteInvokedOutsideAgentScope()
+        {
+            // arrange
+            var target = new ExpandVariables();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Inputs", new [] { "$(BuildAgentName)" } },
+                { "IncludeBuildVariables", true }
+            };
+
+            var buildDetail = GetMockedIBuildDetail();
+            var invoker = new WorkflowInvoker(target);
+            invoker.Extensions.Add(buildDetail.Object);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
+            Assert.AreEqual(string.Empty, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
+        }
+
+        [TestMethod]
+        public void ExpandVariables_ExpandBuildAgentNameWhenExecuteInvokedInsideAgentScope()
+        {
+            // arrange
+            var target = new ExpandVariables();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Inputs", new [] { "$(BuildAgentName)" } },
+                { "IncludeBuildVariables", true }
+            };
+
+            var buildDetail = GetMockedIBuildDetail();
+            var buildAgent = GetMockedIBuildAgent();
+            var invoker = new WorkflowInvoker(target);
+            invoker.Extensions.Add(buildDetail.Object);
+            invoker.Extensions.Add(buildAgent.Object);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
+            Assert.AreEqual(buildAgent.Object.Name, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
+        }
+
+        [TestMethod]
+        public void ExpandVariables_DoNotExpandBuildAgentIdWhenExecuteInvokedOutsideAgentScope()
+        {
+            // arrange
+            var target = new ExpandVariables();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Inputs", new [] { "$(BuildAgentId)" } },
+                { "IncludeBuildVariables", true }
+            };
+
+            var buildDetail = GetMockedIBuildDetail();
+            var invoker = new WorkflowInvoker(target);
+            invoker.Extensions.Add(buildDetail.Object);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
+            Assert.AreEqual(string.Empty, ((IEnumerable<string>)actual["Result"]).ElementAt(0));
+        }
+
+        [TestMethod]
+        public void ExpandVariables_ExpandBuildAgentIdWhenExecuteInvokedInsideAgentScope()
+        {
+            // arrange
+            var target = new ExpandVariables();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Inputs", new [] { "$(BuildAgentId)" } },
+                { "IncludeBuildVariables", true }
+            };
+
+            var buildDetail = GetMockedIBuildDetail();
+            var buildAgent = GetMockedIBuildAgent();
+            var invoker = new WorkflowInvoker(target);
+            invoker.Extensions.Add(buildDetail.Object);
+            invoker.Extensions.Add(buildAgent.Object);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            Assert.AreEqual(1, ((IEnumerable<string>)actual["Result"]).Count(), "Expected only one output parameter.");
+            Assert.AreEqual("5", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
         }
 
         #endregion
@@ -466,9 +561,41 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(3, ((IEnumerable<string>)actual["Result"]).Count(), "Expected 3 output parameter.");
-            Assert.AreEqual("value1", ((IEnumerable<string>)actual["Result"]).ElementAt(0).ToString());
-            Assert.AreEqual(buildDetail.Object.BuildNumber, ((IEnumerable<string>)actual["Result"]).ElementAt(1).ToString());
-            Assert.AreEqual(Environment.GetEnvironmentVariable("TMP"), ((IEnumerable<string>)actual["Result"]).ElementAt(2).ToString());
+            Assert.AreEqual("value1", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
+            Assert.AreEqual(buildDetail.Object.BuildNumber, ((IEnumerable<string>)actual["Result"]).ElementAt(1));
+            Assert.AreEqual(Environment.GetEnvironmentVariable("TMP"), ((IEnumerable<string>)actual["Result"]).ElementAt(2));
+        }
+
+        #endregion
+
+        #region Variable Name Case Tests
+
+        [TestMethod]
+        public void ExpandVariables_ExpandVariablesWhenExecuteInvoked_WithDifferentCaseNames()
+        {
+            // arrange
+            var target = new ExpandVariables();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Inputs", new [] { "$(value1)", "$(buildNumber)", "$(TMp)" } },
+                { "Variables", new Dictionary<string, string> { { "Value1", "value1" } } },
+                { "IncludeBuildVariables", true },
+                { "IncludeEnvironmentVariables", true }
+            };
+
+            var buildDetail = GetMockedIBuildDetail();
+
+            var invoker = new WorkflowInvoker(target);
+            invoker.Extensions.Add(buildDetail.Object);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            Assert.AreEqual(3, ((IEnumerable<string>)actual["Result"]).Count(), "Expected 3 output parameter.");
+            Assert.AreEqual("value1", ((IEnumerable<string>)actual["Result"]).ElementAt(0));
+            Assert.AreEqual(buildDetail.Object.BuildNumber, ((IEnumerable<string>)actual["Result"]).ElementAt(1));
+            Assert.AreEqual(Environment.GetEnvironmentVariable("TMP"), ((IEnumerable<string>)actual["Result"]).ElementAt(2));
         }
 
         #endregion
@@ -504,6 +631,7 @@ namespace TfsBuildExtensions.Activities.Tests
             buildAgent.SetupAllProperties();
 
             buildAgent.Object.Name = "MyBuildAgent";
+            buildAgent.SetupGet(ba => ba.Uri).Returns(new Uri("vstfs:///tool/artifact/5"));
 
             return buildAgent;
         }

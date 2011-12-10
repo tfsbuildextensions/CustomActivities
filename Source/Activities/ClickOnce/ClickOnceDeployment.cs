@@ -179,8 +179,10 @@ namespace TfsBuildExtensions.Activities.ClickOnce
 
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (file.EndsWith(".manifest") || file.EndsWith(".application"))
+                if (file.EndsWith(".manifest", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".application", StringComparison.OrdinalIgnoreCase))
+                {
                     continue;
+                }
 
                 string dest = Path.Combine(destPath, Path.GetFileName(file));
                 File.Copy(file, dest, overwrite);

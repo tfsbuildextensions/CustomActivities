@@ -85,7 +85,6 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// </summary>
         [RequiredArgument]
         public InArgument<int> CyclomaticComplexityErrorThreshold { get; set; }
-                               
 
         /// <summary>
         /// Threshold value for what Cyclomatic Complexity should partially fail the build
@@ -101,7 +100,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// Raise this exception if the string contains a part that is not an integer.
         /// </exception>
         [Description("Optional: Overrides the global thresholds for the Assembly Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
-        public InArgument<String> AssemblyThresholdsString { get; set; }
+        public InArgument<string> AssemblyThresholdsString { get; set; }
 
         /// <summary>
         /// Overrides the global thresholds for the Namespace Metric Level by specific one.  
@@ -111,7 +110,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// Raise this exception if the string contains a part that is not an integer.
         /// </exception>
         [Description("Optional: Overrides the global thresholds for the Namespace Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
-        public InArgument<String> NamespaceThresholdsString { get; set; }
+        public InArgument<string> NamespaceThresholdsString { get; set; }
 
         /// <summary>
         /// Overrides the global thresholds for the Assembly Metric Level by specific one.  
@@ -121,7 +120,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// Raise this exception if the string contains a part that is not an integer.
         /// </exception>
         [Description("Optional: Overrides the global thresholds for the Type Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
-        public InArgument<String> TypeThresholdsString { get; set; }
+        public InArgument<string> TypeThresholdsString { get; set; }
 
         /// <summary>
         /// Overrides the global thresholds for the Assembly Metric Level by specific one.  
@@ -131,9 +130,23 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// Raise this exception if the string contains a part that is not an integer.
         /// </exception>
         [Description("Optional: Overrides the global thresholds for the Member Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
-        public InArgument<String> MemberThresholdsString { get; set; }
+        public InArgument<string> MemberThresholdsString { get; set; }
          
         private IBuildDetail BuildDetail { get; set; }
+
+        /// <summary>
+        /// Path to Program Files environment directory.
+        /// </summary>
+        /// <returns>Path to Program Files directory (C:\Program Files or C:\Program Files (x86)).</returns>
+        public static string ProgramFilesX86()
+        {
+            if (8 == IntPtr.Size || (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
+            {
+                return Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+            }
+
+            return Environment.GetEnvironmentVariable("ProgramFiles");
+        }
 
         /// <summary>
         /// Executes the logic for this workflow activity
@@ -180,11 +193,11 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                         foreach (var type in ns.Types)
                         {
                             var typeNode = AddTextNode("Type: " + type.Name, namespaceNode);
-                            this.ProcessMetrics(type.Name, type.Metrics, typeNode, CodeMetricsThresholds.GetForType(this, this.ActivityContext)); 
+                            this.ProcessMetrics(type.Name, type.Metrics, typeNode, CodeMetricsThresholds.GetForType(this, this.ActivityContext));
                             foreach (var member in type.Members)
                             {
                                 var memberNode = AddTextNode("Member: " + member.Name, typeNode);
-                                this.ProcessMetrics(member.Name, member.Metrics, memberNode, CodeMetricsThresholds.GetForMember(this, this.ActivityContext), type.Name); 
+                                this.ProcessMetrics(member.Name, member.Metrics, memberNode, CodeMetricsThresholds.GetForMember(this, this.ActivityContext), type.Name);
                             }
                         }
                     }
@@ -202,18 +215,14 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             metadata.RequireExtension(typeof(IBuildDetail));
         }
 
-        /// <summary>
-        /// Path to Program Files environment directory.
-        /// </summary>
-        /// <returns>Path to Program Files directory (C:\Program Files or C:\Program Files (x86)).</returns>
-        public static string ProgramFilesX86()
+        private static string GetMemberRootForOutput(string memberRootDesc)
         {
-            if (8 == IntPtr.Size || (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
+            if (!string.IsNullOrWhiteSpace(memberRootDesc))
             {
-                return Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+                return string.Format(" [Root:{0}]", memberRootDesc);
             }
 
-            return Environment.GetEnvironmentVariable("ProgramFiles");
+            return string.Empty;
         }
 
         private bool RunCodeMetrics(string output)
@@ -225,7 +234,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 return false;
             }
 
-            string metricsExeArguments = GetFilesToProcess().Aggregate(string.Empty, (current, file) => current + string.Format(" /f:\"{0}\"", file));
+            string metricsExeArguments = this.GetFilesToProcess().Aggregate(string.Empty, (current, file) => current + string.Format(" /f:\"{0}\"", file));
             metricsExeArguments += string.Format(" /out:\"{0}\"", output);
             if (this.SearchGac.Get(this.ActivityContext))
             {
@@ -239,7 +248,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.Arguments = metricsExeArguments;
-                proc.StartInfo.WorkingDirectory = BinariesDirectory.Get(this.ActivityContext);
+                proc.StartInfo.WorkingDirectory = this.BinariesDirectory.Get(this.ActivityContext);
                 this.LogBuildMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
 
@@ -287,7 +296,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// <param name="thresholds"> The thresholds for this level, member</param>
         private void ProcessMetrics(string member, IEnumerable<Metric> metrics, IBuildInformationNode parent, SpecificMetricThresholds thresholds)
         {
-            ProcessMetrics(member, metrics, parent, thresholds, string.Empty);
+            this.ProcessMetrics(member, metrics, parent, thresholds, string.Empty);
         }
 
         /// <summary>
@@ -297,7 +306,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// <param name="metrics">The metrics for this member</param>
         /// <param name="parent">The parent node in the build log</param>
         /// <param name="thresholds"> The thresholds for this level, member</param>
-        /// <param name="memberRootDesc"></param>
+        /// <param name="memberRootDesc">The memberRootDesc</param>
         private void ProcessMetrics(string member, IEnumerable<Metric> metrics, IBuildInformationNode parent, SpecificMetricThresholds thresholds, string memberRootDesc)
         {
             foreach (var metric in metrics)
@@ -332,13 +341,6 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                     AddTextNode(metric.Name + ": " + metric.Value, parent);
                 }
             }
-        }
-
-        private string GetMemberRootForOutput(string memberRootDesc)
-        {
-            if (!string.IsNullOrWhiteSpace(memberRootDesc))
-                return string.Format(" [Root:{0}]", memberRootDesc);
-            return string.Empty;
         }
 
         private void PartiallyFailCurrentBuild()

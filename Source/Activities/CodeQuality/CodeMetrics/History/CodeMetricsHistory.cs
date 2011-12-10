@@ -1,9 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="CodeMetricsHistory.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-
-using TfsBuildExtensions.Activities.CodeQuality.Proxy;
-
 namespace TfsBuildExtensions.Activities.CodeQuality.History
 {
     using System;
@@ -13,7 +10,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
     using System.IO;
     using System.Linq;
     using Microsoft.TeamFoundation.Build.Client;
-    
+    using TfsBuildExtensions.Activities.CodeQuality.Proxy;
 
     /// <summary>
     /// Activity to push the Code Metrics produce by the <see cref="CodeMetrics"/> activity in an history folder.
@@ -31,26 +28,20 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
     [BuildActivity(HostEnvironmentOption.All)]
     public class CodeMetricsHistory : BaseCodeActivity
     {
-        private readonly bool _dependenciesCameFromExternalSource;
-        private IActivityContextProxy _proxyContext;
-        private IFileSystemProxy _proxyFileSystem;
-        private IParametersValidations _validations;
+        private readonly bool dependenciesCameFromExternalSource;
+        private IActivityContextProxy proxyContext;
+        private IFileSystemProxy proxyFileSystem;
+        private IParametersValidations validations;
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public CodeMetricsHistory()
         {
-            _dependenciesCameFromExternalSource = false;
+            this.dependenciesCameFromExternalSource = false;
         }
 
-        /// <summary>
-        /// Constructor to inject dependencies (coupling concerns)
-        /// </summary>
         public CodeMetricsHistory(IActivityContextProxy proxyContext, IFileSystemProxy proxyFileSystem, IParametersValidations validations)
         {
-            _dependenciesCameFromExternalSource = true;
-            InitializeDependencies(proxyContext, proxyFileSystem, validations);
+            this.dependenciesCameFromExternalSource = true;
+            this.InitializeDependencies(proxyContext, proxyFileSystem, validations);
         }
 
         /// <summary>
@@ -58,7 +49,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
         /// </summary>
         [Description("Enable Code Metrics history")]
         [RequiredArgument, DefaultValue(false)]
-        public InArgument<Boolean> Enabled { get; set; }
+        public InArgument<bool> Enabled { get; set; }
 
         /// <summary>
         /// The full filename where the metrics has been written by the Code Metrics activity.
@@ -87,77 +78,19 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
         /// </summary>
         [Description("How many files to keep in history before removing the oldest.  Default:50")]
         [RequiredArgument, DefaultValue(50)]
-        public InArgument<Int16> HowManyFilesToKeepInDirectory { get; set; }
+        public InArgument<short> HowManyFilesToKeepInDirectory { get; set; }
 
         /// <summary>
         /// Executes the logic for this workflow activity
         /// </summary>
         protected override void InternalExecute()
         {
-            InitializeMissingDependencies();
-            if (_proxyContext.Enabled && _validations.ParametersAreValid())
+            this.InitializeMissingDependencies();
+            if (this.proxyContext.Enabled && this.validations.ParametersAreValid())
             {
-                PurgeOldHistory();
-                ValidateDestinationFileAndCopy();
+                this.PurgeOldHistory();
+                this.ValidateDestinationFileAndCopy();
             }
-        }
-
-        private void InitializeMissingDependencies()
-        {
-            if (!_dependenciesCameFromExternalSource)
-                InitializeDependencies(new ActivityContextProxy(this, this.ActivityContext), new FileSystemProxy());
-        }
-
-        private void ValidateDestinationFileAndCopy()
-        {
-            var destinationFilename = BuildDestinationFilename();
-
-            if (DestinationFileNameIsValid(destinationFilename))
-            {
-                _proxyFileSystem.CopyFile(_proxyContext.SourceFileName, destinationFilename);
-                _proxyContext.LogBuildMessage(string.Format("The file '{0}' has been successfully transfered to the new history file '{1}'", _proxyContext.SourceFileName, destinationFilename));
-            }
-        }
-
-        private void PurgeOldHistory()
-        {
-            var existingFilenames = _proxyFileSystem.EnumerateFiles(_proxyContext.HistoryDirectory);
-
-            if (existingFilenames != null && existingFilenames.Count() >= _proxyContext.HowManyFilesToKeepInDirectory)
-            {
-                var filesWithLastWrite = GetFilesOrderedByLastWriteDescending(existingFilenames);
-                DeleteOldestFilesUntilUnderThreshold(filesWithLastWrite);
-            }
-        }
-
-        private void DeleteOldestFilesUntilUnderThreshold(IEnumerable<Tuple<string, DateTime>> filesWithLastWrite)
-        {
-            for (var i = filesWithLastWrite.Count(); i >= _proxyContext.HowManyFilesToKeepInDirectory; i--)
-            {
-                _proxyFileSystem.DeleteFile(filesWithLastWrite.ElementAt(i - 1).Item1);
-            }
-        }
-
-        private IEnumerable<Tuple<string, DateTime>> GetFilesOrderedByLastWriteDescending(IEnumerable<string> existingFilenames)
-        {
-            var filesWithLastWrite = existingFilenames.Select(filename => Tuple.Create(filename, _proxyFileSystem.GetLastWriteTime(filename)));
-
-            return filesWithLastWrite.OrderByDescending(x => x.Item2);
-        }
-
-        private bool DestinationFileNameIsValid(string destinationFilename)
-        {
-            if (_proxyFileSystem.FileExists(destinationFilename))
-            {
-                FailCurrentBuild(string.Format("The history (destination) filename already exists [{0}]", destinationFilename));
-                return false;
-            }
-            return true;
-        }
-
-        private string BuildDestinationFilename()
-        {
-            return Path.Combine(_proxyContext.HistoryDirectory, _proxyContext.HistoryFileName);
         }
 
         /// <summary>
@@ -170,23 +103,84 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
             metadata.RequireExtension(typeof(IBuildDetail));
         }
 
+        private void InitializeMissingDependencies()
+        {
+            if (!this.dependenciesCameFromExternalSource)
+            {
+                this.InitializeDependencies(new ActivityContextProxy(this, this.ActivityContext), new FileSystemProxy());
+            }
+        }
+
+        private void ValidateDestinationFileAndCopy()
+        {
+            var destinationFilename = this.BuildDestinationFilename();
+
+            if (this.DestinationFileNameIsValid(destinationFilename))
+            {
+                this.proxyFileSystem.CopyFile(this.proxyContext.SourceFileName, destinationFilename);
+                this.proxyContext.LogBuildMessage(string.Format("The file '{0}' has been successfully transfered to the new history file '{1}'", this.proxyContext.SourceFileName, destinationFilename));
+            }
+        }
+
+        private void PurgeOldHistory()
+        {
+            var existingFilenames = this.proxyFileSystem.EnumerateFiles(this.proxyContext.HistoryDirectory);
+
+            if (existingFilenames != null && existingFilenames.Count() >= this.proxyContext.HowManyFilesToKeepInDirectory)
+            {
+                var filesWithLastWrite = this.GetFilesOrderedByLastWriteDescending(existingFilenames);
+                this.DeleteOldestFilesUntilUnderThreshold(filesWithLastWrite);
+            }
+        }
+
+        private void DeleteOldestFilesUntilUnderThreshold(IEnumerable<Tuple<string, DateTime>> filesWithLastWrite)
+        {
+            for (var i = filesWithLastWrite.Count(); i >= this.proxyContext.HowManyFilesToKeepInDirectory; i--)
+            {
+                this.proxyFileSystem.DeleteFile(filesWithLastWrite.ElementAt(i - 1).Item1);
+            }
+        }
+
+        private IEnumerable<Tuple<string, DateTime>> GetFilesOrderedByLastWriteDescending(IEnumerable<string> existingFilenames)
+        {
+            var filesWithLastWrite = existingFilenames.Select(filename => Tuple.Create(filename, this.proxyFileSystem.GetLastWriteTime(filename)));
+
+            return filesWithLastWrite.OrderByDescending(x => x.Item2);
+        }
+
+        private bool DestinationFileNameIsValid(string destinationFilename)
+        {
+            if (this.proxyFileSystem.FileExists(destinationFilename))
+            {
+                this.FailCurrentBuild(string.Format("The history (destination) filename already exists [{0}]", destinationFilename));
+                return false;
+            }
+
+            return true;
+        }
+
+        private string BuildDestinationFilename()
+        {
+            return Path.Combine(this.proxyContext.HistoryDirectory, this.proxyContext.HistoryFileName);
+        }
+
         private void FailCurrentBuild(string msg)
         {
-            _proxyContext.BuildDetail.Status = BuildStatus.Failed;
-            _proxyContext.BuildDetail.Save();
-            _proxyContext.LogBuildError(msg);
+            this.proxyContext.BuildDetail.Status = BuildStatus.Failed;
+            this.proxyContext.BuildDetail.Save();
+            this.proxyContext.LogBuildError(msg);
         }
 
-        private void InitializeDependencies(IActivityContextProxy proxyContext, IFileSystemProxy proxyFileSystem)
+        private void InitializeDependencies(IActivityContextProxy vproxyContext, IFileSystemProxy vproxyFileSystem)
         {
-            InitializeDependencies(proxyContext, proxyFileSystem, new ParametersValidations(proxyContext, proxyFileSystem));
+            this.InitializeDependencies(vproxyContext, vproxyFileSystem, new ParametersValidations(vproxyContext, vproxyFileSystem));
         }
 
-        private void InitializeDependencies(IActivityContextProxy proxyContext, IFileSystemProxy proxyFileSystem, IParametersValidations validations)
+        private void InitializeDependencies(IActivityContextProxy vproxyContext, IFileSystemProxy vproxyFileSystem, IParametersValidations vvalidations)
         {
-            _proxyContext = proxyContext;
-            _proxyFileSystem = proxyFileSystem;
-            _validations = validations;
+            this.proxyContext = vproxyContext;
+            this.proxyFileSystem = vproxyFileSystem;
+            this.validations = vvalidations;
         }
     }
 }
