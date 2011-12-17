@@ -16,7 +16,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
     /// Provides an activity that can be used to determine if an Environment is locked (via the file-lock)
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class CheckIfEnvironmentIsLocked : CodeActivity
+    public class CheckIfEnvironmentIsLocked : BaseCodeActivity
     {
         /// <summary>
         /// Defines the UNC Share where the flags exist
@@ -39,21 +39,20 @@ namespace TfsBuildExtensions.Activities.LabManagement
         /// <summary>
         /// Execute the Update Version Number build step.
         /// </summary>
-        /// <param name="context">Contains the workflow context</param>
-        protected override void Execute(CodeActivityContext context)
+        protected override void InternalExecute()
         {
             //-- Get the input parameters
-            string lockingUncShare = context.GetValue(this.LockingUNCShare);
-            string environmentName = context.GetValue(this.EnvironmentName);
+            string lockingUncShare = this.ActivityContext.GetValue(this.LockingUNCShare);
+            string environmentName = this.ActivityContext.GetValue(this.EnvironmentName);
 
             //-- If the file does not exist, we are not locked...
             if (!File.Exists(Path.Combine(lockingUncShare, environmentName)))
             {
-                context.SetValue(this.EnvironmentIsLocked, false);
+                this.ActivityContext.SetValue(this.EnvironmentIsLocked, false);
             }
 
             //-- If we made it here, the file exists, and we can be considered locked
-            context.SetValue(this.EnvironmentIsLocked, true);
+            this.ActivityContext.SetValue(this.EnvironmentIsLocked, true);
         }
     }
 }

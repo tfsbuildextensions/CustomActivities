@@ -18,7 +18,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
     /// Provides an activity that unlocks an environment, providing it is the build that locked it (unless explicitly overridden)
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class UnlockEnvironment : CodeActivity
+    public class UnlockEnvironment : BaseCodeActivity
     {
         /// <summary>
         /// Defines the UNC Share where the flags exist
@@ -53,14 +53,13 @@ namespace TfsBuildExtensions.Activities.LabManagement
         /// <summary>
         /// Execute the Update Version Number build step.
         /// </summary>
-        /// <param name="context">Contains the workflow context</param>
-        protected override void Execute(CodeActivityContext context)
+        protected override void InternalExecute()
         {
             //-- Get the input parameters
-            string lockingUncShare = context.GetValue(this.LockingUNCShare);
-            string environmentName = context.GetValue(this.EnvironmentName);
-            string buildNumber = context.GetValue(this.BuildNumber);
-            bool forceUnlock = context.GetValue(this.ForceUnlock);
+            string lockingUncShare = this.ActivityContext.GetValue(this.LockingUNCShare);
+            string environmentName = this.ActivityContext.GetValue(this.EnvironmentName);
+            string buildNumber = this.ActivityContext.GetValue(this.BuildNumber);
+            bool forceUnlock = this.ActivityContext.GetValue(this.ForceUnlock);
 
             //-- Calculate the full path to the target file...
             string strTargetFile = Path.Combine(lockingUncShare, environmentName);
@@ -68,7 +67,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
             //-- If the File Already doesn't Exists, the environment is unlocked...      
             if (!File.Exists(strTargetFile))
             {
-                context.SetValue(this.Success, true);
+                this.ActivityContext.SetValue(this.Success, true);
             }
 
             //-- Create a file with our build number inside it...
@@ -80,13 +79,13 @@ namespace TfsBuildExtensions.Activities.LabManagement
                 if (!strFileContents.Equals(buildNumber, StringComparison.OrdinalIgnoreCase) && !forceUnlock)
                 {
                     //-- No, the environment was not locked by this build...
-                    context.SetValue(this.Success, false);
+                    this.ActivityContext.SetValue(this.Success, false);
                 }
             }
 
             //-- If we made it here, we should delete the lock file...
             File.Delete(strTargetFile);
-            context.SetValue(this.Success, true);
+            this.ActivityContext.SetValue(this.Success, true);
         }
     }
 }

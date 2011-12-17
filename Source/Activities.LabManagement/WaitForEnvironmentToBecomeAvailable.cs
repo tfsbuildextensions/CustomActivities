@@ -22,7 +22,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
     /// used
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class WaitForEnvironmentToBecomeAvailable : CodeActivity
+    public class WaitForEnvironmentToBecomeAvailable : BaseCodeActivity
     {
         /// <summary>
         /// Defines the UNC Share where the flags exist
@@ -52,21 +52,20 @@ namespace TfsBuildExtensions.Activities.LabManagement
         /// <summary>
         /// Execute the Update Version Number build step.
         /// </summary>
-        /// <param name="context">Contains the workflow context</param>
-        protected override void Execute(CodeActivityContext context)
+        protected override void InternalExecute()
         {
             //-- Get the input parameters
-            string lockingUNCShare = context.GetValue(this.LockingUNCShare);
-            string[] environmentNames = context.GetValue(this.EnvironmentList);
-            int maximumWaitTime = context.GetValue(this.MaximumWaitTimeSeconds);
+            string lockingUNCShare = this.ActivityContext.GetValue(this.LockingUNCShare);
+            string[] environmentNames = this.ActivityContext.GetValue(this.EnvironmentList);
+            int maximumWaitTime = this.ActivityContext.GetValue(this.MaximumWaitTimeSeconds);
 
             //-- Calculate the end time...
             DateTime endTime = DateTime.Now.AddSeconds(maximumWaitTime);
 
             //-- Get the details about the Project Collection, Build, and LabService...
-            TfsTeamProjectCollection tpc = context.GetExtension<TfsTeamProjectCollection>();
+            TfsTeamProjectCollection tpc = this.ActivityContext.GetExtension<TfsTeamProjectCollection>();
             LabService labService = tpc.GetService<LabService>();
-            IBuildDetail buildDetail = context.GetExtension<IBuildDetail>();
+            IBuildDetail buildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
 
             //-- Get a list of environments that could be used...
             ICollection<LabEnvironment> lstEnvironments = labService.QueryLabEnvironments(new LabEnvironmentQuerySpec { Project = buildDetail.TeamProject });
@@ -90,7 +89,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
                                 if (marker == null)
                                 {
                                     //-- The Environment is not in use...
-                                    context.SetValue(this.EnvironmentIsAvailable, true);
+                                    this.ActivityContext.SetValue(this.EnvironmentIsAvailable, true);
                                     return;
                                 }
 
@@ -105,7 +104,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
             }
 
             //-- If we reached here, none of the available environments became available...
-            context.SetValue(this.EnvironmentIsAvailable, false);
+            this.ActivityContext.SetValue(this.EnvironmentIsAvailable, false);
         }
     }
 }

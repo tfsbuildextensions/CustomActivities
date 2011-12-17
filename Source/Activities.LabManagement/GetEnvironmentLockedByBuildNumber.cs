@@ -16,7 +16,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
     /// Provides an activity that allows the user to get the build number that currently has the environment locked
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class GetEnvironmentLockedByBuildNumber : CodeActivity
+    public class GetEnvironmentLockedByBuildNumber : BaseCodeActivity
     {
         /// <summary>
         /// Defines the UNC Share where the flags exist
@@ -38,12 +38,11 @@ namespace TfsBuildExtensions.Activities.LabManagement
         /// <summary>
         /// Execute the Update Version Number build step.
         /// </summary>
-        /// <param name="context">Contains the workflow context</param>
-        protected override void Execute(CodeActivityContext context)
+        protected override void InternalExecute()
         {
             //-- Get the input parameters
-            string lockingUncShare = context.GetValue(this.LockingUNCShare);
-            string environmentName = context.GetValue(this.EnvironmentName);
+            string lockingUncShare = this.ActivityContext.GetValue(this.LockingUNCShare);
+            string environmentName = this.ActivityContext.GetValue(this.EnvironmentName);
 
             //-- Calculate the full path to the target file...
             string strTargetFile = Path.Combine(lockingUncShare, environmentName);
@@ -51,7 +50,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
             //-- If the File Doesn't Exist, there is no lock, so return null...
             if (!File.Exists(strTargetFile))
             {
-                context.SetValue(this.BuildNumber, null);
+                this.ActivityContext.SetValue(this.BuildNumber, null);
             }
 
             //-- Create a file with our build number inside it...
@@ -61,7 +60,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
                 string strFileContents = reader.ReadToEnd();
 
                 //-- If we made it here, the file was created...
-                context.SetValue(this.BuildNumber, strFileContents);
+                this.ActivityContext.SetValue(this.BuildNumber, strFileContents);
             }
         }
     }

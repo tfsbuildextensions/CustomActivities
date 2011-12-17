@@ -17,7 +17,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
     /// Provides an activity that locked the environment and writes the build number into the lock file
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class LockEnvironment : CodeActivity
+    public class LockEnvironment : BaseCodeActivity
     {
         /// <summary>
         /// Defines the UNC Share where the flags exist
@@ -46,13 +46,12 @@ namespace TfsBuildExtensions.Activities.LabManagement
         /// <summary>
         /// Execute the Update Version Number build step.
         /// </summary>
-        /// <param name="context">Contains the workflow context</param>
-        protected override void Execute(CodeActivityContext context)
+        protected override void InternalExecute()
         {
             //-- Get the input parameters
-            string lockingUncShare = context.GetValue(this.LockingUNCShare);
-            string environmentName = context.GetValue(this.EnvironmentName);
-            string buildNumber = context.GetValue(this.BuildNumber);
+            string lockingUncShare = this.ActivityContext.GetValue(this.LockingUNCShare);
+            string environmentName = this.ActivityContext.GetValue(this.EnvironmentName);
+            string buildNumber = this.ActivityContext.GetValue(this.BuildNumber);
 
             //-- Calculate the full path to the target file...
             string targetFile = Path.Combine(lockingUncShare, environmentName);
@@ -72,12 +71,12 @@ namespace TfsBuildExtensions.Activities.LabManagement
                     if (strFileContents.Equals(buildNumber, StringComparison.OrdinalIgnoreCase))
                     {
                         //-- Yes, indicate that we have locked it...
-                        context.SetValue(this.Success, true);
+                        this.ActivityContext.SetValue(this.Success, true);
                     }
                 }
 
                 //-- Lock file exists, but this build is not the one that locked it...
-                context.SetValue(this.Success, false);
+                this.ActivityContext.SetValue(this.Success, false);
             }
 
             try
@@ -95,18 +94,18 @@ namespace TfsBuildExtensions.Activities.LabManagement
                     File.Move(tempFileName, targetFile);
 
                     //-- We have successfully Locked the environment...
-                    context.SetValue(this.Success, true);
+                    this.ActivityContext.SetValue(this.Success, true);
                 }
                 else
                 {
                     //-- Lock File Now Exists, so we cannot lock this environment...
-                    context.SetValue(this.Success, false);
+                    this.ActivityContext.SetValue(this.Success, false);
                 }
             }
             catch (Exception)
             {
                 //-- We could not lock the build, or there was some other issue...
-                context.SetValue(this.Success, false);
+                this.ActivityContext.SetValue(this.Success, false);
             }
             finally
             {

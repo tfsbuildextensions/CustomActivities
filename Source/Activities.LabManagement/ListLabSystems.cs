@@ -18,7 +18,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
     /// An activity that lists TFS Lab Management Lab Systems based on tag filters.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class ListLabSystems : CodeActivity
+    public sealed class ListLabSystems : BaseCodeActivity
     {
         /// <summary>
         /// Specifies the filter criteria to match environments. The tags are to be specified as name-value
@@ -35,16 +35,15 @@ namespace TfsBuildExtensions.Activities.LabManagement
         /// <summary>
         /// Execute the ListEnvironment build activity.
         /// </summary>
-        /// <param name="context">Contains the workflow context</param>
-        protected override void Execute(CodeActivityContext context)
+        protected override void InternalExecute()
         {
-            var tpc = context.GetExtension<TfsTeamProjectCollection>();
+            var tpc = this.ActivityContext.GetExtension<TfsTeamProjectCollection>();
             var labService = tpc.GetService<LabService>();
-            var buildDetail = context.GetExtension<IBuildDetail>();
+            var buildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
             var environments = labService.QueryLabEnvironments(
                                     new LabEnvironmentQuerySpec() { Project = buildDetail.TeamProject });
 
-            var filterTags = context.GetValue(this.Tags);
+            var filterTags = this.ActivityContext.GetValue(this.Tags);
 
             var matchingLabSystems = new List<string>();
             foreach (var environment in environments)
@@ -66,7 +65,7 @@ namespace TfsBuildExtensions.Activities.LabManagement
                 }
             }
 
-            context.SetValue(this.LabSystems, matchingLabSystems.ToArray());
+            this.ActivityContext.SetValue(this.LabSystems, matchingLabSystems.ToArray());
         }
     }
 }
