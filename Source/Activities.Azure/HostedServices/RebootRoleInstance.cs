@@ -30,7 +30,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
     /// Request a reboot of a role instance that is running in a deployment.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class RebootRoleInstance : BaseAzureActivity
+    public class RebootRoleInstance : BaseAzureAsynchronousActivity
     {
         /// <summary>
         /// The action to perform
@@ -70,11 +70,6 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// </summary>
         [RequiredArgument]
         public InArgument<string> InstanceName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the operation id of the Azure API command.
-        /// </summary>
-        public OutArgument<string> OperationId { get; set; }
 
         /// <summary>
         /// Connect to an Azure subscription and reboot a deployment.

@@ -19,9 +19,9 @@ namespace TfsBuildExtensions.Activities.Azure.Tests
             var target = new GetDeployment
             {
                 Slot = "Production",
-                ServiceName = "",
-                SubscriptionId = "",
-                CertificateThumbprintId = ""
+                ServiceName = string.Empty,
+                SubscriptionId = string.Empty,
+                CertificateThumbprintId = string.Empty
             };
 
             // Act
@@ -38,8 +38,8 @@ namespace TfsBuildExtensions.Activities.Azure.Tests
             // Arrange           
             var target = new GetHostedServices
             {
-                SubscriptionId = "",
-                CertificateThumbprintId = ""
+                SubscriptionId = string.Empty,
+                CertificateThumbprintId = string.Empty
             };
 
             // Act

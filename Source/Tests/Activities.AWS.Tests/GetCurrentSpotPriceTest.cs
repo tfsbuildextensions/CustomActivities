@@ -18,8 +18,8 @@ namespace TfsBuildExtensions.Activities.AWS.Tests
             // Arrange           
             var target = new GetCurrentSpotPrice
             {
-                AccessKey = "",
-                SecretKey = "",
+                AccessKey = string.Empty,
+                SecretKey = string.Empty,
                 InstanceType = InstanceType.M1Small,
                 ProductDescription = ProductionDescriptionType.Windows
             };

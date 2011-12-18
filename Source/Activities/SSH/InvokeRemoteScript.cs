@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.SSH
 {
+    using System;
     using System.Activities;
     using System.ComponentModel;
     using System.IO;
@@ -87,6 +88,7 @@ namespace TfsBuildExtensions.Activities.SSH
                 // Common Input parameters
                 ToolsPath = new InArgument<string>(env => this.ToolsPath.Get(env)),                
                 Authentication = new InArgument<SSHAuthentication>(env => this.Authentication.Get(env)),
+                Port = new InArgument<int>(env => this.Port.Get(env)),
 
                 // Specific input parameters
                 Host = new InArgument<string>(env => this.Host.Get(env)),
@@ -116,9 +118,8 @@ namespace TfsBuildExtensions.Activities.SSH
             
             [RequiredArgument]
             public InArgument<SSHAuthentication> Authentication { get; set; }
-
-            [RequiredArgument]
-            public InArgument<string> Host { get; set; }
+            
+            public InArgument<int> Port { get; set; }
 
             #endregion
 
@@ -131,6 +132,9 @@ namespace TfsBuildExtensions.Activities.SSH
             [RequiredArgument]
             [Description("The remote command to be executed (can include arguments)")]
             public InArgument<string> Command { get; set; }
+
+            [RequiredArgument]
+            public InArgument<string> Host { get; set; }
 
             #endregion
 
@@ -178,11 +182,19 @@ namespace TfsBuildExtensions.Activities.SSH
             private string GenerateCommandLineCommands(ActivityContext context)
             {
                 var auth = this.Authentication.Get(context);
+                var port = this.Port.Get(context);
                 var host = this.Host.Get(context);
+                var portParameter = string.Empty;
+
+                if (port > 0)
+                {
+                    portParameter = string.Format("-P {0}", port);
+                }
 
                 return string.Format(
-                    "{0} -ssh -batch -noagent {1} {2}",
+                    "{0} -ssh -batch -noagent {1} {2} {3}",
                     PuttyHelper.GetAuthenticationParameters(auth),
+                    portParameter,
                     host,
                     this.Command.Get(context));
             }

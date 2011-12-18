@@ -81,7 +81,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "My user var: $(Value1)/$(Value2)" } },
+                { "Inputs", new[] { "My user var: $(Value1)/$(Value2)" } },
                 { "Variables", new Dictionary<string, string> { { "Value1", "value1" },  { "Value2", "value2" } } }
             };
 
@@ -102,7 +102,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "My user var: $(Value1)" } },
+                { "Inputs", new[] { "My user var: $(Value1)" } },
                 { "Variables", new Dictionary<string, string> { { "$(Value1)", "value1" },  { "Value2", "value2" } } }
             };
 
@@ -123,7 +123,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "My user var: $(Value1)" } },
+                { "Inputs", new[] { "My user var: $(Value1)" } },
                 { "Variables", new Dictionary<string, string> { { "Value2", "value2" } } }
             };
 
@@ -144,7 +144,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "My user var: $(BuildId)" } },
+                { "Inputs", new[] { "My user var: $(BuildId)" } },
                 { "Variables", new Dictionary<string, string> { { "BuildId", "-1" } } },
                 { "IncludeBuildVariables", true }
             };
@@ -168,7 +168,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "My user var: $(TMP)" } },
+                { "Inputs", new[] { "My user var: $(TMP)" } },
                 { "Variables", new Dictionary<string, string> { { "TMP", "[TEMP]" } } },
                 { "IncludeEnvironmentVariables", true }
             };
@@ -194,7 +194,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "My temp dir: $(TMP)" } }
+                { "Inputs", new[] { "My temp dir: $(TMP)" } }
             };
 
             var invoker = new WorkflowInvoker(target);
@@ -214,7 +214,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "My temp dir: $(TMP)" } },
+                { "Inputs", new[] { "My temp dir: $(TMP)" } },
                 { "IncludeEnvironmentVariables", true }
             };
 
@@ -239,7 +239,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "My build number: $(BuildNumber)" } }
+                { "Inputs", new[] { "My build number: $(BuildNumber)" } }
             };
 
             var invoker = new WorkflowInvoker(target);
@@ -259,7 +259,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildNumber)" } },
+                { "Inputs", new[] { "$(BuildNumber)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -282,7 +282,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildId)" } },
+                { "Inputs", new[] { "$(BuildId)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -305,7 +305,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildDefinitionName)" } },
+                { "Inputs", new[] { "$(BuildDefinitionName)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -328,7 +328,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildDefinitionId)" } },
+                { "Inputs", new[] { "$(BuildDefinitionId)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -351,7 +351,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(TeamProject)" } },
+                { "Inputs", new[] { "$(TeamProject)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -374,7 +374,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(DropLocation)" } },
+                { "Inputs", new[] { "$(DropLocation)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -397,7 +397,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildAgent)" } },
+                { "Inputs", new[] { "$(BuildAgent)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -420,7 +420,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildAgent)" } },
+                { "Inputs", new[] { "$(BuildAgent)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -445,7 +445,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildAgentName)" } },
+                { "Inputs", new[] { "$(BuildAgentName)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -468,7 +468,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildAgentName)" } },
+                { "Inputs", new[] { "$(BuildAgentName)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -493,7 +493,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildAgentId)" } },
+                { "Inputs", new[] { "$(BuildAgentId)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -516,7 +516,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(BuildAgentId)" } },
+                { "Inputs", new[] { "$(BuildAgentId)" } },
                 { "IncludeBuildVariables", true }
             };
 
@@ -545,7 +545,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(Value1)", "$(BuildNumber)", "$(TMP)" } },
+                { "Inputs", new[] { "$(Value1)", "$(BuildNumber)", "$(TMP)" } },
                 { "Variables", new Dictionary<string, string> { { "Value1", "value1" } } },
                 { "IncludeBuildVariables", true },
                 { "IncludeEnvironmentVariables", true }
@@ -577,7 +577,7 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new ExpandVariables();
             var parameters = new Dictionary<string, object>
             {
-                { "Inputs", new [] { "$(value1)", "$(buildNumber)", "$(TMp)" } },
+                { "Inputs", new[] { "$(value1)", "$(buildNumber)", "$(TMp)" } },
                 { "Variables", new Dictionary<string, string> { { "Value1", "value1" } } },
                 { "IncludeBuildVariables", true },
                 { "IncludeEnvironmentVariables", true }

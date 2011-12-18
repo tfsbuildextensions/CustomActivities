@@ -12,7 +12,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
     /// Execute a swap operation between the staging and production slots.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class SwapDeployment : BaseAzureActivity
+    public class SwapDeployment : BaseAzureAsynchronousActivity
     {
         /// <summary>
         /// Gets or sets the Azure service name.
@@ -31,11 +31,6 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// </summary>
         [RequiredArgument]
         public InArgument<string> ProductionDeploymentName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the operation id of the Azure API command.
-        /// </summary>
-        public OutArgument<string> OperationId { get; set; }
 
         /// <summary>
         /// Connect to an Azure subscription and execute a VIP swap.

@@ -51,22 +51,6 @@ namespace TfsBuildExtensions.Activities.Azure
         protected IServiceManagement Channel { get; set; }
 
         /// <summary>
-        /// Get the Azure operation identifier from the server response headers.
-        /// </summary>
-        /// <returns>The operation identifier.</returns>
-        protected static string RetrieveOperationId()
-        {
-            var operationId = string.Empty;
-
-            if (WebOperationContext.Current.IncomingResponse != null)
-            {
-                operationId = WebOperationContext.Current.IncomingResponse.Headers[Constants.OperationTrackingIdHeader];
-            }
-
-            return operationId;
-        }
-
-        /// <summary>
         /// Prevent inheritance of the method.  Bind required parameters.
         /// </summary>
         protected sealed override void InternalExecute()

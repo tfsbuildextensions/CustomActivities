@@ -243,6 +243,8 @@
     <Compile Include="VisualStudio\VSDevEnvAction.cs" />
     <Compile Include="VisualStudio\VSVersion.cs" />
     <Compile Include="VisualStudio\VSDevEnv.cs" />
+    <Compile Include="Xml\Xml.cs" />
+    <Compile Include="Xml\XmlFile.cs" />
     <None Include="CodeQuality\CodeMetrics\MetricsReport.xsd">
       <SubType>Designer</SubType>
     </None>

@@ -389,20 +389,38 @@ namespace TfsBuildExtensions.Activities.Framework
         /// <summary>
         /// Gets the max updated assembly version.
         /// </summary>
-        [Description("Gets the max computed assembly version. (null to disable update)")]
+        [Description("Gets the max computed assembly version.")]
         public OutArgument<Version> MaxAssemblyVersion { get; set; }
 
         /// <summary>
         /// Gets the max updated assembly file version.
         /// </summary>
-        [Description("Gets the max computed assembly file version. (null to disable update)")]
+        [Description("Gets the max computed assembly file version.")]
         public OutArgument<Version> MaxAssemblyFileVersion { get; set; }
 
         /// <summary>
         /// Gets the max updated assembly informational version.
         /// </summary>
-        [Description("Gets the max computed assembly informational version. (null to disable update)")]
+        [Description("Gets the max computed assembly informational version.")]
         public OutArgument<string> MaxAssemblyInformationalVersion { get; set; }
+
+        /// <summary>
+        /// Gets the updated assembly versions.
+        /// </summary>
+        [Description("Gets the updated assembly versions.")]
+        public OutArgument<IEnumerable<Version>> AssemblyVersions { get; set; }
+
+        /// <summary>
+        /// Gets the max updated assembly file versions.
+        /// </summary>
+        [Description("Gets the updated assembly file versions.")]
+        public OutArgument<IEnumerable<Version>> AssemblyFileVersions { get; set; }
+
+        /// <summary>
+        /// Gets the updated assembly informational versions.
+        /// </summary>
+        [Description("Gets the updated assembly informational versions.")]
+        public OutArgument<IEnumerable<string>> AssemblyInformationalVersions { get; set; }
 
         #endregion
 
@@ -417,6 +435,9 @@ namespace TfsBuildExtensions.Activities.Framework
             var now = DateTime.Now;
             var version = string.Empty;
             var fileVersion = string.Empty;
+            var versions = new List<Version>();
+            var fileVersions = new List<Version>();
+            var infoVersions = new List<string>();
             this.tokenEvaluators = new Dictionary<string, Func<string, string>>
             {
                 { "current", p => "-1" },
@@ -429,6 +450,9 @@ namespace TfsBuildExtensions.Activities.Framework
             this.MaxAssemblyVersion.Set(this.ActivityContext, new Version(0, 0, 0, 0));
             this.MaxAssemblyFileVersion.Set(this.ActivityContext, new Version(0, 0, 0, 0));
             this.MaxAssemblyInformationalVersion.Set(this.ActivityContext, string.Empty);
+            this.AssemblyVersions.Set(this.ActivityContext, new List<Version>());
+            this.AssemblyFileVersions.Set(this.ActivityContext, new List<Version>());
+            this.AssemblyInformationalVersions.Set(this.ActivityContext, new List<string>());
 
             // update all files
             var files = this.Files.Get(this.ActivityContext);
@@ -449,17 +473,21 @@ namespace TfsBuildExtensions.Activities.Framework
                         "AssemblyVersion",
                         this.AssemblyVersion.Get(this.ActivityContext),
                         this.MaxAssemblyVersion);
+                    versions.Add(new Version(version));
 
                     fileVersion = this.UpdateVersion(
                         "AssemblyFileVersion",
                         this.AssemblyFileVersion.Get(this.ActivityContext),
                         this.MaxAssemblyFileVersion);
+                    fileVersions.Add(new Version(fileVersion));
 
                     var infoVersion = this.UpdateAttribute("AssemblyInformationalVersion", this.AssemblyInformationalVersion.Get(this.ActivityContext), true);
                     if (string.Compare(infoVersion, this.MaxAssemblyInformationalVersion.Get(this.ActivityContext), StringComparison.Ordinal) > 0)
                     {
                         this.MaxAssemblyInformationalVersion.Set(this.ActivityContext, infoVersion);
                     }
+
+                    infoVersions.Add(infoVersion);
 
                     // update other attributes
                     this.UpdateAttribute("AssemblyCompany", this.AssemblyCompany.Get(this.ActivityContext), true);
@@ -498,8 +526,12 @@ namespace TfsBuildExtensions.Activities.Framework
                     }
 
                     // log successful update
-                    this.LogBuildMessage("AssemblyInfo file '" + path + "' was successfully updated.");
+                    this.LogBuildMessage("AssemblyInfo file '" + path + "' was successfully updated.", BuildMessageImportance.High);
                 }
+
+                this.AssemblyVersions.Set(this.ActivityContext, versions);
+                this.AssemblyFileVersions.Set(this.ActivityContext, fileVersions);
+                this.AssemblyInformationalVersions.Set(this.ActivityContext, infoVersions);
             }
             else
             {
@@ -510,7 +542,7 @@ namespace TfsBuildExtensions.Activities.Framework
         #endregion
 
         #region Private Helpers
-        
+
         // Returns the specified value as a string with the correct case based on the file extension.
         private static string BooleanToString(string path, bool value)
         {
@@ -534,7 +566,7 @@ namespace TfsBuildExtensions.Activities.Framework
             if (oldValue == null || string.IsNullOrWhiteSpace(format))
             {
                 // do nothing
-                return string.Empty;
+                return oldValue;
             }
 
             // parse old version

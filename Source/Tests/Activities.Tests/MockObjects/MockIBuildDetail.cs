@@ -242,7 +242,7 @@ namespace TfsBuildExtensions.Activities.Tests
 
         public DateTime StartTime
         {
-            get { throw new NotImplementedException(); }
+            get { return DateTime.Now; }
         }
 
         public DateTime FinishTime

@@ -115,6 +115,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Framework\AssemblyInfoTests.cs" />
+    <Compile Include="Xml\XmlTests.cs" />
+    <Compile Include="Xml\XmlFileTests.cs" />
     <None Include="CodeQuality\FxCop\FxCop.FxCop" />
     <None Include="Framework\TestFiles\AssemblyInfo %281%29.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -173,6 +175,7 @@
     <Content Include="CodeQuality\CodeMetrics\MetricsSample.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Xml\book.xml" />
     <None Include="Framework\TestFiles\AssemblyInfo %281%29.vb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

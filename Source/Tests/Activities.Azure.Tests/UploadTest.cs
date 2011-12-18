@@ -31,17 +31,17 @@ namespace TfsBuildExtensions.Activities.Azure.Tests
                 {
                     new GetStorageKeys
                     {
-                        SubscriptionId = "",
-                        CertificateThumbprintId = "",
-                        ServiceName = "",
+                        SubscriptionId = string.Empty,
+                        CertificateThumbprintId = string.Empty,
+                        ServiceName = string.Empty,
                         StorageKeys = keys
                     },
                     new UploadPackageToBlobStorage
                     {
-                        SubscriptionId = "",
-                        CertificateThumbprintId = "",
-                        LocalPackagePath = "",
-                        StorageServiceName = "",
+                        SubscriptionId = string.Empty,
+                        CertificateThumbprintId = string.Empty,
+                        LocalPackagePath = string.Empty,
+                        StorageServiceName = string.Empty,
                         StorageKeys = keys
                     }
                 }

@@ -243,10 +243,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
             string tfsBuildNumber = this.ActivityContext.GetExtension<IBuildDetail>().BuildNumber;
             this.LogBuildMessage("Getting Version");
-            string buildname = this.ActivityContext.GetExtension<IBuildDetail>().BuildDefinition.Name;
+            IBuildDetail b = this.ActivityContext.GetExtension<IBuildDetail>();
+            string buildname = b.BuildDefinition.Name;
+            DateTime t = b.StartTime;
             string buildstring = tfsBuildNumber.Replace(buildname + "_", string.Empty);
             string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            DateTime t = new DateTime(Convert.ToInt32(buildParts[0].Substring(0, 4), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(4, 2), CultureInfo.CurrentCulture), Convert.ToInt32(buildParts[0].Substring(6, 2), CultureInfo.InvariantCulture));
             DateTime baseTimeToUse = this.UseUtcDate ? DateTime.UtcNow : DateTime.Now;
 
             if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Revision)))
@@ -257,16 +258,16 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                     {
                         case TfsVersionVersionFormat.Elapsed:
                             TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.ActivityContext.GetValue(this.StartDate));
-                            this.ActivityContext.SetValue(this.Revision, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1]);
+                            this.ActivityContext.SetValue(this.Revision, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[buildParts.Length - 1]);
                             break;
                         case TfsVersionVersionFormat.DateTime:
-                            this.ActivityContext.SetValue(this.Revision, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[1]);
+                            this.ActivityContext.SetValue(this.Revision, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[buildParts.Length - 1]);
                             break;
                     }
                 }
                 else
                 {
-                    this.ActivityContext.SetValue(this.Revision, buildParts[1]);
+                    this.ActivityContext.SetValue(this.Revision, buildParts[buildParts.Length - 1]);
                 }
             }
 

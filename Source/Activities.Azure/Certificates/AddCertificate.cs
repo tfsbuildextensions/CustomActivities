@@ -14,7 +14,7 @@ namespace TfsBuildExtensions.Activities.Azure.Certificates
     /// Add a certificate to a subscription.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class AddCertificate : BaseAzureActivity
+    public class AddCertificate : BaseAzureAsynchronousActivity
     {
         /// <summary>
         /// Gets or sets the Azure service name.
@@ -32,11 +32,6 @@ namespace TfsBuildExtensions.Activities.Azure.Certificates
         /// </summary>
         [RequiredArgument]
         public InArgument<string> Password { get; set; }
-
-        /// <summary>
-        /// Gets or sets the operation id of the Azure API command.
-        /// </summary>
-        public OutArgument<string> OperationId { get; set; }
 
         /// <summary>
         /// Connect to an Azure subscription and obtain a certificate.

@@ -14,7 +14,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
     /// Create a new deployment for a package which has already been uploaded.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class NewDeployment : BaseAzureActivity
+    public class NewDeployment : BaseAzureAsynchronousActivity
     {
         /// <summary>
         /// Gets or sets the Azure deployment slot identifier.
@@ -47,11 +47,6 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// Gets or sets the Azure deployment name.
         /// </summary>
         public InArgument<string> DeploymentName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the operation id of the Azure API command.
-        /// </summary>
-        public OutArgument<string> OperationId { get; set; }
 
         /// <summary>
         /// Connect to an Azure subscription create a new deployment.

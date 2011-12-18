@@ -33,11 +33,20 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
         private IFileSystemProxy proxyFileSystem;
         private IParametersValidations validations;
 
+        /// <summary>
+        /// Initializes a new instance of the CodeMetricsHistory class
+        /// </summary>
         public CodeMetricsHistory()
         {
             this.dependenciesCameFromExternalSource = false;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the CodeMetricsHistory class
+        /// </summary>
+        /// <param name="proxyContext">Proxy context</param>
+        /// <param name="proxyFileSystem">File system proxy</param>
+        /// <param name="validations">validation</param>
         public CodeMetricsHistory(IActivityContextProxy proxyContext, IFileSystemProxy proxyFileSystem, IParametersValidations validations)
         {
             this.dependenciesCameFromExternalSource = true;

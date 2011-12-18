@@ -17,17 +17,17 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         private readonly IActivityContextProxy activityProxy;
         private readonly IFileSystemProxy fileSystemProxy;
 
-        public CodeMetricsFilesToProcess(CodeMetrics activity, CodeActivityContext context) : this(new ActivityContextProxy(activity, context), new FileSystemProxy())
+        internal CodeMetricsFilesToProcess(CodeMetrics activity, CodeActivityContext context) : this(new ActivityContextProxy(activity, context), new FileSystemProxy())
         {
         }
 
-        public CodeMetricsFilesToProcess(IActivityContextProxy activityProxy, IFileSystemProxy fileSystemProxy)
+        internal CodeMetricsFilesToProcess(IActivityContextProxy activityProxy, IFileSystemProxy fileSystemProxy)
         {
             this.activityProxy = activityProxy;
             this.fileSystemProxy = fileSystemProxy;
         }
 
-        public IEnumerable<string> Get()
+        internal IEnumerable<string> Get()
         {
             IEnumerable<string> files = this.activityProxy.FilesToProcess;
 
@@ -51,10 +51,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         private void RemovesFilesToIgnore(ref IEnumerable<string> files)
         {
-            if (IsNotEmpty(this.activityProxy.FilesToIgnore))
-            {
-                files = this.GetFilesNotExcluded();
-            }
+            files = this.GetFilesNotExcluded();
         }
 
         private void LogFiles(IEnumerable<string> files)
@@ -88,6 +85,11 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         private List<string> GetFiles(IEnumerable<string> filenames)
         {
             var completeFileNames = new List<string>();
+
+            if (filenames == null)
+            {
+                return completeFileNames;
+            }
 
             foreach (var filename in filenames)
             {

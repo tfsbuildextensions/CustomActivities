@@ -7,6 +7,7 @@ namespace TfsBuildExtensions.Activities.Tests
     using System.Activities;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TfsBuildExtensions.Activities.Framework;
 
@@ -309,6 +310,38 @@ namespace TfsBuildExtensions.Activities.Tests
             Assert.AreEqual("1.3.0.0", actual["MaxAssemblyVersion"].ToString());
         }
 
+        /// <summary>
+        /// Tests if the assembly versions enumerable is filled.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (1).cs")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (3).cs")]
+        public void AssemblyInfo_FillAssemblyVersions_WhenExecuteInvoked()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (1).cs", TestFilePrefix + "1.cs", true);
+            File.Copy(@"AssemblyInfo (3).cs", TestFilePrefix + "2.cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + "1.cs", TestFilePrefix + "2.cs" } },
+                { "AssemblyVersion", "$(current).$(increment).$(current).$(current)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var versions = actual["AssemblyVersions"] as IEnumerable<Version>;
+            Assert.AreEqual(2, versions.Count());
+            Assert.AreEqual("1.3.0.0", versions.ElementAt(0).ToString());
+            Assert.AreEqual("1.2.0.0", versions.ElementAt(1).ToString());
+        }
+
         #endregion
 
         #region AssemblyFileVersion Tests
@@ -368,6 +401,38 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual("1.3.3.4", actual["MaxAssemblyFileVersion"].ToString());
+        }
+
+        /// <summary>
+        /// Tests if the assembly file versions enumerable is filled.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (1).cs")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (3).cs")]
+        public void AssemblyInfo_FillAssemblyFileVersions_WhenExecuteInvoked()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (1).cs", TestFilePrefix + "1.cs", true);
+            File.Copy(@"AssemblyInfo (3).cs", TestFilePrefix + "2.cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + "1.cs", TestFilePrefix + "2.cs" } },
+                { "AssemblyFileVersion", "$(current).$(increment).$(current).$(current)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var versions = actual["AssemblyFileVersions"] as IEnumerable<Version>;
+            Assert.AreEqual(2, versions.Count());
+            Assert.AreEqual("1.3.3.4", versions.ElementAt(0).ToString());
+            Assert.AreEqual("1.2.3.4", versions.ElementAt(1).ToString());
         }
 
         #endregion
@@ -433,6 +498,40 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // assert
             Assert.AreEqual(string.Format("Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}", DateTime.Today), actual["MaxAssemblyInformationalVersion"].ToString());
+        }
+
+        /// <summary>
+        /// Tests if the assembly informational versions enumerable is filled.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (1).cs")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (3).cs")]
+        public void AssemblyInfo_FillAssemblyInformationalVersions_WhenExecuteInvoked()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (1).cs", TestFilePrefix + "1.cs", true);
+            File.Copy(@"AssemblyInfo (3).cs", TestFilePrefix + "2.cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + "1.cs", TestFilePrefix + "2.cs" } },
+                { "AssemblyVersion", "$(current).$(current).0.0" },
+                { "AssemblyFileVersion", "$(current).$(current).$(increment).0" },
+                { "AssemblyInformationalVersion", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var versions = actual["AssemblyInformationalVersions"] as IEnumerable<string>;
+            Assert.AreEqual(2, versions.Count());
+            Assert.AreEqual(string.Format("Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}", DateTime.Today), versions.ElementAt(0));
+            Assert.AreEqual(string.Format("Value 1.1.0.0/1.1.4.0 at {0:yyyyMMdd}", DateTime.Today), versions.ElementAt(1));
         }
 
         #endregion

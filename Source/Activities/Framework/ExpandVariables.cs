@@ -145,6 +145,10 @@ namespace TfsBuildExtensions.Activities.Framework
                 buildVariables["BuildAgent"] = buildAgent != null ? buildAgent.Name : string.Empty;
                 buildVariables["BuildAgentName"] = buildAgent != null ? buildAgent.Name : string.Empty; // Same as BuildAgent but more consistent with TFS naming convention
                 buildVariables["BuildAgentId"] = buildAgent != null ? LinkingUtilities.DecodeUri(buildAgent.Uri.AbsoluteUri).ToolSpecificId : string.Empty;
+
+                buildVariables["BuildControllerName"] = buildAgent != null ? buildAgent.Controller.Name : string.Empty;
+                buildVariables["BuildControllerId"] = buildAgent != null ? LinkingUtilities.DecodeUri(buildAgent.Controller.Uri.AbsoluteUri).ToolSpecificId : string.Empty;
+                buildVariables["BuildControllerCustomAssemblyPath"] = buildAgent != null ? buildAgent.Controller.CustomAssemblyPath : string.Empty;
             }
 
             var envVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

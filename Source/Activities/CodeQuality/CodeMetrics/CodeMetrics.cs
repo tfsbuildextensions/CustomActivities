@@ -131,7 +131,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// </exception>
         [Description("Optional: Overrides the global thresholds for the Member Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
         public InArgument<string> MemberThresholdsString { get; set; }
-         
+
+        /// <summary>
+        /// Gets or sets ta value indicating if code metrics should be logged.
+        /// </summary>
+        public InArgument<bool> LogCodeMetrics { get; set; }
+
         private IBuildDetail BuildDetail { get; set; }
 
         /// <summary>
@@ -179,25 +184,34 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 return;
             }
 
+            // Get thresholds for each level.
+            SpecificMetricThresholds assemblyMetricThresholds = CodeMetricsThresholds.GetForAssembly(this, this.ActivityContext);
+            SpecificMetricThresholds namespaceMetricThresholds = CodeMetricsThresholds.GetForNamespace(this, this.ActivityContext);
+            SpecificMetricThresholds typeMetricThresholds = CodeMetricsThresholds.GetForType(this, this.ActivityContext);
+            SpecificMetricThresholds memberMetricThresholds = CodeMetricsThresholds.GetForMember(this, this.ActivityContext);
+
+            // Check if metrics should be logged.
+            bool logCodeMetrics = this.ActivityContext.GetValue(this.LogCodeMetrics);
+
             foreach (var target in result.Targets)
             {
-                var targetNode = AddTextNode("Target: " + target.Name, rootNode);
+                var targetNode = logCodeMetrics ? AddTextNode("Target: " + target.Name, rootNode) : null;
                 foreach (var module in target.Modules)
                 {
-                    var moduleNode = AddTextNode("Module: " + module.Name, targetNode);
-                    this.ProcessMetrics(module.Name, module.Metrics, moduleNode, CodeMetricsThresholds.GetForAssembly(this, this.ActivityContext));
+                    var moduleNode = logCodeMetrics ? AddTextNode("Module: " + module.Name, targetNode) : null;
+                    this.ProcessMetrics(module.Name, module.Metrics, moduleNode, assemblyMetricThresholds);
                     foreach (var ns in module.Namespaces)
                     {
-                        var namespaceNode = AddTextNode("Namespace: " + ns.Name, moduleNode);
-                        this.ProcessMetrics(ns.Name, ns.Metrics, namespaceNode, CodeMetricsThresholds.GetForNamespace(this, this.ActivityContext));
+                        var namespaceNode = logCodeMetrics ? AddTextNode("Namespace: " + ns.Name, moduleNode) : null;
+                        this.ProcessMetrics(ns.Name, ns.Metrics, namespaceNode, namespaceMetricThresholds);
                         foreach (var type in ns.Types)
                         {
-                            var typeNode = AddTextNode("Type: " + type.Name, namespaceNode);
-                            this.ProcessMetrics(type.Name, type.Metrics, typeNode, CodeMetricsThresholds.GetForType(this, this.ActivityContext));
+                            var typeNode = logCodeMetrics ? AddTextNode("Type: " + type.Name, namespaceNode) : null;
+                            this.ProcessMetrics(type.Name, type.Metrics, typeNode, typeMetricThresholds);
                             foreach (var member in type.Members)
                             {
-                                var memberNode = AddTextNode("Member: " + member.Name, typeNode);
-                                this.ProcessMetrics(member.Name, member.Metrics, memberNode, CodeMetricsThresholds.GetForMember(this, this.ActivityContext), type.Name);
+                                var memberNode = logCodeMetrics ? AddTextNode("Member: " + member.Name, typeNode) : null;
+                                this.ProcessMetrics(member.Name, member.Metrics, memberNode, memberMetricThresholds, type.Name);
                             }
                         }
                     }
@@ -345,8 +359,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         private void PartiallyFailCurrentBuild()
         {
-            this.BuildDetail.Status = BuildStatus.PartiallySucceeded;
-            this.BuildDetail.Save();
+            // Don't replace a failed status.
+            if (this.BuildDetail.Status != BuildStatus.Failed)
+            {
+                this.BuildDetail.Status = BuildStatus.PartiallySucceeded;
+                this.BuildDetail.Save();
+            }
         }
 
         private void FailCurrentBuild()

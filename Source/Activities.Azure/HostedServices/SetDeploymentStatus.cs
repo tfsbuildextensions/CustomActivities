@@ -12,7 +12,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
     /// Change the service status for a deployed service.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class SetDeploymentStatus : BaseAzureActivity
+    public class SetDeploymentStatus : BaseAzureAsynchronousActivity
     {
         /// <summary>
         /// Gets or sets the Azure deployment slot identifier.
@@ -31,11 +31,6 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// </summary>
         [RequiredArgument]
         public InArgument<string> ServiceStatus { get; set; }
-
-        /// <summary>
-        /// Gets or sets the operation id of the Azure API command.
-        /// </summary>
-        public OutArgument<string> OperationId { get; set; }
 
         /// <summary>
         /// Connect to an Azure subscription and set the deployment status.

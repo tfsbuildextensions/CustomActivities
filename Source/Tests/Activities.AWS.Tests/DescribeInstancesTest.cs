@@ -18,8 +18,8 @@ namespace TfsBuildExtensions.Activities.AWS.Tests
             // Arrange           
             var target = new DescribeInstances
             {
-                AccessKey = "",
-                SecretKey = ""
+                AccessKey = string.Empty,
+                SecretKey = string.Empty
             };
 
             // Act

@@ -34,7 +34,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
     /// <para><i>ChangeBySlot</i></para>
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class ChangeDeploymentConfiguration : BaseAzureActivity
+    public class ChangeDeploymentConfiguration : BaseAzureAsynchronousActivity
     {
         /// <summary>
         /// The action to perform
@@ -72,11 +72,6 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// This parameter should specifiy a .cscfg file on disk.
         /// </summary>
         public InArgument<string> ConfigurationFilePath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the operation id of the Azure API command.
-        /// </summary>
-        public OutArgument<string> OperationId { get; set; }
 
         /// <summary>
         /// Connect to an Azure subscription and change the configuration of a deployment.

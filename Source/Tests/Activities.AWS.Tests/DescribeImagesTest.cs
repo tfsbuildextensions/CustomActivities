@@ -18,9 +18,9 @@ namespace TfsBuildExtensions.Activities.AWS.Tests
             // Arrange           
             var target = new DescribeImages
             {
-                AccessKey = "",
-                SecretKey = "",
-                Owner = ""
+                AccessKey = string.Empty,
+                SecretKey = string.Empty,
+                Owner = string.Empty
             };
 
             // Act

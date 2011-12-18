@@ -10,6 +10,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     /// </summary>
     public class MetricThresholdsByLevel
     {
+        /// <summary>
+        /// Initializes a new instance of the MetricThresholdsByLevel class
+        /// </summary>
         public MetricThresholdsByLevel()
         {
             this.Assembly = new SpecificMetricThresholds();

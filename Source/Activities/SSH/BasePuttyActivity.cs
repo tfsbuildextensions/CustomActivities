@@ -75,7 +75,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// </summary>
         [Description("The known host files (.reg format). Allows you to load on the agent the know hosts")]
         [Category("Authentication")]
-        public InArgument<string> KnowHostFile { get; set; }
+        public InArgument<string> KnownHostsFile { get; set; }
 
         /// <summary>
         /// Logging level for the placing the standard output content directly on 
@@ -105,12 +105,28 @@ namespace TfsBuildExtensions.Activities.SSH
         public InArgument<string> LogFileName { get; set; }
 
         /// <summary>
+        /// Should we log to the log file errors that appear on stderr?
+        /// If not the errors will be logged into team build public
+        /// </summary>
+        [Description("Should we log errors sent to stderr to the log file instead of the build log output as errors?")]
+        [Category("Logging")]
+        public InArgument<bool> LogErrorToFile { get; set; }
+
+        /// <summary>
         /// The path for the putty commands. If missing we will try to determine the path
         /// ourselves or ultimately rely on path
         /// </summary>
         [Description("The path for putty command tools. If ommited we will try to determine the path on our own")]
         [Category("Configuration")]
         public InArgument<string> ToolsPath { get; set; }
+
+        /// <summary>
+        /// The port used for communications. Only to be used if the non standard port
+        /// is not going to be used
+        /// </summary>
+        [Description("the port (optional). Only use if you to use a non standard port")]
+        [Category("Host")]
+        public InArgument<int> Port { get; set; }                
 
         /// <summary>
         /// Were there any errors while executing the operation? (or even before that)
@@ -274,7 +290,7 @@ namespace TfsBuildExtensions.Activities.SSH
 
                     new RegisterKnownHosts 
                     {
-                        RegistryHostFileName = new InArgument<string>(env => this.KnowHostFile.Get(env)),
+                        RegistryHostFileName = new InArgument<string>(env => this.KnownHostsFile.Get(env)),
 
                         IgnoreExceptions = new InArgument<bool>(env => this.IgnoreExceptions.Get(env)),
                         FailBuildOnError = new InArgument<bool>(env => this.FailBuildOnError.Get(env)),
@@ -325,10 +341,23 @@ namespace TfsBuildExtensions.Activities.SSH
                         ErrorDataReceived = new ActivityAction<string>
                         {
                             Argument = errorHandlerArgument,
-                            Handler = new LogBuildError
-                            {
-                                Message = errorHandlerArgument,
-                                FailBuildOnError = new InArgument<bool>(false)
+                            Handler = new @If 
+                            {                                           
+                                Condition = new InArgument<bool>(env => this.LogErrorToFile.Get(env) && logFileLocationVariable.Get(env) != null),
+
+                                Then = new WriteToFile
+                                {
+                                    FileName = new InArgument<string>(env => logFileLocationVariable.Get(env)),
+                                    Content = errorHandlerArgument,
+                                    AutoNewLine = true,
+                                    Create = false
+                                },
+                            
+                                Else = new LogBuildError
+                                {
+                                    Message = errorHandlerArgument,
+                                    FailBuildOnError = new InArgument<bool>(false)                                
+                                }                            
                             }
                         }
                     },

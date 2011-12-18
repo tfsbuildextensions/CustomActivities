@@ -68,7 +68,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
 
             UploadBlobStream(blob, filePath);
 
-            this.PackageUrl.Set(this.ActivityContext, new Uri(string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}", client.BaseUri, containerName, client.DefaultDelimiter, blobName)));
+            this.PackageUrl.Set(this.ActivityContext, string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}", client.BaseUri, containerName, client.DefaultDelimiter, blobName));
         }
 
         private static void UploadBlobStream(CloudBlob blob, string sourceFile)

@@ -9,9 +9,8 @@ namespace TfsBuildExtensions.Activities.SharePoint
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Globalization;
-    using System.Linq;
     using Microsoft.TeamFoundation.Build.Client;
-    
+
     /// <summary>
     ///  Possible action for the activity
     /// </summary>
@@ -66,7 +65,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
     /// <summary>
     /// An activity that builds and executes PowerShell commands to deploy SharePoint features
     /// </summary>
-    [BuildActivity(HostEnvironmentOption.Agent)]
+    [BuildActivity(HostEnvironmentOption.All)]
     public sealed class SharePointDeployment : BaseCodeActivity
     {
         /// <summary>
@@ -184,7 +183,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                         command = command.AppendFormat(" –WebApplication {0}", siteUrl);
                     }
 
-                    if (gacDeployment == true)
+                    if (gacDeployment)
                     {
                         command += " -GACDeployment";
                     }
@@ -226,7 +225,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                         command = command.AppendFormat(" -Url {0}", siteUrl);
                     }
 
-                    if (force == true)
+                    if (force)
                     {
                         command += " -Force";
                     }
@@ -246,9 +245,6 @@ namespace TfsBuildExtensions.Activities.SharePoint
 
                     break;
                 case SharePointAction.GetSolution:
-
-                    command = command.AppendFormat("$result=");
-
                     if (string.IsNullOrEmpty(wspName))
                     {
                         command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution");
@@ -266,10 +262,9 @@ namespace TfsBuildExtensions.Activities.SharePoint
                         }
                     }
 
-                    command += "; foreach ($line in $result) {'{0}, {1}, {2}' -f $line.Displayname, $line.Id, $Line.Deployed}";
+                    command += " | fl -property Displayname, Deployed, Id ;";
                     break;
                 case SharePointAction.GetFeature:
-                    command = command.AppendFormat("$result=");
                     if (string.IsNullOrEmpty(featureName))
                     {
                         command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature");
@@ -289,8 +284,8 @@ namespace TfsBuildExtensions.Activities.SharePoint
                     }
 
                     // we now need to add the handling to make sure the format is consistant both locally and remotely
-                    // using the plus operator to make sur eno {0} confusion
-                    command += "; foreach ($line in $result) {'{0}, {1}' -f $line.Displayname, $line.Id}";
+                    // using the plus operator to make sure no {0} confusion
+                    command += " | fl -property Displayname, Id ;";
 
                     break;
                 default:
@@ -323,28 +318,32 @@ namespace TfsBuildExtensions.Activities.SharePoint
             switch (action)
             {
                 case SharePointAction.GetFeature:
-                    var lines = outputFromScript.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int i = 0; i < lines.Length; i++)
-                    {
-                        var fields = lines[i].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (string.IsNullOrEmpty(fields[1].Trim()) == false)
-                        {
-                            var line = new SharePointDeploymentStatus() { Name = fields[0].Trim(), Id = Guid.Parse(fields[1].Trim()), Deployed = true };
-                            results.Add(line);
-                        }
-                    }
-
-                    break;
                 case SharePointAction.GetSolution:
-
-                    lines = outputFromScript.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int i = 0; i < lines.Length; i++)
+                    var lines = outputFromScript.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                    SharePointDeploymentStatus newItem = null;
+                    foreach (var line in lines)
                     {
-                        var fields = lines[i].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (string.IsNullOrEmpty(fields[1].Trim()) == false)
+                        if (!string.IsNullOrEmpty(line))
                         {
-                            var line = new SharePointDeploymentStatus() { Name = fields[0].Trim(), Id = Guid.Parse(fields[1].Trim()), Deployed = bool.Parse(fields[2].Trim()) };
-                            results.Add(line);
+                            var sections = line.Split(':');
+                            if ((sections != null) && (sections.Length == 2))
+                            {
+                                switch (sections[0].Trim())
+                                {
+                                    case "DisplayName":
+                                        newItem = new SharePointDeploymentStatus();
+                                        newItem.Name = sections[1].Trim();
+                                        newItem.Deployed = true; // set a default as features don't pass this
+                                        break;
+                                    case "Id":
+                                        newItem.Id = Guid.Parse(sections[1].Trim());
+                                        results.Add(newItem); // we need to make sure the ID is the last in the list
+                                        break;
+                                    case "Deployed":
+                                        newItem.Deployed = bool.Parse(sections[1].Trim());
+                                        break;
+                                }
+                            }
                         }
                     }
 
@@ -387,7 +386,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
 
                 if (proc.ExitCode != 0)
                 {
-                    if (this.FailBuildOnError.Get(this.ActivityContext) == true)
+                    if (this.FailBuildOnError.Get(this.ActivityContext))
                     {
                         this.LogBuildError(string.Format(CultureInfo.InvariantCulture, "Powershell script exit code {0}: {1}", proc.ExitCode, proc.StandardError.ReadToEnd()));
                     }

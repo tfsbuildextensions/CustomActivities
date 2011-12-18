@@ -75,14 +75,14 @@ namespace TfsBuildExtensions.Activities.Tests
 
             // Create a WorkflowInvoker and add the IBuildDetail Extension
             WorkflowInvoker invoker = new WorkflowInvoker(target);
-            IBuildDetail t = new MockIBuildDetail { BuildNumber = "MyBuild_20101101.2" };
+            IBuildDetail t = new MockIBuildDetail { BuildNumber = string.Format("MyBuild_{0}{1}{2}.2", DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day) };
             t.BuildDefinition.Name = "MyBuild";
             invoker.Extensions.Add(t);
             
             var actual = invoker.Invoke(parameters);
 
             // Test the result
-            Assert.AreEqual("1.5.11101.2", actual["Version"].ToString());
+            Assert.AreEqual(string.Format("1.5.1{0}{1}.2", DateTime.Now.Month, DateTime.Now.Day), actual["Version"].ToString());
         }
 
         /// <summary>

@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.SSH
 {
+    using System;
     using System.Activities;
     using System.ComponentModel;
     using System.IO;
@@ -108,7 +109,7 @@ namespace TfsBuildExtensions.Activities.SSH
         [Description("The Protocol to be used to perform the copy. (scp is used by default")]
         [Category("Files")]
         public InArgument<SSHCopyProtocol> Protocol { get; set; }
-        
+
         /// <summary>
         /// Base on the main activity parameters constructs the code activity that 
         /// will return the command line arguments and putty executable location 
@@ -123,6 +124,7 @@ namespace TfsBuildExtensions.Activities.SSH
             {
                 ToolsPath = new InArgument<string>(env => this.ToolsPath.Get(env)),
                 Authentication = new InArgument<SSHAuthentication>(env => this.Authentication.Get(env)),
+                Port = new InArgument<int>(env => this.Port.Get(env)),
 
                 // Specific input parameters
                 EnableCompression = new InArgument<bool>(env => this.EnableCompression.Get(env)),
@@ -270,6 +272,8 @@ namespace TfsBuildExtensions.Activities.SSH
             [RequiredArgument]
             public InArgument<SSHAuthentication> Authentication { get; set; }
 
+            public InArgument<int> Port { get; set; }
+
             #endregion
 
             #region specific input parameters
@@ -372,7 +376,7 @@ namespace TfsBuildExtensions.Activities.SSH
             protected override void Execute(CodeActivityContext context)
             {
                 var toolsPath = PuttyHelper.GetPuttyPath(this.ToolsPath.Get(context));
-
+                
                 if (string.IsNullOrEmpty(toolsPath))
                 {
                     context.TrackBuildWarning("can't determine PuTTy tools path. Will rely on path");
@@ -419,15 +423,23 @@ namespace TfsBuildExtensions.Activities.SSH
             private string GenerateCommandLineCommands(ActivityContext context)
             {
                 var auth = this.Authentication.Get(context);
-                
+                var port = this.Port.Get(context);
+                var portParameter = string.Empty;
+
+                if (port > 0)
+                {
+                    portParameter = string.Format("-P {0}", port);
+                }
+
                 return string.Format(
-                    "{0} -{1} {2} {3} {4} {5} -batch -noagent {6} {7}",
-                    PuttyHelper.GetAuthenticationParameters(auth),                    
+                    "{0} -{1} {2} {3} {4} {5} -batch -noagent {6} {7} {8}",
+                    PuttyHelper.GetAuthenticationParameters(auth),
                     this.Protocol.Get(context),
                     GetStringIfTrue(this.Unsafe, context, "-unsafe"),
                     GetStringIfTrue(this.EnableCompression, context, "-C"),
                     GetStringIfTrue(this.Recursively, context, "-r"),
                     GetStringIfTrue(this.PreserveFileAttributes, context, "-p"),
+                    portParameter,
                     this.Source.Get(context),
                     this.Target.Get(context));
             }

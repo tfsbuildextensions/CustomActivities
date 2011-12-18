@@ -12,7 +12,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
     /// Remove a pre-existing deployment from a slot.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class RemoveDeployment : BaseAzureActivity
+    public class RemoveDeployment : BaseAzureAsynchronousActivity
     {
         /// <summary>
         /// Gets or sets the Azure deployment slot identifier.
@@ -25,11 +25,6 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// </summary>
         [RequiredArgument]
         public InArgument<string> ServiceName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the operation id of the Azure API command.
-        /// </summary>
-        public OutArgument<string> OperationId { get; set; }
 
         /// <summary>
         /// Connect to an Azure subscription and remove the named deployment.
