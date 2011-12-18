@@ -7,6 +7,8 @@ namespace TfsBuildExtensions.Activities.Tests
     using System;
     using System.Collections.Generic;
     using Microsoft.TeamFoundation.Build.Client;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
 
     class MockIBuildDefinition : IBuildDefinition
     {
@@ -15,12 +17,55 @@ namespace TfsBuildExtensions.Activities.Tests
             throw new NotImplementedException();
         }
 
+        public int BatchSize
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public Uri Uri
         {
             get { throw new NotImplementedException(); }
         }
 
         public string Name { get; set; }
+
+        public DateTime DateCreated { get; set; }
+
+        public DefinitionQueueStatus QueueStatus
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+        
+        public DefinitionTriggerType TriggerType
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IDictionary<string, object> AttachedProperties
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         public string TeamProject
         {
@@ -42,7 +87,42 @@ namespace TfsBuildExtensions.Activities.Tests
             throw new NotImplementedException();
         }
 
+        public void CopyFrom(IBuildDefinition buildDefinition)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Refresh(string[] propertyNameFilters, QueryOptions queryOptions)
+        {
+            throw new NotImplementedException();
+        }
+
         public IBuildRequest CreateBuildRequest()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Connect(int pollingInterval, int timeout, System.ComponentModel.ISynchronizeInvoke synchronizingObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Wait(TimeSpan a, TimeSpan b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ReadOnlyCollection<int> RequestIds       
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public ReadOnlyCollection<IQueuedBuild> Requests
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool Wait(TimeSpan a, TimeSpan b, System.ComponentModel.ISynchronizeInvoke synchronizingObject)
         {
             throw new NotImplementedException();
         }

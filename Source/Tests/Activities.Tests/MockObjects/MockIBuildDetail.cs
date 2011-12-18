@@ -7,12 +7,18 @@ namespace TfsBuildExtensions.Activities.Tests
     using System;
     using System.ComponentModel;
     using Microsoft.TeamFoundation.Build.Client;
+    using System.Collections.ObjectModel;
 
     public class MockIBuildDetail : IBuildDetail
     {
         private readonly MockIBuildDefinition mib = new MockIBuildDefinition();
 
         #region IBuildDetail Members
+
+        public void Connect(int pollingInterval, int timeout, System.ComponentModel.ISynchronizeInvoke synchronizingObject)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Connect(int pollingInterval, ISynchronizeInvoke synchronizingObject)
         {
@@ -33,6 +39,27 @@ namespace TfsBuildExtensions.Activities.Tests
         {
             throw new NotImplementedException();
         }
+
+        public bool Wait(TimeSpan a, TimeSpan b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ReadOnlyCollection<int> RequestIds
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public ReadOnlyCollection<IQueuedBuild> Requests
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool Wait(TimeSpan a, TimeSpan b, System.ComponentModel.ISynchronizeInvoke synchronizingObject)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public void Disconnect()
         {
