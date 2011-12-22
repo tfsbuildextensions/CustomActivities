@@ -20,6 +20,16 @@ namespace TfsBuildExtensions.Activities.Tests
             throw new NotImplementedException();
         }
 
+        public string LastChangedByDisplayName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public Guid RequestIntermediateLogs()
+        {
+            throw new NotImplementedException();
+        }
+
         public void Connect(int pollingInterval, ISynchronizeInvoke synchronizingObject)
         {
             throw new NotImplementedException();
