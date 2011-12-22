@@ -86,9 +86,11 @@
     <Compile Include="Certificates\RemoveCertificate.cs" />
     <Compile Include="Certificates\GetCertificate.cs" />
     <Compile Include="Certificates\GetCertificates.cs" />
+    <Compile Include="ChannelManager.cs" />
     <Compile Include="Common\GetOperationStatus.cs" />
     <Compile Include="ConfigurationConstants.cs" />
     <Compile Include="BaseAzureAsynchronousActivity.cs" />
+    <Compile Include="BaseAzureActivityGeneric.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\Utility.cs" />
     <Compile Include="HostedServices\ChangeDeploymentConfiguration.cs" />

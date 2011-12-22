@@ -67,7 +67,8 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// <summary>
         /// Connect to an Azure subscription and upgrade an existing deployment.
         /// </summary>
-        protected override void AzureExecute()
+        /// <returns>The asynchronous operation identifier.</returns>
+        protected override string AzureExecute()
         {
             var deploymentInput = this.CreateUpgradeInput();
 
@@ -76,12 +77,12 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                 try
                 {
                     this.RetryCall(s => this.Channel.UpgradeDeployment(s, this.ServiceName.Get(this.ActivityContext), this.DeploymentName.Get(this.ActivityContext), deploymentInput));
-                    this.OperationId.Set(this.ActivityContext, RetrieveOperationId());
+                    return RetrieveOperationId();
                 }
                 catch (EndpointNotFoundException ex)
                 {
                     LogBuildMessage(ex.Message);
-                    this.OperationId.Set(this.ActivityContext, null);
+                    return null;
                 }
             }
         }

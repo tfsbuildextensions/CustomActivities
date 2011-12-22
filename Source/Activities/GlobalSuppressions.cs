@@ -242,3 +242,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope = "member", Target = "TfsBuildExtensions.Activities.Framework.AssemblyInfo.#AssemblyFileVersions")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.GetLastGoodBuild.#ConnectToTFS()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.GetLastGoodBuild.#isErrorCaught")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Scope = "type", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.IsSourceChanged")]

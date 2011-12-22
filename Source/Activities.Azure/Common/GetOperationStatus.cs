@@ -12,7 +12,7 @@ namespace TfsBuildExtensions.Activities.Azure.Common
     /// Get the status of an asynchronous operation.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public class GetOperationStatus : BaseAzureActivity
+    public class GetOperationStatus : BaseAzureActivity<string>
     {
         /// <summary>
         /// Gets or sets the operation id of the Azure API command.
@@ -21,24 +21,20 @@ namespace TfsBuildExtensions.Activities.Azure.Common
         public InArgument<string> OperationId { get; set; }
 
         /// <summary>
-        /// Gets or sets the operation state of the Azure API command.
-        /// </summary>
-        public OutArgument<string> OperationState { get; set; }
-
-        /// <summary>
         /// Connect to an Azure subscription and obtain information about a pending operation.
         /// </summary>
-        protected override void AzureExecute()
+        /// <returns>string</returns>
+        protected override string AzureExecute()
         {
             try
             {
                 Operation operation = this.RetryCall(s => this.Channel.GetOperationStatus(s, this.OperationId.Get(this.ActivityContext)));
-                this.OperationState.Set(this.ActivityContext, operation.Status);
+                return operation.Status;
             }
             catch (EndpointNotFoundException ex)
             {
                 LogBuildMessage(ex.Message);
-                this.OperationState.Set(this.ActivityContext, null);
+                return null;
             }
         }
     }

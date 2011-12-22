@@ -36,19 +36,20 @@ namespace TfsBuildExtensions.Activities.Azure.Certificates
         /// <summary>
         /// Connect to an Azure subscription and obtain a certificate.
         /// </summary>
-        protected override void AzureExecute()
+        /// <returns>The asynchronous operation identifier.</returns>
+        protected override string AzureExecute()
         {
             CertificateFile file = this.CreateFileFromCertificate();
 
             try
             {
                 this.RetryCall(s => this.Channel.AddCertificates(s, this.ServiceName.Get(this.ActivityContext), file));
-                this.OperationId.Set(this.ActivityContext, RetrieveOperationId());
+                return RetrieveOperationId();
             }
             catch (EndpointNotFoundException ex)
             {
                 LogBuildMessage(ex.Message);
-                this.OperationId.Set(this.ActivityContext, null);
+                return null;
             }
         }
 

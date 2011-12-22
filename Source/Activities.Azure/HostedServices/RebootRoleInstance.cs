@@ -74,7 +74,8 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// <summary>
         /// Connect to an Azure subscription and reboot a deployment.
         /// </summary>
-        protected override void AzureExecute()
+        /// <returns>The asynchronous operation identifier.</returns>
+        protected override string AzureExecute()
         {
             try
             {
@@ -87,12 +88,12 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                     this.RetryCall(s => this.Channel.RebootDeploymentRoleInstanceBySlot(s, this.ServiceName.Get(this.ActivityContext), this.Slot.Get(this.ActivityContext), this.InstanceName.Get(this.ActivityContext)));
                 }
 
-                this.OperationId.Set(this.ActivityContext, RetrieveOperationId());
+                return RetrieveOperationId();
             }
             catch (EndpointNotFoundException ex)
             {
                 LogBuildMessage(ex.Message);
-                this.OperationId.Set(this.ActivityContext, null);
+                return null;
             }
         }
     }

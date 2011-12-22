@@ -6,7 +6,6 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     using System;
     using System.Activities;
     using System.Collections.Generic;
-    using System.Linq;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.VersionControl.Client;
@@ -15,12 +14,17 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// Checks build definition workspace to determine if the source control has changed since a given datetime (i.e. when the last good build ran).  Useful for not launching builds if source hasn't changed.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class IsSourceChanged : BaseCodeActivity<bool>
+    public sealed class IsSourceChanged : CodeActivity<bool>
     {
         private IBuildServer bs;
         private VersionControlServer vcs;
         private DateTime since;
+        private TfsTeamProjectCollection mtfs;
         private List<string> exclusions;
+        private string buildDefinition;
+        private string teamProject;
+        private string teamFoundationServer;
+        private string serverPath;
 
         /// <summary>
         /// Specifies the TeamFoundationServer. Defaults to that of the current build
@@ -55,35 +59,37 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Executes the logic for this workflow activity
         /// </summary>
+        /// <param name="context">CodeActivityContext</param>
         /// <returns>bool</returns>
-        protected override bool InternalExecute()
+        protected override bool Execute(CodeActivityContext context)
         {
-            this.since = this.Since.Get(this.ActivityContext);
-            this.exclusions = this.Exclusions.Get(this.ActivityContext);
-            this.ConnectToTfs();
-            bool containsChanges = this.ServerPath.Expression == null ? this.CheckWorkspaces() : this.CheckServerPath();
-            this.ActivityContext.SetValue(Result, containsChanges);
+            this.buildDefinition = context.GetValue(this.BuildDefinition);
+            this.serverPath = (context.GetValue(this.ServerPath) == null) ? string.Empty : context.GetValue(this.ServerPath);
+            this.teamProject = context.GetValue(this.TeamProject);
+            this.teamFoundationServer = context.GetValue(this.TeamFoundationServer);
+            this.since = context.GetValue(this.Since);
+            this.exclusions = context.GetValue(this.Exclusions);
+
+            this.ConnectToTFS();
+
+            bool containsChanges = string.IsNullOrEmpty(this.serverPath) ? this.CheckWorkspaces() : this.CheckServerPath();
+
+            context.SetValue(Result, containsChanges);
             return containsChanges;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "TODO: Need to resolve this.")]
-        private void ConnectToTfs()
+        private void ConnectToTFS()
         {
-            TfsTeamProjectCollection tpc = this.TeamFoundationServer.Expression == null ? this.ActivityContext.GetExtension<TfsTeamProjectCollection>() : new TfsTeamProjectCollection(new Uri(this.TeamFoundationServer.Get(this.ActivityContext)));
-            this.bs = (IBuildServer)tpc.GetService(typeof(IBuildServer));
-            this.vcs = (VersionControlServer)tpc.GetService(typeof(VersionControlServer));
+            this.mtfs = new TfsTeamProjectCollection(new Uri(this.teamFoundationServer));
+            this.bs = (IBuildServer)this.mtfs.GetService(typeof(IBuildServer));
+            this.vcs = (VersionControlServer)this.mtfs.GetService(typeof(VersionControlServer));
         }
 
         private bool CheckWorkspaces()
         {
-            if (this.TeamProject.Expression == null)
-            {
-                var buildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
-                this.TeamProject.Set(this.ActivityContext, buildDetail.TeamProject);
-            }
-
-            IBuildDefinition buildDefinition = this.bs.GetBuildDefinition(this.TeamProject.Get(this.ActivityContext), this.BuildDefinition.Get(this.ActivityContext));
-            IWorkspaceTemplate workspaceTemplate = buildDefinition.Workspace;
+            IBuildDefinition builddef = this.bs.GetBuildDefinition(this.teamProject, this.buildDefinition);
+            IWorkspaceTemplate workspaceTemplate = builddef.Workspace;
             bool containsChanges = false;
 
             foreach (IWorkspaceMapping mapping in workspaceTemplate.Mappings)
@@ -95,15 +101,23 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                         continue;
                     }
 
-                    string serverPath = mapping.ServerItem;
-                    ItemSet itemSet = this.vcs.GetItems(serverPath, RecursionType.Full);
+                    ItemSet itemSet = this.vcs.GetItems(mapping.ServerItem, RecursionType.Full);
 
-                    foreach (Item item in itemSet.Items.Where(item => !workspaceTemplate.Mappings.Exists(m => item.ServerItem.Contains(m.ServerItem) && m.MappingType == WorkspaceMappingType.Cloak && m.ServerItem.Contains(mapping.ServerItem))).Where(item => item.CheckinDate >= this.since))
+                    foreach (Item item in itemSet.Items)
                     {
-                        containsChanges = true;
-                        foreach (string exclusion in this.exclusions.Where(exclusion => item.ServerItem.Contains(exclusion)))
+                        if (!workspaceTemplate.Mappings.Exists(m => item.ServerItem.Contains(m.ServerItem) && m.MappingType == WorkspaceMappingType.Cloak && m.ServerItem.Contains(mapping.ServerItem)))
                         {
-                            containsChanges = false;
+                            if (item.CheckinDate >= this.since)
+                            {
+                                containsChanges = true;
+                                foreach (string exclusion in this.exclusions)
+                                {
+                                    if (item.ServerItem.Contains(exclusion))
+                                    {
+                                        containsChanges = false;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -116,16 +130,22 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             bool containsChanges = false;
 
-            ItemSet itemSet = this.vcs.GetItems(this.ServerPath.Get(this.ActivityContext), RecursionType.Full);
+            ItemSet itemSet = this.vcs.GetItems(this.serverPath, RecursionType.Full);
 
-            foreach (Item item in itemSet.Items.Where(item => item.CheckinDate >= this.since))
+            foreach (Item item in itemSet.Items)
             {
-                containsChanges = true;
-                if (this.exclusions != null)
+                if (item.CheckinDate >= this.since)
                 {
-                    foreach (string e in this.exclusions.Where(e => item.ServerItem.Contains(e)))
+                    containsChanges = true;
+                    if (this.exclusions != null)
                     {
-                        containsChanges = false;
+                        foreach (string e in this.exclusions)
+                        {
+                            if (item.ServerItem.Contains(e))
+                            {
+                                containsChanges = false;
+                            }
+                        }
                     }
                 }
             }

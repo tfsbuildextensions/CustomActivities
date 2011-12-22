@@ -168,9 +168,14 @@ namespace TfsBuildExtensions.Activities
         /// </summary>
         /// <param name="text">Display text</param>
         /// <param name="parent">Parent node in the build log</param>
-        /// <returns>The new node containing the supplied text</returns>
+        /// <returns>The new node containing the supplied text if <paramref name="parent"/> is not a null reference; otherwise null.</returns>
         protected static IBuildInformationNode AddTextNode(string text, IBuildInformationNode parent)
         {
+            if (parent == null)
+            {
+                return null;
+            }
+
             IBuildInformationNode childNode = parent.Children.CreateNode();
             childNode.Type = parent.Type;
             childNode.Fields.Add("DisplayText", text);
@@ -184,9 +189,14 @@ namespace TfsBuildExtensions.Activities
         /// <param name="text">Display text of the hyperlink</param>
         /// <param name="uri">Uri of the hyperlink</param>
         /// <param name="parent">Parent node in the build log</param>
-        /// <returns>The new external link containing the supplied hyperlink</returns>
+        /// <returns>The new external link containing the supplied hyperlink if <paramref name="parent"/> is not a null reference; otherwise null.</returns>
         protected static IExternalLink AddLinkNode(string text, Uri uri, IBuildInformationNode parent)
         {
+            if (parent == null)
+            {
+                return null;
+            }
+
             var link = parent.Children.AddExternalLink(text, uri);
             link.Save();
             return link;

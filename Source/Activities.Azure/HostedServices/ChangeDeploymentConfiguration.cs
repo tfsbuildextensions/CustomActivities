@@ -76,7 +76,8 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// <summary>
         /// Connect to an Azure subscription and change the configuration of a deployment.
         /// </summary>
-        protected override void AzureExecute()
+        /// <returns>The asynchronous operation identifier.</returns>
+        protected override string AzureExecute()
         {
             var changeInput = this.CreateConfigurationInput();
 
@@ -93,12 +94,12 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                         this.RetryCall(s => this.Channel.ChangeConfigurationBySlot(s, this.ServiceName.Get(this.ActivityContext), this.Slot.Get(this.ActivityContext), changeInput));
                     }
 
-                    this.OperationId.Set(this.ActivityContext, RetrieveOperationId());
+                    return RetrieveOperationId();
                 }
                 catch (EndpointNotFoundException ex)
                 {
                     LogBuildMessage(ex.Message);
-                    this.OperationId.Set(this.ActivityContext, null);
+                    return null;
                 }
             }
         }

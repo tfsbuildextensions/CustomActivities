@@ -29,19 +29,20 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// <summary>
         /// Connect to an Azure subscription and remove the named deployment.
         /// </summary>
-        protected override void AzureExecute()
+        /// <returns>The asynchronous operation identifier.</returns>
+        protected override string AzureExecute()
         {
             using (new OperationContextScope((IContextChannel)Channel))
             {
                 try
                 {
                     this.RetryCall(s => this.Channel.DeleteDeploymentBySlot(s, this.ServiceName.Get(this.ActivityContext), this.Slot.Get(this.ActivityContext)));
-                    this.OperationId.Set(this.ActivityContext, RetrieveOperationId());
+                    return RetrieveOperationId();
                 }
                 catch (EndpointNotFoundException ex)
                 {
                     LogBuildMessage(ex.Message);
-                    this.OperationId.Set(this.ActivityContext, null);
+                    return null;
                 }
             }
         }

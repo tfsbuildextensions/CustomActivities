@@ -352,7 +352,10 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                         this.LogBuildError(string.Format("{0} for {1} is {2} which is above threshold ({3}){4}", CyclomaticComplexity, member, metric.Value, thresholds.CyclomaticComplexityWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
                     }
 
-                    AddTextNode(metric.Name + ": " + metric.Value, parent);
+                    if (this.LogCodeMetrics.Get(this.ActivityContext))
+                    {
+                        AddTextNode(metric.Name + ": " + metric.Value, parent);
+                    }
                 }
             }
         }

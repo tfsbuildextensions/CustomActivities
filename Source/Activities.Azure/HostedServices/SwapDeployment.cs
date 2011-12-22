@@ -35,7 +35,8 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// <summary>
         /// Connect to an Azure subscription and execute a VIP swap.
         /// </summary>
-        protected override void AzureExecute()
+        /// <returns>The asynchronous operation identifier.</returns>
+        protected override string AzureExecute()
         {
             var swapDeploymentInput = new SwapDeploymentInput()
             {
@@ -48,12 +49,12 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                 try
                 {
                     this.RetryCall(s => this.Channel.SwapDeployment(s, this.ServiceName.Get(this.ActivityContext), swapDeploymentInput));
-                    this.OperationId.Set(this.ActivityContext, RetrieveOperationId());
+                    return RetrieveOperationId();
                 }
                 catch (EndpointNotFoundException ex)
                 {
                     LogBuildMessage(ex.Message);
-                    this.OperationId.Set(this.ActivityContext, null);
+                    return null;
                 }
             }
         }

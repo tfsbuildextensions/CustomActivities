@@ -35,7 +35,8 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// <summary>
         /// Connect to an Azure subscription and set the deployment status.
         /// </summary>
-        protected override void AzureExecute()
+        /// <returns>The asynchronous operation identifier.</returns>
+        protected override string AzureExecute()
         {
             var updateDeploymentStatus = new UpdateDeploymentStatusInput()
             {
@@ -47,12 +48,12 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                 try
                 {
                     this.RetryCall(s => this.Channel.UpdateDeploymentStatusBySlot(s, this.ServiceName.Get(this.ActivityContext), this.Slot.Get(this.ActivityContext), updateDeploymentStatus));
-                    this.OperationId.Set(this.ActivityContext, RetrieveOperationId());
+                    return RetrieveOperationId();
                 }
                 catch (EndpointNotFoundException ex)
                 {
                     LogBuildMessage(ex.Message);
-                    this.OperationId.Set(this.ActivityContext, null);
+                    return null;
                 }
             }
         }

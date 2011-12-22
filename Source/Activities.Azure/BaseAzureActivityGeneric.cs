@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="BaseAzureActivity.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="BaseAzureActivityGeneric.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.Azure
 {
@@ -12,7 +12,8 @@ namespace TfsBuildExtensions.Activities.Azure
     /// <summary>
     /// Provide the base integration to the Azure Service Management API for all activities.
     /// </summary>
-    public abstract class BaseAzureActivity : BaseCodeActivity
+    /// <typeparam name="T">Return type of the activity.</typeparam>
+    public abstract class BaseAzureActivity<T> : BaseCodeActivity<T>
     {
         /// <summary>
         /// Gets or sets the Azure subscription ID.
@@ -56,7 +57,8 @@ namespace TfsBuildExtensions.Activities.Azure
         /// <summary>
         /// Prevent inheritance of the method.  Bind required parameters.
         /// </summary>
-        protected sealed override void InternalExecute()
+        /// <returns>A value of the generic type.</returns>
+        protected sealed override T InternalExecute()
         {
             // Initialize the channel to Azure.
             try
@@ -73,13 +75,14 @@ namespace TfsBuildExtensions.Activities.Azure
             }
 
             // Execute the activity body
-            this.AzureExecute();
+            return this.AzureExecute();
         }
 
         /// <summary>
         /// AzureExecute method which Azure-specific activities should implement
         /// </summary>
-        protected abstract void AzureExecute();
+        /// <returns>A value of generic return type.</returns>
+        protected abstract T AzureExecute();
 
         /// <summary>
         /// Execute a call to the Azure service, with retry logic for common failures.

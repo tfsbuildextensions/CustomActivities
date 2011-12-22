@@ -10,14 +10,8 @@ namespace TfsBuildExtensions.Activities.Azure
     /// <summary>
     /// Provide support for Azure asynchronous activities that return an operation identifier for later polling.
     /// </summary>
-    public abstract class BaseAzureAsynchronousActivity : BaseAzureActivity
+    public abstract class BaseAzureAsynchronousActivity : BaseAzureActivity<string>
     {
-        /// <summary>
-        /// Gets or sets the operation id of the Azure API command.
-        /// </summary>
-        [RequiredArgument]
-        public OutArgument<string> OperationId { get; set; }
-
         /// <summary>
         /// Get the Azure operation identifier from the server response headers.
         /// </summary>
