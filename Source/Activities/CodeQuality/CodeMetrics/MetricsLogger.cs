@@ -22,7 +22,7 @@ namespace TfsBuildExtensions.Activities.CodeMetrics
         /// <summary>
         /// Logs error message back to the calling activity
         /// </summary>
-        /// <param name="msg">Message</param>
+        /// <param name="message">Message</param>
         public void LogError(string message)
         {
             this.activity.LogError(message);
@@ -31,7 +31,7 @@ namespace TfsBuildExtensions.Activities.CodeMetrics
         /// <summary>
         /// Logs information message back to activity
         /// </summary>
-        /// <param name="msg">Message</param>
+        /// <param name="message">Message</param>
         public void LogMessage(string message)
         {
             this.activity.LogMessage(message);

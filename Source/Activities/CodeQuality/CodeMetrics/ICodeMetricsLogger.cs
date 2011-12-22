@@ -11,13 +11,13 @@ namespace TfsBuildExtensions.Activities.CodeMetrics
         /// <summary>
         /// Logs an error
         /// </summary>
-        /// <param name="msg">Error description</param>
+        /// <param name="message">Error description</param>
         void LogError(string message);
 
         /// <summary>
         /// Logs information
         /// </summary>
-        /// <param name="msg">Information message</param>
+        /// <param name="message">Information message</param>
         void LogMessage(string message);
     }
 }
