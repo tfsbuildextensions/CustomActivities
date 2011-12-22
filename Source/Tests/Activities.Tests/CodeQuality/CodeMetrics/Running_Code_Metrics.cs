@@ -7,7 +7,7 @@ namespace TfsBuildExtensions.Activities.Tests
     using System.Collections.Generic;
     using System.IO;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using TfsBuildExtensions.Activities.CodeMetrics;
+    using TfsBuildExtensions.Activities.CodeMetrics.Extended;
     
     /// <summary>
     /// This is a test class for CodeMetricsTest and is intended

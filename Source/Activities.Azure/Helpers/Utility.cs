@@ -16,7 +16,7 @@
 //// places, or events is intended or should be inferred.
 //// ----------------------------------------------------------------------------------
 #pragma warning disable 1591
-namespace TfsBuildExtensions.Activities.Azure.Helpers
+namespace TfsBuildExtensions.Activities.Azure.Extended
 {
     using System.IO;
     using Microsoft.Samples.WindowsAzure.ServiceManagement;

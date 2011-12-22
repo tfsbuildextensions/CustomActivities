@@ -7,7 +7,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
     using System.ServiceModel;
     using Microsoft.Samples.WindowsAzure.ServiceManagement;
     using Microsoft.TeamFoundation.Build.Client;
-    using TfsBuildExtensions.Activities.Azure.Model;
+    using TfsBuildExtensions.Activities.Azure.Extended;
 
     /// <summary>
     /// Get the deployment context for a currently running service.

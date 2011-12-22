@@ -8,9 +8,9 @@
     <ItemGroup>
         <FilesToCheckout Include="$(CustomActivitiesFolder)\TFSBuildExtensions.*"/>
     </ItemGroup>
-    <Target Name="PreCheckin" DependsOnTargets="StyleCop;
+    <Target Name="PreCheckin" DependsOnTargets="
                                                 Compile"/>
-    <Target Name="FullBuild" DependsOnTargets="StyleCop;
+    <Target Name="FullBuild" DependsOnTargets="
                                             Compile;
                                             UpdateSourceControl;
                                             BuildChm"/>

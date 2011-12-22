@@ -8,7 +8,7 @@ namespace TfsBuildExtensions.Activities.Azure.Tests
     using Microsoft.Samples.WindowsAzure.ServiceManagement;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TfsBuildExtensions.Activities.Azure.HostedServices;
-
+    using TfsBuildExtensions.Activities.Azure.Extended;
     [TestClass]
     public class GetDeploymentTest
     {
@@ -26,7 +26,7 @@ namespace TfsBuildExtensions.Activities.Azure.Tests
 
             // Act
             IDictionary<string, object> results = WorkflowInvoker.Invoke(target, new Dictionary<string, object>());
-            Model.DeploymentInfoContext ctx = results["DeploymentContext"] as Model.DeploymentInfoContext;
+            DeploymentInfoContext ctx = results["DeploymentContext"] as DeploymentInfoContext;
 
             // Assert
             Assert.IsNotNull(ctx);

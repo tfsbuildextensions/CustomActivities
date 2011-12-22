@@ -16,10 +16,9 @@
 // places, or events is intended or should be inferred.
 // ----------------------------------------------------------------------------------
 #pragma warning disable 1591
-namespace TfsBuildExtensions.Activities.Azure.Model
+namespace TfsBuildExtensions.Activities.Azure.Extended
 {
     using System;
-    using System.Collections.Generic;
 
     public class HostedServiceContext : ManagementOperationContext
     {

@@ -5,7 +5,7 @@
 //  </auto-generated>
 // ------------------------------------------------------------------------------
 #pragma warning disable 1591
-namespace TfsBuildExtensions.Activities.CodeMetrics
+namespace TfsBuildExtensions.Activities.CodeMetrics.Extended
 {
     using System;
     using System.Diagnostics;

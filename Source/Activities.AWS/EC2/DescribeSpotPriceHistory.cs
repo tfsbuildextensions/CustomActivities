@@ -9,6 +9,7 @@ namespace TfsBuildExtensions.Activities.AWS.EC2
     using System.ServiceModel;
     using Amazon.EC2.Model;
     using Microsoft.TeamFoundation.Build.Client;
+    using TfsBuildExtensions.Activities.AWS.Extended;
 
     /// <summary>
     /// Get spot pricing history.

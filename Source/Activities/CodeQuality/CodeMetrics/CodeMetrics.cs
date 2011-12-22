@@ -13,7 +13,8 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     using System.Linq;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Build.Workflow.Services;
-    using TfsBuildExtensions.Activities.CodeMetrics;
+    using TfsBuildExtensions.Activities.CodeMetrics.Extended;
+    using TfsBuildExtensions.Activities.CodeQuality.Extended;
 
     /// <summary>
     /// Activity for processing code metrics using the Visual Studio Code Metrics PowerTool 10.0

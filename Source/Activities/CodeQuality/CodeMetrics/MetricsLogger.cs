@@ -1,7 +1,7 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="MetricsLogger.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-namespace TfsBuildExtensions.Activities.CodeMetrics
+namespace TfsBuildExtensions.Activities.CodeMetrics.Extended
 {
     /// <summary>
     /// Implements IMetricLogger

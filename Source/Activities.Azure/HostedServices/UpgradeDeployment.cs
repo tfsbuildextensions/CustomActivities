@@ -8,7 +8,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
     using System.ServiceModel;
     using Microsoft.Samples.WindowsAzure.ServiceManagement;
     using Microsoft.TeamFoundation.Build.Client;
-    using TfsBuildExtensions.Activities.Azure.Helpers;
+    using TfsBuildExtensions.Activities.Azure.Extended;
 
     /// <summary>
     /// UpgradeMode enumeration

@@ -245,3 +245,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Scope = "type", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.IsSourceChanged")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Dir", Scope = "member", Target = "TfsBuildExtensions.Activities.VisualStudio.VB6.#OutDir")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Auth", Scope = "member", Target = "TfsBuildExtensions.Activities.SSH.SSHAuthentication.#AuthType")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Scope = "member", Target = "TfsBuildExtensions.Activities.CodeMetrics.Extended.MetricsInvoker.#Invoke()")]
