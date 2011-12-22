@@ -26,7 +26,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
 
         void LogBuildError(string errorMessage);
 
-        void LogBuildMessage(string msg);
+        void LogBuildMessage(string message);
     }
 
     /// <summary>
@@ -111,9 +111,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality.History
             this.activity.LogBuildError(errorMessage);
         }
 
-        public void LogBuildMessage(string msg)
+        public void LogBuildMessage(string message)
         {
-            this.activity.LogBuildMessage(msg);
+            this.activity.LogBuildMessage(message);
         }
     }
 }

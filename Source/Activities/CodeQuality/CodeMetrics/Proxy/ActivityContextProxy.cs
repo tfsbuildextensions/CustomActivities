@@ -18,7 +18,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Proxy
 
         string BinariesDirectory { get; }
 
-        void LogBuildMessage(string msg);
+        void LogBuildMessage(string message);
     }
 
     /// <summary>
@@ -65,9 +65,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Proxy
             }
         }
 
-        public void LogBuildMessage(string msg)
+        public void LogBuildMessage(string message)
         {
-            this.activity.LogBuildMessage(msg);
+            this.activity.LogBuildMessage(message);
         }
     }
 }

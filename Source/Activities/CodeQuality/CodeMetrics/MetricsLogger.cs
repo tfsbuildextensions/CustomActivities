@@ -23,18 +23,18 @@ namespace TfsBuildExtensions.Activities.CodeMetrics
         /// Logs error message back to the calling activity
         /// </summary>
         /// <param name="msg">Message</param>
-        public void LogError(string msg)
+        public void LogError(string message)
         {
-            this.activity.LogError(msg);
+            this.activity.LogError(message);
         }
 
         /// <summary>
         /// Logs information message back to activity
         /// </summary>
         /// <param name="msg">Message</param>
-        public void LogMessage(string msg)
+        public void LogMessage(string message)
         {
-            this.activity.LogMessage(msg);
+            this.activity.LogMessage(message);
         }
     }
 }
