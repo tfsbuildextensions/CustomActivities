@@ -308,7 +308,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
             if (!string.IsNullOrEmpty(this.Dictionary.Get(this.ActivityContext)))
             {
-                arguments += "/dictionary:\"" + this.Dictionary.Get(this.ActivityContext) + "\"";
+                arguments += " /dictionary:\"" + this.Dictionary.Get(this.ActivityContext) + "\"";
             }
 
             if (this.ShowSummary.Get(this.ActivityContext))
