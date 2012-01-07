@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="CheckIfEnvironmentIsLocked.cs" />
     <Compile Include="PauseEnvironment.cs" />
+    <Compile Include="RenameSnapshot.cs" />
     <Compile Include="ShutdownEnvironment.cs" />
     <Compile Include="GetEnvironment.cs" />
     <Compile Include="ListLabSystems.cs" />

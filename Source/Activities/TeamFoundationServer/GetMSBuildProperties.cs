@@ -6,6 +6,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     using System;
     using System.Activities;
     using System.Collections.Generic;
+    using System.Text.RegularExpressions;
     using Microsoft.TeamFoundation.Build.Client;
 
     /// <summary>
@@ -65,7 +66,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                         rawArgs.Add(rawArg);
                     }
 
-                    argsWithLowerCaseDelimiters = rawArg == argsWithoutFirstDelimiters ? string.Empty : argsWithoutFirstDelimiters.TrimStart(rawArg.ToCharArray()).Trim();
+                    argsWithLowerCaseDelimiters = rawArg == argsWithoutFirstDelimiters ? string.Empty : Regex.Replace(argsWithLowerCaseDelimiters, @"^[^\s]*\s", string.Empty); 
                 }
 
                 foreach (string s in rawArgs)
