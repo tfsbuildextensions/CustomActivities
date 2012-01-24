@@ -225,7 +225,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
         private static void CreateDeploymentManifest(string version, string applicationName, string publishLocation, string targetFrameworkVersion)
         {
             Dictionary<string, string> metadata = new Dictionary<string, string>();
-            metadata.Add("TargetPath", "Application Files\\TestApp_" + version + "\\" + applicationName + ".exe.manifest");
+            metadata.Add("TargetPath", "Application Files\\" + applicationName + "_" + version + "\\" + applicationName + ".exe.manifest");
 
             GenerateDeploymentManifest generateDeploymentManifest = new GenerateDeploymentManifest()
             {
@@ -239,7 +239,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 UpdateMode = "Foreground",
                 OutputManifest = new TaskItem(publishLocation + "\\" + applicationName + ".application"),
                 MapFileExtensions = true,
-                EntryPoint = new TaskItem(publishLocation + @"\Application Files\TestApp_" + version + "\\" + applicationName + ".exe.manifest", metadata),
+                EntryPoint = new TaskItem(publishLocation + @"\Application Files\" + applicationName + "_" + version + "\\" + applicationName + ".exe.manifest", metadata),
                 CreateDesktopShortcut = false,
                 TargetFrameworkVersion = targetFrameworkVersion,
                 TargetFrameworkMoniker = ".NETFramework,Version=v" + targetFrameworkVersion,
