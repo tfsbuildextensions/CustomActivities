@@ -163,6 +163,8 @@
     <Compile Include="Scripting\PowerShell\WorkflowPsHost.cs" />
     <Compile Include="Scripting\PowerShell\WorkflowPsHostUi.cs" />
     <Compile Include="Scripting\PowerShell\WorkflowRawPsHostUi.cs" />
+    <Compile Include="SharePoint\CodeQuality\CatNetScan.cs" />
+    <Compile Include="SharePoint\CodeQuality\SPDisposeCheck.cs" />
     <Compile Include="SharePoint\SharePointDeployment.cs" />
     <Compile Include="SharePoint\SharePointDeploymentStatus.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs" />
