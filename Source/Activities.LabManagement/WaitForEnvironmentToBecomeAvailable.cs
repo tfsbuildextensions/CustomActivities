@@ -12,11 +12,6 @@ namespace TfsBuildExtensions.Activities.LabManagement
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.Lab.Client;
 
-    /*
-     *  This Activity Represents a Work in progress and is subject to change without notice until the
-     *  corresponding process template has been published.
-     */
-
     /// <summary>
     /// Provides an activity that can be used to wait until an environment because available to be
     /// used

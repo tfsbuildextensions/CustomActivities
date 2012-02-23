@@ -9,13 +9,8 @@ namespace TfsBuildExtensions.Activities.LabManagement
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.Lab.Client;
 
-    /*
-    *  This Activity Represents a Work in progress and is subject to change without notice until the
-    *  corresponding process template has been published.
-    */
-
     /// <summary>
-    /// An activity that renames a snapshot attached to a TFS Lab Management Lab Environment.  This activity will only rename a snapshot
+    /// An activity renames a snapshot attached to a TFS Lab Management Lab Environment. This activity will only rename a snapshot
     /// that is part of a lab environment that is in a Running state.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]

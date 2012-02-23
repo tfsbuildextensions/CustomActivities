@@ -7,11 +7,6 @@ namespace TfsBuildExtensions.Activities.LabManagement
     using System.IO;
     using Microsoft.TeamFoundation.Build.Client;
 
-    /*
-     *  This Activity Represents a Work in progress and is subject to change without notice until the
-     *  corresponding process template has been published.
-     */
-
     /// <summary>
     /// Provides an activity that allows the user to get the build number that currently has the environment locked
     /// </summary>

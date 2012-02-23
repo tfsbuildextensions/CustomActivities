@@ -7,11 +7,6 @@ namespace TfsBuildExtensions.Activities.LabManagement
     using System.IO;
     using Microsoft.TeamFoundation.Build.Client;
 
-    /*
-     *  This Activity Represents a Work in progress and is subject to change without notice until the
-     *  corresponding process template has been published.
-     */
-
     /// <summary>
     /// Provides an activity that can be used to determine if an Environment is locked (via the file-lock)
     /// </summary>

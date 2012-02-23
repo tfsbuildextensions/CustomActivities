@@ -9,11 +9,6 @@ namespace TfsBuildExtensions.Activities.LabManagement
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.Lab.Client;
 
-    /*
-     *  This Activity Represents a Work in progress and is subject to change without notice until the
-     *  corresponding process template has been published.
-     */
-
     /// <summary>
     /// An activity that lists TFS Lab Management Lab Environments based on tag filters.
     /// </summary>
