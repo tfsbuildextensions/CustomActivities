@@ -217,6 +217,12 @@ namespace TfsBuildExtensions.Activities.Framework
         }
 
         /// <summary>
+        /// If specified, this sets the directories to be used to search for input assemblies and dependencies. Separate each directory with a semi-colon
+        /// <para/>Command line option: /lib:directory
+        /// </summary>
+        public InArgument<string> SearchDirectories { get; set; }
+
+        /// <summary>
         /// This method sets the .NET Framework for the target assembly to be the one specified by platform. Valid strings for the first argument are "v1", "v1.1", "v2", and "v4". 
         /// <para/>The "v" is case insensitive and is also optional. This way ILMerge can be used to "cross-compile", i.e., it can run in one version of the framework and generate 
         /// <para/>the target assembly so it will run under a different assembly. The second argument is the directory in which mscorlib.dll is to be found.
@@ -311,6 +317,7 @@ namespace TfsBuildExtensions.Activities.Framework
             string allfiles = this.InputAssemblies.Get(this.ActivityContext).Aggregate(string.Empty, (current, assembly) => current + (assembly + " "));
             this.LogBuildMessage("Merging " + allfiles + " into " + this.OutputFile.Get(this.ActivityContext));
             ILMerging.ILMerge m = new ILMerging.ILMerge();
+
             if (this.AllowDuplicateTypes.Expression != null)
             {
                 foreach (string allowDuplicateType in this.AllowDuplicateTypes.Get(this.ActivityContext))
@@ -394,6 +401,12 @@ namespace TfsBuildExtensions.Activities.Framework
             if (this.XmlDocs.Get(this.ActivityContext))
             {
                 m.XmlDocumentation = true;
+            }
+
+            if (this.SearchDirectories.Expression != null)
+            {
+                var directories = this.SearchDirectories.Get(this.ActivityContext).Split(';');
+                m.SetSearchDirectories(directories);
             }
 
             m.FileAlignment = this.FileAlignment.Get(this.ActivityContext);

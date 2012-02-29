@@ -342,6 +342,104 @@ namespace TfsBuildExtensions.Activities.Tests
             Assert.AreEqual("1.2.0.0", versions.ElementAt(1).ToString());
         }
 
+        /// <summary>
+        /// Tests if the assembly versions enumerable is empty if no AssemblyVersion is present.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (4).cs")]
+        public void AssemblyInfo_EmptyAssemblyVersions_WhenExecuteInvokedOnFileWithoutAssemblyVersion()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (4).cs", TestFilePrefix + ".cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + ".cs" } },
+                { "AssemblyVersion", "$(current).$(increment).$(current).$(current)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var versions = actual["AssemblyVersions"] as IEnumerable<Version>;
+            Assert.AreEqual(0, versions.Count());
+        }
+
+        /// <summary>
+        /// Tests if the assembly version is updated when a '*' wildcard character is present.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (5).cs")]
+        public void AssemblyInfo_UpdatesAssemblyVersion_WhenExecuteInvokedWithWildcard1()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (5).cs", TestFilePrefix + ".cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + ".cs" } },
+                { "AssemblyVersion", "$(current).$(increment).0.0" },
+                { "AssemblyInformationalVersion", "$(version)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var text = File.ReadAllText(TestFilePrefix + ".cs");
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyVersion(\"1.3.*\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyInformationalVersion(\"1.3.0.0\")]", StringComparison.Ordinal));
+            Assert.AreEqual("1.3.0.0", actual["MaxAssemblyVersion"].ToString());
+
+            var versions = actual["AssemblyVersions"] as IEnumerable<Version>;
+            Assert.AreEqual(1, versions.Count());
+            Assert.AreEqual("1.3.0.0", versions.ElementAt(0).ToString());
+        }
+
+        /// <summary>
+        /// Tests if the assembly version is updated when a '*' wildcard character is present.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (6).cs")]
+        public void AssemblyInfo_UpdatesAssemblyVersion_WhenExecuteInvokedWithWildcard2()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (6).cs", TestFilePrefix + ".cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + ".cs" } },
+                { "AssemblyVersion", "$(current).$(increment).$(increment).0" },
+                { "AssemblyInformationalVersion", "$(version)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var text = File.ReadAllText(TestFilePrefix + ".cs");
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyVersion(\"1.3.1.*\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyInformationalVersion(\"1.3.1.0\")]", StringComparison.Ordinal));
+            Assert.AreEqual("1.3.1.0", actual["MaxAssemblyVersion"].ToString());
+
+            var versions = actual["AssemblyVersions"] as IEnumerable<Version>;
+            Assert.AreEqual(1, versions.Count());
+            Assert.AreEqual("1.3.1.0", versions.ElementAt(0).ToString());
+        }
+
         #endregion
 
         #region AssemblyFileVersion Tests
@@ -433,6 +531,104 @@ namespace TfsBuildExtensions.Activities.Tests
             Assert.AreEqual(2, versions.Count());
             Assert.AreEqual("1.3.3.4", versions.ElementAt(0).ToString());
             Assert.AreEqual("1.2.3.4", versions.ElementAt(1).ToString());
+        }
+
+        /// <summary>
+        /// Tests if the assembly file versions enumerable is empty if no AssemblyVersion is present.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (4).cs")]
+        public void AssemblyInfo_EmptyAssemblyFileVersions_WhenExecuteInvokedOnFileWithoutAssemblyFileVersion()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (4).cs", TestFilePrefix + ".cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + ".cs" } },
+                { "AssemblyFileVersion", "$(current).$(increment).$(current).$(current)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var versions = actual["AssemblyFileVersions"] as IEnumerable<Version>;
+            Assert.AreEqual(0, versions.Count());
+        }
+
+        /// <summary>
+        /// Tests if the assembly file version is updated when a '*' wildcard character is present.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (5).cs")]
+        public void AssemblyInfo_UpdatesAssemblyFileVersion_WhenExecuteInvokedWithWildcard1()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (5).cs", TestFilePrefix + ".cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + ".cs" } },
+                { "AssemblyFileVersion", "$(current).$(increment).0.0" },
+                { "AssemblyInformationalVersion", "$(fileversion)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var text = File.ReadAllText(TestFilePrefix + ".cs");
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyFileVersion(\"2.4.*\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyInformationalVersion(\"2.4.0.0\")]", StringComparison.Ordinal));
+            Assert.AreEqual("2.4.0.0", actual["MaxAssemblyFileVersion"].ToString());
+
+            var versions = actual["AssemblyFileVersions"] as IEnumerable<Version>;
+            Assert.AreEqual(1, versions.Count());
+            Assert.AreEqual("2.4.0.0", versions.ElementAt(0).ToString());
+        }
+
+        /// <summary>
+        /// Tests if the assembly file version is updated when a '*' wildcard character is present.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (6).cs")]
+        public void AssemblyInfo_UpdatesAssemblyFileVersion_WhenExecuteInvokedWithWildcard2()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (6).cs", TestFilePrefix + ".cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + ".cs" } },
+                { "AssemblyFileVersion", "$(current).$(increment).$(increment).0" },
+                { "AssemblyInformationalVersion", "$(fileversion)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var text = File.ReadAllText(TestFilePrefix + ".cs");
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyFileVersion(\"2.4.2.*\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyInformationalVersion(\"2.4.2.0\")]", StringComparison.Ordinal));
+            Assert.AreEqual("2.4.2.0", actual["MaxAssemblyFileVersion"].ToString());
+
+            var versions = actual["AssemblyFileVersions"] as IEnumerable<Version>;
+            Assert.AreEqual(1, versions.Count());
+            Assert.AreEqual("2.4.2.0", versions.ElementAt(0).ToString());
         }
 
         #endregion
@@ -532,6 +728,35 @@ namespace TfsBuildExtensions.Activities.Tests
             Assert.AreEqual(2, versions.Count());
             Assert.AreEqual(string.Format("Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}", DateTime.Today), versions.ElementAt(0));
             Assert.AreEqual(string.Format("Value 1.1.0.0/1.1.4.0 at {0:yyyyMMdd}", DateTime.Today), versions.ElementAt(1));
+        }
+
+        /// <summary>
+        /// Tests if the assembly file versions enumerable is filled with empty string if no AssemblyInformationalVersion is present.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (4).cs")]
+        public void AssemblyInfo_EmptyAssemblyInformationalVersions_WhenExecuteInvokedOnFileWithoutAssemblyInformationalVersion()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (4).cs", TestFilePrefix + ".cs", true);
+
+            var target = new AssemblyInfo();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + ".cs" } },
+                { "AssemblyInformationalVersion", "$(fileversion)" }
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var versions = actual["AssemblyInformationalVersions"] as IEnumerable<string>;
+            Assert.AreEqual(1, versions.Count());
+            Assert.AreEqual(string.Empty, versions.ElementAt(0));
         }
 
         #endregion

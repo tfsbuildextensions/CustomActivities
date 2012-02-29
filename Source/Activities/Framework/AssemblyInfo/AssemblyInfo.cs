@@ -473,13 +473,22 @@ namespace TfsBuildExtensions.Activities.Framework
                         "AssemblyVersion",
                         this.AssemblyVersion.Get(this.ActivityContext),
                         this.MaxAssemblyVersion);
-                    versions.Add(new Version(version));
+
+                    var parsedVersion = default(Version);
+                    if (Version.TryParse(version, out parsedVersion))
+                    {
+                        versions.Add(parsedVersion);
+                    }
 
                     fileVersion = this.UpdateVersion(
                         "AssemblyFileVersion",
                         this.AssemblyFileVersion.Get(this.ActivityContext),
                         this.MaxAssemblyFileVersion);
-                    fileVersions.Add(new Version(fileVersion));
+
+                    if (Version.TryParse(fileVersion, out parsedVersion))
+                    {
+                        fileVersions.Add(parsedVersion);
+                    }
 
                     var infoVersion = this.UpdateAttribute("AssemblyInformationalVersion", this.AssemblyInformationalVersion.Get(this.ActivityContext), true);
                     if (string.Compare(infoVersion, this.MaxAssemblyInformationalVersion.Get(this.ActivityContext), StringComparison.Ordinal) > 0)
@@ -569,7 +578,24 @@ namespace TfsBuildExtensions.Activities.Framework
                 return oldValue;
             }
 
-            // parse old version
+            // parse old version (handle * character)
+            bool containsWildcard = oldValue.Contains('*');
+            string versionPattern = "{0}.{1}.{2}.{3}";
+
+            if (containsWildcard)
+            {
+                if (oldValue.Split('.').Length == 3)
+                {
+                    oldValue = oldValue.Replace("*", "0.0");
+                    versionPattern = "{0}.{1}.*";
+                }
+                else
+                {
+                    oldValue = oldValue.Replace("*", "0");
+                    versionPattern = "{0}.{1}.{2}.*";
+                }                
+            }
+
             if (!versionParser.IsMatch(oldValue))
             {
                 throw new FormatException("Current value for attribute '" + attributeName + "' is not in a correct version format.");
@@ -590,7 +616,7 @@ namespace TfsBuildExtensions.Activities.Framework
                 Convert.ToInt32(this.ReplaceTokens(tokens[2], version.Build)),
                 Convert.ToInt32(this.ReplaceTokens(tokens[3], version.Revision)));
 
-            this.file[attributeName] = version.ToString();
+            this.file[attributeName] = string.Format(versionPattern, version.Major, version.Minor, version.Build, version.Revision);
 
             if (version > maxVersion.Get(this.ActivityContext))
             {

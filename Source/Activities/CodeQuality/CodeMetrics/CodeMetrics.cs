@@ -11,6 +11,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Build.Workflow.Services;
     using TfsBuildExtensions.Activities.CodeMetrics.Extended;
@@ -33,6 +34,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         private const string MaintainabilityIndex = "MaintainabilityIndex";
         private const string CyclomaticComplexity = "CyclomaticComplexity";
         private InArgument<bool> searchGac = false;
+        private InArgument<bool> analyzeMetricsResult = true;
 
         /// <summary>
         /// Path to where the binaries are placed
@@ -67,6 +69,16 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         {
             get { return this.searchGac; }
             set { this.searchGac = value; }
+        }
+
+        /// <summary>
+        /// Optional: Enables/Disables analysis of code metrics results. Default true
+        /// </summary>
+        [Description("Optional: Enables/Disables analysis of code metrics results. Default true")]
+        public InArgument<bool> AnalyzeMetricsResult
+        {
+            get { return this.analyzeMetricsResult; }
+            set { this.analyzeMetricsResult = value; }
         }
 
         /// <summary>
@@ -172,7 +184,14 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             }
 
             IActivityTracking currentTracking = this.ActivityContext.GetExtension<IBuildLoggingExtension>().GetActivityTracking(this.ActivityContext);
-            IBuildInformationNode rootNode = AddTextNode("Processing metrics", currentTracking.Node);
+
+            if (!this.AnalyzeMetricsResult.Get(this.ActivityContext))
+            {
+                AddTextNode("Skipped code metrics analysis", currentTracking.Node);
+                return;
+            }
+
+            IBuildInformationNode rootNode = AddTextNode("Analyzing code metrics results", currentTracking.Node);
 
             string fileName = Path.GetFileName(generatedFile);
             string pathToFileInDropFolder = Path.Combine(this.BuildDetail.DropLocation, fileName);
@@ -256,40 +275,54 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 metricsExeArguments += string.Format(" /searchgac");
             }
 
-            using (Process proc = new Process())
+            ProcessStartInfo psi = new ProcessStartInfo { FileName = metricsExePath, UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true, Arguments = metricsExeArguments, WorkingDirectory = this.BinariesDirectory.Get(this.ActivityContext) };
+            this.LogBuildMessage("Running " + psi.FileName + " " + psi.Arguments);
+
+            using (Process process = Process.Start(psi))
             {
-                proc.StartInfo.FileName = metricsExePath;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.Arguments = metricsExeArguments;
-                proc.StartInfo.WorkingDirectory = this.BinariesDirectory.Get(this.ActivityContext);
-                this.LogBuildMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
-                proc.Start();
-
-                string outputStream = proc.StandardOutput.ReadToEnd();
-                if (outputStream.Length > 0)
+                using (ManualResetEvent mreOut = new ManualResetEvent(false), mreErr = new ManualResetEvent(false))
                 {
-                    this.LogBuildMessage(outputStream);
-                }
+                    process.OutputDataReceived += (o, e) =>
+                                                      {
+                                                          if (e.Data == null)
+                                                          {
+                                                              mreOut.Set();
+                                                          }
+                                                          else
+                                                          {
+                                                              LogBuildMessage(e.Data);
+                                                          }
+                                                      };
+                    process.BeginOutputReadLine();
+                    process.ErrorDataReceived += (o, e) =>
+                                                     {
+                                                         if (e.Data == null) 
+                                                         {
+                                                             mreErr.Set(); 
+                                                         } 
+                                                         else
+                                                         {
+                                                             LogBuildMessage(e.Data);
+                                                         }
+                                                     };
+                    process.BeginErrorReadLine();
+                    process.StandardInput.Close();
+                    process.WaitForExit();
 
-                string errorStream = proc.StandardError.ReadToEnd();
-                if (errorStream.Length > 0)
-                {
-                    this.LogBuildError(errorStream);
-                }
+                    mreOut.WaitOne();
+                    mreErr.WaitOne();
 
-                proc.WaitForExit();
-                if (proc.ExitCode != 0)
-                {
-                    this.LogBuildError(proc.ExitCode.ToString(CultureInfo.CurrentCulture));
-                    return false;
-                }
+                    if (process.ExitCode != 0)
+                    {
+                        this.LogBuildError(process.ExitCode.ToString(CultureInfo.CurrentCulture));
+                        return false;
+                    }
 
-                if (!File.Exists(output))
-                {
-                    LogBuildError("Could not locate file " + output);
-                    return false;
+                    if (!File.Exists(output))
+                    {
+                        LogBuildError("Could not locate file " + output);
+                        return false;
+                    }
                 }
             }
 
@@ -329,28 +362,32 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 int metricValue;
                 if (metric != null && !string.IsNullOrEmpty(metric.Value) && int.TryParse(metric.Value, out metricValue))
                 {
-                    if (metric.Name == MaintainabilityIndex && Convert.ToInt32(metric.Value) < thresholds.MaintainabilityIndexErrorThreshold)
+                    if (metric.Name == MaintainabilityIndex && metricValue < thresholds.MaintainabilityIndexErrorThreshold)
                     {
-                        this.FailCurrentBuild();
                         LogBuildError(string.Format("{0} for {1} is {2} which is below threshold ({3}){4}", MaintainabilityIndex, member, metric.Value, thresholds.MaintainabilityIndexErrorThreshold, GetMemberRootForOutput(memberRootDesc)));
+                        if (this.FailBuildOnError.Get(this.ActivityContext))
+                        {
+                            this.FailCurrentBuild();
+                        }
                     }
 
                     if (metric.Name == MaintainabilityIndex && metricValue < thresholds.MaintainabilityIndexWarningThreshold)
                     {
-                        this.PartiallyFailCurrentBuild();
-                        LogBuildError(string.Format("{0} for {1} is {2} which is below threshold ({3}){4}", MaintainabilityIndex, member, metric.Value, thresholds.MaintainabilityIndexWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
+                        LogBuildWarning(string.Format("{0} for {1} is {2} which is below threshold ({3}){4}", MaintainabilityIndex, member, metric.Value, thresholds.MaintainabilityIndexWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
                     }
 
                     if (metric.Name == CyclomaticComplexity && metricValue > thresholds.CyclomaticComplexityErrorThreshold)
                     {
-                        this.FailCurrentBuild();
                         this.LogBuildError(string.Format("{0} for {1} is {2} which is above threshold ({3}){4}", CyclomaticComplexity, member, metric.Value, thresholds.CyclomaticComplexityErrorThreshold, GetMemberRootForOutput(memberRootDesc)));
+                        if (this.FailBuildOnError.Get(this.ActivityContext))
+                        {
+                            this.FailCurrentBuild();
+                        }
                     }
 
                     if (metric.Name == CyclomaticComplexity && metricValue > thresholds.CyclomaticComplexityWarningThreshold)
                     {
-                        this.PartiallyFailCurrentBuild();
-                        this.LogBuildError(string.Format("{0} for {1} is {2} which is above threshold ({3}){4}", CyclomaticComplexity, member, metric.Value, thresholds.CyclomaticComplexityWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
+                        this.LogBuildWarning(string.Format("{0} for {1} is {2} which is above threshold ({3}){4}", CyclomaticComplexity, member, metric.Value, thresholds.CyclomaticComplexityWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
                     }
 
                     if (this.LogCodeMetrics.Get(this.ActivityContext))
@@ -358,16 +395,6 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                         AddTextNode(metric.Name + ": " + metric.Value, parent);
                     }
                 }
-            }
-        }
-
-        private void PartiallyFailCurrentBuild()
-        {
-            // Don't replace a failed status.
-            if (this.BuildDetail.Status != BuildStatus.Failed)
-            {
-                this.BuildDetail.Status = BuildStatus.PartiallySucceeded;
-                this.BuildDetail.Save();
             }
         }
 

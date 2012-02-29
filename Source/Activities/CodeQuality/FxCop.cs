@@ -9,13 +9,14 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
+    using System.Xml;
     using Microsoft.TeamFoundation.Build.Client;
     using TfsBuildExtensions.Activities;
 
     /// <summary>
     /// The FxCop activity provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
-    /// <b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory <b>Output: </b>AnalysisFailed, OutputText, ExitCode<para/>
+    /// <b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, LogResultsToBuildLog, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory <b>Output: </b>AnalysisFailed, OutputText, ExitCode<para/>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -27,6 +28,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     {
         private InArgument<bool> logToConsole = true;
         private InArgument<bool> showSummary = true;
+        private InArgument<bool> logResultsToBuildLog;
 
         /// <summary>
         /// Sets the Item Collection of assemblies to analyse (/file option)
@@ -47,6 +49,15 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// Sets the location of rule libraries to load (/rule option). Prefix the Rules path with ! to treat warnings as errors
         /// </summary>
         public InArgument<IEnumerable<string>> Rules { get; set; }
+
+        /// <summary>
+        /// Set to true to log the results to the build file. Default is false
+        /// </summary>
+        public InArgument<bool> LogResultsToBuildLog
+        {
+            get { return this.logResultsToBuildLog; }
+            set { this.logResultsToBuildLog = value; }
+        }
 
         /// <summary>
         /// Set to true to display a summary (/summary option). Default is true
@@ -188,7 +199,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// Gets the OutputText emitted during analysis
         /// </summary>
         public OutArgument<string> OutputText { get; set; }
-        
+
         /// <summary>
         /// Executes the logic for this workflow activity
         /// </summary>
@@ -406,7 +417,59 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                     return;
                 }
 
-                this.AnalysisFailed.Set(this.ActivityContext, System.IO.File.Exists(this.OutputFile.Get(this.ActivityContext)));
+                string outputPath = this.OutputFile.Get(this.ActivityContext);
+                bool resultsFileExists = System.IO.File.Exists(outputPath);
+
+                this.AnalysisFailed.Set(this.ActivityContext, resultsFileExists);
+
+                if (resultsFileExists && this.LogResultsToBuildLog.Get(this.ActivityContext))
+                {
+                    this.LogResults(outputPath, this.TreatWarningsAsErrors.Get(this.ActivityContext));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Log the results of the FxCop results.
+        /// </summary>
+        /// <param name="resultsFilePath">The path to the FxCop analysis results file.</param>
+        /// <param name="treatWarningsAsErrors">Whether warnings should be logged as errors.</param>
+        private void LogResults(string resultsFilePath, bool treatWarningsAsErrors)
+        {
+            XmlDocument results = new XmlDocument();
+            results.Load(resultsFilePath);
+
+            XmlNodeList messages = results.SelectNodes("//Messages/Message");
+
+            if (messages != null)
+            {
+                foreach (XmlNode message in messages)
+                {
+                    string checkId = message.Attributes["CheckId"].Value;
+                    string category = message.Attributes["Category"].Value;
+
+                    foreach (XmlNode issue in message.SelectNodes("Issue"))
+                    {
+                        string file = issue.Attributes["File"] == null ? "No File" : issue.Attributes["File"].Value;
+                        string logMessage = string.Format(
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            "{0} : {1} : {2} : {3}:{4}",
+                            checkId,
+                            category,
+                            issue.InnerText,
+                            file,
+                            issue.Attributes["Line"].Value);
+
+                        if (treatWarningsAsErrors)
+                        {
+                            this.LogBuildError(logMessage);
+                        }
+                        else
+                        {
+                            this.LogBuildWarning(logMessage);
+                        }
+                    }
+                }
             }
         }
     }

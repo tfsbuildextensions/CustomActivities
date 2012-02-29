@@ -58,7 +58,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
         /// <summary>
         /// Sets the connection string to use for executing the Sql or Files
         /// </summary>
-        public string ConnectionString { get; set; }
+        public InArgument<string> ConnectionString { get; set; }
 
         /// <summary>
         /// Sets the timeout in seconds. Default is 30
@@ -77,7 +77,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
         /// <summary>
         /// Sets the Sql to execute
         /// </summary>
-        public string Sql { get; set; }
+        public InArgument<string> Sql { get; set; }
 
         /// <summary>
         /// Sets the parameters to substitute at execution time
@@ -157,7 +157,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
             try
             {
                 this.timer = DateTime.Now;
-                if (!string.IsNullOrEmpty(this.Sql))
+                if (!string.IsNullOrEmpty(this.Sql.Get(this.ActivityContext)))
                 {
                     this.ExecuteText();
                 }
@@ -179,7 +179,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
             this.files = this.Files.Get(this.ActivityContext).ToArray();
             int previousFailures = this.files.Count();
             ApplicationException lastException = null;
-            using (SqlConnection sqlConnection = this.CreateConnection(this.ConnectionString))
+            using (SqlConnection sqlConnection = this.CreateConnection(this.ConnectionString.Get(this.ActivityContext)))
             {
                 sqlConnection.Open();
                 while (retry)
@@ -284,8 +284,8 @@ namespace TfsBuildExtensions.Activities.SqlServer
 
         private void ExecuteText()
         {
-            using (SqlConnection sqlConnection = this.CreateConnection(this.ConnectionString))
-            using (SqlCommand command = new SqlCommand(this.SubstituteParameters(this.Sql), sqlConnection))
+            using (SqlConnection sqlConnection = this.CreateConnection(this.ConnectionString.Get(this.ActivityContext)))
+            using (SqlCommand command = new SqlCommand(this.SubstituteParameters(this.Sql.Get(this.ActivityContext)), sqlConnection))
             {
                 command.CommandTimeout = this.CommandTimeout;
                 this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Execute: {0}", command.CommandText), BuildMessageImportance.High);

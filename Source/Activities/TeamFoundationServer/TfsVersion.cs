@@ -389,10 +389,10 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                         switch (file.Extension)
                         {
                             case ".cs":
-                                newFile = newFile.AppendFormat(AppendAssemblyFileVersionFormat, this.Version);
+                                newFile = newFile.AppendFormat(AppendAssemblyFileVersionFormat, this.ActivityContext.GetValue(this.Version));
                                 break;
                             case ".vb":
-                                newFile = newFile.AppendFormat(VBAppendAssemblyFileVersionFormat, this.Version);
+                                newFile = newFile.AppendFormat(VBAppendAssemblyFileVersionFormat, this.ActivityContext.GetValue(this.Version));
                                 break;
                         }
                     }
@@ -407,10 +407,10 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                         switch (file.Extension)
                         {
                             case ".cs":
-                                newFile = newFile.AppendFormat(AppendAssemblyVersionFormat, this.AssemblyVersion);
+                                newFile = newFile.AppendFormat(AppendAssemblyVersionFormat, this.ActivityContext.GetValue(this.AssemblyVersion));
                                 break;
                             case ".vb":
-                                newFile = newFile.AppendFormat(VBAppendAssemblyVersionFormat, this.AssemblyVersion);
+                                newFile = newFile.AppendFormat(VBAppendAssemblyVersionFormat, this.ActivityContext.GetValue(this.AssemblyVersion));
                                 break;
                         }
                     }
@@ -425,10 +425,10 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                         switch (file.Extension)
                         {
                             case ".cs":
-                                newFile = newFile.AppendFormat(AppendAssemblyDescriptionFormat, this.AssemblyVersion);
+                                newFile = newFile.AppendFormat(AppendAssemblyDescriptionFormat, this.ActivityContext.GetValue(this.AssemblyDescription));
                                 break;
                             case ".vb":
-                                newFile = newFile.AppendFormat(VBAppendAssemblyDescriptionFormat, this.AssemblyVersion);
+                                newFile = newFile.AppendFormat(VBAppendAssemblyDescriptionFormat, this.ActivityContext.GetValue(this.AssemblyDescription));
                                 break;
                         }
                     }

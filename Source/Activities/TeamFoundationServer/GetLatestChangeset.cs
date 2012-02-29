@@ -19,6 +19,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// Gets or sets the version control server to use.
         /// </summary>
         public InArgument<VersionControlServer> VersionControlServer { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the server path to find the latest changeset for. Defaults to $/
+        /// </summary>
+        public InArgument<string> VersionControlPath { get; set; }
 
         /// <summary>
         /// Gets or sets the changeset.
@@ -30,16 +35,20 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// </summary>
         protected override void InternalExecute()
         {
-            var vcserver = this.VersionControlServer.Get(this.ActivityContext);
+            string versionControlPath = this.VersionControlPath.Get(this.ActivityContext);
+            if (string.IsNullOrEmpty(versionControlPath))
+            {
+                versionControlPath = "$/";
+            }
 
-            var queryHistoryResult = vcserver.QueryHistory("$/", VersionSpec.Latest, 0, RecursionType.Full, null, null, null, 1, true, false).Cast<Changeset>();
-            if (queryHistoryResult.Count() <= 0)
+            var vcserver = this.VersionControlServer.Get(this.ActivityContext);
+            var queryHistoryResult = vcserver.QueryHistory(versionControlPath, VersionSpec.Latest, 0, RecursionType.Full, null, null, null, 1, true, false).Cast<Changeset>();
+            if (!queryHistoryResult.Any())
             {
                 throw new ChangesetNotFoundException("No current changeset available.");
             }
 
             var changeset = queryHistoryResult.First();
-
             this.Changeset.Set(this.ActivityContext, changeset);
         }
     }

@@ -37,9 +37,9 @@
 				</Execution>
 			</TestSettings>
 			<Times creation="2008-01-01T00:00:00.0000000+10:00" queuing="2008-01-01T00:00:00.0000000+10:00" start="2008-01-01T00:00:00.0000000+10:00" finish="2008-01-01T00:00:00.0000000+10:00" />
-			<xsl:variable name="pass_count" select="count(//test-case[@success='True'])"/>
-			<xsl:variable name="failed_count" select="count(//test-case[@success='False' and (count(./failure) + count(./reason) &gt; 0)])"/>
-			<xsl:variable name="inconclusive_count" select="count(//test-case[@success='False' and (count(./failure) + count(./reason) = 0)])"/>
+			<xsl:variable name="pass_count" select="count(//test-case[@result='Success'])"/>
+			<xsl:variable name="failed_count" select="count(//test-case[@result='Error'])"/>
+			<xsl:variable name="inconclusive_count" select="count(//test-case[@result='Inconclusive'])"/>
 			<xsl:variable name="executed_count" select="count(//test-case[@executed='True'])"/>
 			<xsl:variable name="notExecuted_count" select="count(//test-case[@executed='False'])"/>
 			<ResultSummary>
@@ -180,17 +180,14 @@
 										</xsl:when>
 										<xsl:otherwise>
 											<xsl:choose>
-												<!--
-													If the test has failed it will have a child <failure> element for ResultStates of
-													Failure, Error or Cancelled. For ResultStates of NotRunnable, Skipped or Ignored it
-													will have a child <reason> element. Therefore if it has neither it can only have a
-													ResultState of Inconclusive.
-												-->
-												<xsl:when test="count(./failure) + count(./reason) &gt; 0">
+												<xsl:when test="@result='Error'">
 													<xsl:value-of select="'Failed'"/>
 												</xsl:when>
+                        <xsl:when test="@result='Inconclusive'">
+                          <xsl:value-of select="'Inconclusive'"/>
+                        </xsl:when>
 												<xsl:otherwise>
-													<xsl:value-of select="'Inconclusive'"/>
+													<xsl:value-of select="'Failed'"/>
 												</xsl:otherwise>
 											</xsl:choose>
 										</xsl:otherwise>
