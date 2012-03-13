@@ -133,7 +133,7 @@ namespace TfsBuildExtensions.Activities
                 Debug.WriteLine(string.Format("BuildWarning: {0}", warningMessage));
             }
         }
-
+        
         /// <summary>
         /// Logs a generical build message
         /// </summary>
