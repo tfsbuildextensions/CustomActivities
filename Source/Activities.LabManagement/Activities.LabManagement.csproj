@@ -39,6 +39,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.XML</DocumentationFile>
     <CodeAnalysisRuleSet>..\Common\TFSBuildExtensions.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -100,6 +101,7 @@
       <Link>IBaseActivityMinimumArguments.cs</Link>
     </Compile>
     <Compile Include="CheckIfEnvironmentIsLocked.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="PauseEnvironment.cs" />
     <Compile Include="RenameSnapshot.cs" />
     <Compile Include="ShutdownEnvironment.cs" />

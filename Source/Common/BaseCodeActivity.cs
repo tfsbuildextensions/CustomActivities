@@ -139,10 +139,19 @@ namespace TfsBuildExtensions.Activities
         /// </summary>
         /// <param name="message">The message to save</param>
         /// <param name="importance">The verbosity importance of the message</param>
-        protected internal void LogBuildMessage(string message, BuildMessageImportance importance = BuildMessageImportance.Normal)
+        protected internal void LogBuildMessage(string message, BuildMessageImportance importance)
         {
             this.ActivityContext.TrackBuildMessage(message, importance);
             Debug.WriteLine(string.Format("BuildMessage: {0}", message));
+        }
+
+        /// <summary>
+        /// Logs a generical build message
+        /// </summary>
+        /// <param name="message">The message to save</param>
+        protected internal void LogBuildMessage(string message)
+        {
+            this.LogBuildMessage(message, BuildMessageImportance.Normal);
         }
 
         /// <summary>
