@@ -102,7 +102,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
                 completeFileNames.AddRange(files);
             }
 
-            return completeFileNames;
+            return completeFileNames.GroupBy(f => Path.GetFileName(f)).Select(g => g.First()).ToList();
         }
 
         private IEnumerable<string> EnumerateFiles(string filename, string path)

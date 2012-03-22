@@ -32,7 +32,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Proxy
     {
         public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
         {
-            return Directory.EnumerateFiles(path, searchPattern);
+            return Directory.EnumerateFiles(path, searchPattern, SearchOption.AllDirectories);
         }
 
         public IEnumerable<string> EnumerateFiles(string path)

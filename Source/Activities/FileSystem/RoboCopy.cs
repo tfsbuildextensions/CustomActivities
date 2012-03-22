@@ -7,6 +7,7 @@ namespace TfsBuildExtensions.Activities.FileSystem
     using System.Activities;
     using System.Diagnostics;
     using System.Text;
+    using System.Threading;
     using Microsoft.TeamFoundation.Build.Client;
 
     /// <summary>
@@ -94,80 +95,100 @@ namespace TfsBuildExtensions.Activities.FileSystem
 
         private void Copy()
         {
-            using (Process proc = new Process())
+            ProcessStartInfo psi = new ProcessStartInfo { FileName = "RoboCopy.exe", UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true, Arguments = this.GenerateCommandLineCommands() };
+            this.LogBuildMessage("Running " + psi.FileName + " " + psi.Arguments);
+
+            using (Process process = Process.Start(psi))
             {
-                proc.StartInfo.FileName = "RoboCopy.exe";
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.Arguments = this.GenerateCommandLineCommands();
-                this.LogBuildMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
-                
-                proc.OutputDataReceived += (o, e) => this.LogBuildMessage(e.Data);
-                proc.ErrorDataReceived += (o, e) => this.LogBuildMessage(e.Data);
-
-                proc.Start();
-
-                proc.BeginErrorReadLine();
-                proc.BeginOutputReadLine();
-
-                proc.WaitForExit();
-                this.ReturnCode.Set(this.ActivityContext, proc.ExitCode);
-                switch (proc.ExitCode)
+                using (ManualResetEvent mreOut = new ManualResetEvent(false), mreErr = new ManualResetEvent(false))
                 {
-                    case 0:
-                        this.LogBuildMessage("Return Code 0. No errors occurred, and no copying was done. The source and destination directory trees are completely synchronized.");
-                        break;
-                    case 1:
-                        this.LogBuildMessage("Return Code 1. One or more files were copied successfully (that is, new files have arrived).");
-                        break;
-                    case 2:
-                        this.LogBuildMessage("Return Code 2. Some Extra files or directories were detected. Examine the output log. Some housekeeping may be needed.");
-                        break;
-                    case 3:
-                        this.LogBuildMessage("Return Code 3. One or more files were copied successfully (that is, new files have arrived). Some Extra files or directories were detected. Examine the output log. Some housekeeping may be needed.");
-                        break;
-                    case 4:
-                        this.LogBuildMessage("Return Code 4. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary.");
-                        break;
-                    case 5:
-                        this.LogBuildMessage("Return Code 5. One or more files were copied successfully (that is, new files have arrived). Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary.");
-                        break;
-                    case 6:
-                        this.LogBuildMessage("Return Code 6. Some Extra files or directories were detected. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary.");
-                        break;
-                    case 7:
-                        this.LogBuildMessage("Return Code 7. One or more files were copied successfully (that is, new files have arrived). Some Extra files or directories were detected. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary.");
-                        break;
-                    case 8:
-                        this.LogBuildError("Return Code 8. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
-                        break;
-                    case 9:
-                        this.LogBuildError("Return Code 9. One or more files were copied successfully (that is, new files have arrived). Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
-                        break;
-                    case 10:
-                        this.LogBuildError("Return Code 10. Some Extra files or directories were detected. Examine the output log. Some housekeeping may be needed. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
-                        break;
-                    case 11:
-                        this.LogBuildError("Return Code 11. One or more files were copied successfully (that is, new files have arrived). Some Extra files or directories were detected. Examine the output log. Some housekeeping may be needed. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
-                        break;
-                    case 12:
-                        this.LogBuildError("Return Code 12. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
-                        break;
-                    case 13:
-                        this.LogBuildError("Return Code 13. One or more files were copied successfully (that is, new files have arrived). Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
-                        break;
-                    case 14:
-                        this.LogBuildError("Return Code 14. Some Extra files or directories were detected. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
-                        break;
-                    case 15:
-                        this.LogBuildError("Return Code 15. One or more files were copied successfully (that is, new files have arrived). Some Extra files or directories were detected. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
-                        break;
-                    case 16:
-                        this.LogBuildError("Return Code 16. Serious error. RoboCopy did not copy any files. This is either a usage error or an error due to insufficient access privileges on the source or destination directories.");
-                        break;
-                    default:
-                        break;
+                    process.OutputDataReceived += (o, e) =>
+                    {
+                        if (e.Data == null)
+                        {
+                            mreOut.Set();
+                        }
+                        else
+                        {
+                            LogBuildMessage(e.Data);
+                        }
+                    };
+
+                    process.BeginOutputReadLine();
+                    process.ErrorDataReceived += (o, e) =>
+                    {
+                        if (e.Data == null)
+                        {
+                            mreErr.Set();
+                        }
+                        else
+                        {
+                            LogBuildMessage(e.Data);
+                        }
+                    };
+
+                    process.BeginErrorReadLine();
+                    process.StandardInput.Close();
+                    process.WaitForExit();
+
+                    mreOut.WaitOne();
+                    mreErr.WaitOne();
+
+                    this.ReturnCode.Set(this.ActivityContext, process.ExitCode);
+                    switch (process.ExitCode)
+                    {
+                        case 0:
+                            this.LogBuildMessage("Return Code 0. No errors occurred, and no copying was done. The source and destination directory trees are completely synchronized.");
+                            break;
+                        case 1:
+                            this.LogBuildMessage("Return Code 1. One or more files were copied successfully (that is, new files have arrived).");
+                            break;
+                        case 2:
+                            this.LogBuildMessage("Return Code 2. Some Extra files or directories were detected. Examine the output log. Some housekeeping may be needed.");
+                            break;
+                        case 3:
+                            this.LogBuildMessage("Return Code 3. One or more files were copied successfully (that is, new files have arrived). Some Extra files or directories were detected. Examine the output log. Some housekeeping may be needed.");
+                            break;
+                        case 4:
+                            this.LogBuildMessage("Return Code 4. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary.");
+                            break;
+                        case 5:
+                            this.LogBuildMessage("Return Code 5. One or more files were copied successfully (that is, new files have arrived). Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary.");
+                            break;
+                        case 6:
+                            this.LogBuildMessage("Return Code 6. Some Extra files or directories were detected. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary.");
+                            break;
+                        case 7:
+                            this.LogBuildMessage("Return Code 7. One or more files were copied successfully (that is, new files have arrived). Some Extra files or directories were detected. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary.");
+                            break;
+                        case 8:
+                            this.LogBuildError("Return Code 8. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
+                            break;
+                        case 9:
+                            this.LogBuildError("Return Code 9. One or more files were copied successfully (that is, new files have arrived). Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
+                            break;
+                        case 10:
+                            this.LogBuildError("Return Code 10. Some Extra files or directories were detected. Examine the output log. Some housekeeping may be needed. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
+                            break;
+                        case 11:
+                            this.LogBuildError("Return Code 11. One or more files were copied successfully (that is, new files have arrived). Some Extra files or directories were detected. Examine the output log. Some housekeeping may be needed. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
+                            break;
+                        case 12:
+                            this.LogBuildError("Return Code 12. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
+                            break;
+                        case 13:
+                            this.LogBuildError("Return Code 13. One or more files were copied successfully (that is, new files have arrived). Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
+                            break;
+                        case 14:
+                            this.LogBuildError("Return Code 14. Some Extra files or directories were detected. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
+                            break;
+                        case 15:
+                            this.LogBuildError("Return Code 15. One or more files were copied successfully (that is, new files have arrived). Some Extra files or directories were detected. Some Mismatched files or directories were detected. Examine the output log. Housekeeping is probably necessary. Some files or directories could not be copied (copy errors occurred and the retry limit was exceeded). Check these errors further.");
+                            break;
+                        case 16:
+                            this.LogBuildError("Return Code 16. Serious error. RoboCopy did not copy any files. This is either a usage error or an error due to insufficient access privileges on the source or destination directories.");
+                            break;
+                    }
                 }
             }
         }

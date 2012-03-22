@@ -247,3 +247,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Auth", Scope = "member", Target = "TfsBuildExtensions.Activities.SSH.SSHAuthentication.#AuthType")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Scope = "member", Target = "TfsBuildExtensions.Activities.CodeMetrics.Extended.MetricsInvoker.#Invoke()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "TfsBuildExtensions.Activities.CodeQuality.SharePoint")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "TfsBuildExtensions.Activities.FileSystem.RoboCopy.#Copy()")]

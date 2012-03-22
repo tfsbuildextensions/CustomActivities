@@ -150,6 +150,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// </summary>
         public InArgument<bool> LogCodeMetrics { get; set; }
 
+        /// <summary>
+        /// Optional: Indicates whether to ignore elements with the GeneratedCode attribute. Default false
+        /// </summary>
+        [Description("Indicates whether to ignore elements with the GeneratedCode attribute. Default false")]
+        public InArgument<bool> IgnoreGeneratedCode { get; set; }
+
         private IBuildDetail BuildDetail { get; set; }
 
         /// <summary>
@@ -273,6 +279,11 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             if (this.SearchGac.Get(this.ActivityContext))
             {
                 metricsExeArguments += string.Format(" /searchgac");
+            }
+
+            if (this.IgnoreGeneratedCode.Get(this.ActivityContext))
+            {
+                metricsExeArguments += " /ignoregeneratedcode";
             }
 
             ProcessStartInfo psi = new ProcessStartInfo { FileName = metricsExePath, UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true, Arguments = metricsExeArguments, WorkingDirectory = this.BinariesDirectory.Get(this.ActivityContext) };
