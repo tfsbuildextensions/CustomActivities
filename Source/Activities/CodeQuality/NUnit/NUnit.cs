@@ -258,6 +258,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         public InArgument<string> Run { get; set; }
 
         /// <summary>
+        /// Name of the test case(s), fixture(s) or namespace(s) to run
+        /// </summary>
+        [Browsable(true)]
+        [Description("ExitCode for the NUnit process")]
+        public OutArgument<int> ExitCode { get; set; }
+
+        /// <summary>
         /// Executes the logic for this custom activity
         /// </summary>
         protected override void InternalExecute()
@@ -276,7 +283,8 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             }
 
             string workingDirectory = Path.GetDirectoryName(this.Assemblies.Get(this.ActivityContext).First());
-            this.RunProcess(fullPath, workingDirectory, this.GenerateCommandLineCommands(this.ActivityContext, workingDirectory));
+            int exitCode = this.RunProcess(fullPath, workingDirectory, this.GenerateCommandLineCommands(this.ActivityContext, workingDirectory));
+            this.ExitCode.Set(this.ActivityContext, exitCode);
             this.ProcessXmlResultsFile(this.ActivityContext, workingDirectory);
             this.PublishTestResultsToTFS(this.ActivityContext, workingDirectory);
         }

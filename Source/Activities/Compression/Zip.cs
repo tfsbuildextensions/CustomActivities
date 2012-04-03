@@ -36,8 +36,8 @@ namespace TfsBuildExtensions.Activities.Compression
 
     /// <summary>
     /// <b>Valid Action values are:</b>
-    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot) Existing files will be updated</para>
-    /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, Password; RemoveRoot)</para>
+    /// <para><i>AddFiles</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, MaxOutputSegmentSize, Password; RemoveRoot, UseZip64WhenSaving) Existing files will be updated</para>
+    /// <para><i>Create</i> (<b>Required: </b> ZipFileName, CompressFiles or Path <b>Optional: </b>CompressionLevel, MaxOutputSegmentSize, Password; RemoveRoot, UseZip64WhenSaving)</para>
     /// <para><i>Extract</i> (<b>Required: </b> ZipFileName, ExtractPath <b>Optional:</b> Password)</para>
     /// </summary>
     /// <example>
@@ -52,6 +52,7 @@ namespace TfsBuildExtensions.Activities.Compression
     {
         private ZipAction action = ZipAction.Create;
         private Ionic.Zlib.CompressionLevel compressLevel = Ionic.Zlib.CompressionLevel.Default;
+        private Zip64Option useZip64WhenSaving = Zip64Option.Default;
         
         /// <summary>
         /// Sets the root to remove from the zip path. Note that this should be part of the file to compress path, not the target path of the ZipFileName
@@ -103,10 +104,28 @@ namespace TfsBuildExtensions.Activities.Compression
         }
 
         /// <summary>
+        /// Sets the UseZip64WhenSaving output of the DotNetZip library. Default is Zip64Option.Default
+        /// For more details see the DotNetZip documentation.
+        /// </summary>
+        public InArgument<string> UseZip64WhenSaving { get; set; }
+
+        /// <summary>
+        /// Sets the maximum output segment size, which typically results in a split archive (an archive split into multiple files).
+        /// This value is not required and if not set or set to 0 the resulting archive will not be split.
+        /// For more details see the DotNetZip documentation.
+        /// </summary>
+        public InArgument<int> MaxOutputSegmentSize { get; set; }
+        
+        /// <summary>
         /// Executes the logic for this workflow activity
         /// </summary>
         protected override void InternalExecute()
         {
+            if (!string.IsNullOrEmpty(this.UseZip64WhenSaving.Get(this.ActivityContext)))
+            {
+                this.useZip64WhenSaving = (Zip64Option)Enum.Parse(typeof(Zip64Option), this.UseZip64WhenSaving.Get(this.ActivityContext));
+            }
+
             switch (this.Action)
             {
                 case ZipAction.Create:
@@ -152,6 +171,12 @@ namespace TfsBuildExtensions.Activities.Compression
                         }
                     }
 
+                    if (this.MaxOutputSegmentSize.Get(this.ActivityContext) > 0)
+                    {
+                        zip.MaxOutputSegmentSize = this.MaxOutputSegmentSize.Get(this.ActivityContext);
+                    }
+
+                    zip.UseZip64WhenSaving = this.useZip64WhenSaving;
                     zip.Save();
                 }
             }
@@ -178,6 +203,12 @@ namespace TfsBuildExtensions.Activities.Compression
                         zip.UpdateDirectory(this.CompressPath.Get(this.ActivityContext));
                     }
 
+                    if (this.MaxOutputSegmentSize.Get(this.ActivityContext) > 0)
+                    {
+                        zip.MaxOutputSegmentSize = this.MaxOutputSegmentSize.Get(this.ActivityContext);
+                    }
+
+                    zip.UseZip64WhenSaving = this.useZip64WhenSaving;
                     zip.Save();
                 }
             }
@@ -212,6 +243,12 @@ namespace TfsBuildExtensions.Activities.Compression
                         }
                     }
 
+                    if (this.MaxOutputSegmentSize.Get(this.ActivityContext) > 0)
+                    {
+                        zip.MaxOutputSegmentSize = this.MaxOutputSegmentSize.Get(this.ActivityContext);
+                    }
+
+                    zip.UseZip64WhenSaving = this.useZip64WhenSaving;
                     zip.Save(this.ZipFileName.Get(this.ActivityContext));
                 }
             }
@@ -239,6 +276,12 @@ namespace TfsBuildExtensions.Activities.Compression
                         zip.AddDirectory(this.CompressPath.Get(this.ActivityContext), d.Name);
                     }
 
+                    if (this.MaxOutputSegmentSize.Get(this.ActivityContext) > 0)
+                    {
+                        zip.MaxOutputSegmentSize = this.MaxOutputSegmentSize.Get(this.ActivityContext);
+                    }
+
+                    zip.UseZip64WhenSaving = this.useZip64WhenSaving;
                     zip.Save(this.ZipFileName.Get(this.ActivityContext));
                 }
             }

@@ -16,7 +16,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     /// <summary>
     /// The FxCop activity provides a basic wrapper over FxCopCmd.exe. See http://msdn.microsoft.com/en-gb/library/bb429449(VS.80).aspx for more details.
     /// <para/>
-    /// <b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, Imports, Rules, ShowSummary, LogResultsToBuildLog, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory <b>Output: </b>AnalysisFailed, OutputText, ExitCode<para/>
+    /// <b>Required: </b> Project and / or Files, OutputFile <b>Optional: </b>DependencyDirectories, AssemblyCompareMode, References, Imports, Rules, ShowSummary, LogResultsToBuildLog, UpdateProject, Verbose, UpdateProject, LogToConsole, Types, FxCopPath, ReportXsl, OutputFile, ConsoleXsl, Project, SearchGac, IgnoreInvalidTargets, Quiet, ForceOutput, AspNetOnly, IgnoreGeneratedCode, OverrideRuleVisibilities, FailOnMissingRules, SuccessFile, Dictionary, Ruleset, RulesetDirectory <b>Output: </b>AnalysisFailed, OutputText, ExitCode<para/>
     /// </summary>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -29,12 +29,41 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         private InArgument<bool> logToConsole = true;
         private InArgument<bool> showSummary = true;
         private InArgument<bool> logResultsToBuildLog;
+        private CompareMode assemblyCompareMode = CompareMode.StrongName;
+        
+        private enum CompareMode
+        {
+            /// <summary>
+            /// None
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// StrongName
+            /// </summary>
+            StrongName,
+
+            /// <summary>
+            /// StrongNameIgnoringVersion
+            /// </summary>
+            StrongNameIgnoringVersion
+        }
 
         /// <summary>
-        /// Sets the Item Collection of assemblies to analyse (/file option)
+        /// Sets the collection of assemblies to analyse (/file option)
         /// </summary>
         public InArgument<IEnumerable<string>> Files { get; set; }
 
+        /// <summary>
+        /// Sets the collection of assemblies to reference (/reference option)
+        /// </summary>
+        public InArgument<IEnumerable<string>> References { get; set; }
+        
+        /// <summary>
+        /// Set the assembly comparison mode. Supports None, StrongName, StrongNameIgnoringVersion. Default is StrongName.
+        /// </summary>
+        public InArgument<string> AssemblyCompareMode { get; set; }
+        
         /// <summary>
         /// Sets the DependencyDirectories :(/directory option)
         /// </summary>
@@ -332,6 +361,16 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 arguments += " /verbose";
             }
 
+            if (!string.IsNullOrEmpty(this.AssemblyCompareMode.Get(this.ActivityContext)))
+            {
+                this.assemblyCompareMode = (CompareMode)Enum.Parse(typeof(CompareMode), this.AssemblyCompareMode.Get(this.ActivityContext));
+
+                if (this.assemblyCompareMode != CodeQuality.FxCop.CompareMode.StrongName)
+                {
+                    arguments += " /assemblyCompareMode:" + this.assemblyCompareMode.ToString();
+                }
+            }
+
             if (!string.IsNullOrEmpty(this.Types.Get(this.ActivityContext)))
             {
                 arguments += " /types:\"" + this.Types.Get(this.ActivityContext) + "\"";
@@ -377,6 +416,11 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 arguments = this.Files.Get(this.ActivityContext).Aggregate(arguments, (current, file) => current + (" /file:\"" + file + "\""));
             }
 
+            if (this.References.Get(this.ActivityContext) != null)
+            {
+                arguments = this.References.Get(this.ActivityContext).Aggregate(arguments, (current, reference) => current + (" /reference:\"" + reference + "\""));
+            }
+
             arguments += " /out:\"" + this.OutputFile.Get(this.ActivityContext) + "\"";
 
             // if the output file exists, delete it.
@@ -392,6 +436,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.Arguments = arguments;
+                proc.StartInfo.CreateNoWindow = true;
                 this.LogBuildMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
 

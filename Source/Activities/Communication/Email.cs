@@ -42,6 +42,7 @@ namespace TfsBuildExtensions.Activities.Communication
     public sealed class Email : BaseCodeActivity
     {
         private EmailAction action = EmailAction.Send;
+        private System.Net.Mail.MailPriority priority = System.Net.Mail.MailPriority.Normal;
 
         /// <summary>
         /// Specifies the action to perform. Default is Send.
@@ -87,7 +88,7 @@ namespace TfsBuildExtensions.Activities.Communication
         public InArgument<string> Subject { get; set; }
 
         /// <summary>
-        /// The priority of the email. Default is Normal
+        /// The priority of the email. Default is Normal (also available High and Low)
         /// </summary>
         public InArgument<string> Priority { get; set; }
 
@@ -139,9 +140,9 @@ namespace TfsBuildExtensions.Activities.Communication
                 this.Format.Set(this.ActivityContext, "HTML");
             }
 
-            if (this.Priority.Expression == null)
+            if (!string.IsNullOrEmpty(this.Priority.Get(this.ActivityContext)))
             {
-                this.Priority.Set(this.ActivityContext, "Normal");
+                this.priority = (System.Net.Mail.MailPriority)Enum.Parse(typeof(System.Net.Mail.MailPriority), this.Priority.Get(this.ActivityContext));
             }
 
             switch (this.Action)
@@ -177,6 +178,7 @@ namespace TfsBuildExtensions.Activities.Communication
                 }
 
                 msg.Subject = this.Subject.Get(this.ActivityContext);
+                msg.Priority = this.priority;
                 msg.Body = this.Body.Get(this.ActivityContext) ?? string.Empty;
                 if (this.Format.Get(this.ActivityContext).ToUpperInvariant() == "HTML")
                 {
