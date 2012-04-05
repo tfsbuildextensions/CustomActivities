@@ -250,3 +250,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "TfsBuildExtensions.Activities.FileSystem.RoboCopy.#Copy()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope = "member", Target = "TfsBuildExtensions.Activities.CodeQuality.FxCop.#References")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "TfsBuildExtensions.Activities.Signing")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "VSIX", Scope = "member", Target = "TfsBuildExtensions.Activities.Signing.SignVSIX.#VSIXFilePath")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "VSIX", Scope = "type", Target = "TfsBuildExtensions.Activities.Signing.SignVSIX")]
