@@ -33,8 +33,29 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     {
         private const string MaintainabilityIndex = "MaintainabilityIndex";
         private const string CyclomaticComplexity = "CyclomaticComplexity";
+        private const string ClassCoupling = "ClassCoupling";
+        private const string DepthOfInheritance = "DepthOfInheritance";
+        private const string LinesOfCode = "LinesOfCode";
+
         private InArgument<bool> searchGac = false;
         private InArgument<bool> analyzeMetricsResult = true;
+        private InArgument<string> generatedFileName = "Metrics.xml";
+        private InArgument<int> maintainabilityIndexWarningThreshold = 40;
+        private InArgument<int> maintainabilityIndexErrorThreshold = 20;
+        private InArgument<int> cyclomaticComplexityErrorThreshold = 40;
+        private InArgument<int> cyclomaticComplexityWarningThreshold = 20;
+        private InArgument<int> couplingWarningThreshold = 20;
+        private InArgument<int> couplingErrorThreshold = 40;
+        private InArgument<int> linesOfCodeWarningThreshold = 20;
+        private InArgument<int> linesOfCodeErrorThreshold = 40;
+        private InArgument<int> depthOfInheritanceWarningThreshold = 5;
+        private InArgument<int> depthOfInheritanceErrorThreshold = 10;
+        private InArgument<bool> ignoreGeneratedCode = true;
+        private InArgument<bool> logCodeMetricsArg = false;
+
+        private bool logCodeMetrics;
+
+        private delegate void LogToBuild(string message);
 
         /// <summary>
         /// Path to where the binaries are placed
@@ -59,7 +80,17 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// Optional: Name of the generated metrics result file. Should end with .xml
         /// </summary>
         [Description("Optional: Name of the generated metrics result file. Default Metrics.xml")]
-        public InArgument<string> GeneratedFileName { get; set; }
+        public InArgument<string> GeneratedFileName
+        {
+            get
+            {
+                return this.generatedFileName;
+            }
+            set
+            {
+                this.generatedFileName = value;
+            }
+        }
 
         /// <summary>
         /// Optional: Enables/Disables searchGac. Default false
@@ -85,25 +116,165 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// Threshold value for what Maintainability Index should fail the build
         /// </summary>
         [RequiredArgument]
-        public InArgument<int> MaintainabilityIndexErrorThreshold { get; set; }
+        [Description("Sets threshold for MaintainabilityIndex Error, default = 20")]
+        public InArgument<int> MaintainabilityIndexErrorThreshold
+        {
+            get
+            {
+                return this.maintainabilityIndexErrorThreshold;
+            }
+            set
+            {
+                this.maintainabilityIndexErrorThreshold = value;
+            }
+        }
 
         /// <summary>
-        /// Threshold value for what Maintainability Index should partially fail the build
+        /// Threshold value for what Maintainability Index should partially fail the build on methods and types
         /// </summary>
         [RequiredArgument]
-        public InArgument<int> MaintainabilityIndexWarningThreshold { get; set; }
+        [Description("Sets threshold for MaintainabilityIndex Warning, default = 40")]
+        public InArgument<int> MaintainabilityIndexWarningThreshold
+        {
+            get
+            {
+                return this.maintainabilityIndexWarningThreshold;
+            }
+            set
+            {
+                this.maintainabilityIndexWarningThreshold = value;
+            }
+        }
 
         /// <summary>
-        /// Threshold value for what Cyclomatic Complexity should fail the build
+        /// Threshold value for what Cyclomatic Complexity should fail the build on methods
         /// </summary>
         [RequiredArgument]
-        public InArgument<int> CyclomaticComplexityErrorThreshold { get; set; }
+        [Description("Sets threshold for Cyclomatic Complexity Error, default = 40")]
+        public InArgument<int> CyclomaticComplexityErrorThreshold
+        {
+            get
+            {
+                return this.cyclomaticComplexityErrorThreshold;
+            }
+            set
+            {
+                this.cyclomaticComplexityErrorThreshold = value;
+            }
+        }
 
         /// <summary>
-        /// Threshold value for what Cyclomatic Complexity should partially fail the build
+        /// Threshold value for what Cyclomatic Complexity should partially fail the build on methods
         /// </summary>
         [RequiredArgument]
-        public InArgument<int> CyclomaticComplexityWarningThreshold { get; set; }
+        [Description("Sets threshold for Cyclomatic Complexity Warning, default = 20")]
+        public InArgument<int> CyclomaticComplexityWarningThreshold
+        {
+            get
+            {
+                return this.cyclomaticComplexityWarningThreshold;
+            }
+            set
+            {
+                this.cyclomaticComplexityWarningThreshold = value;
+            }
+        }
+
+        /// <summary>
+        /// Threshold value for what Coupling should partially fail the build on methods
+        /// </summary>
+        [Description("Optional: Sets threshold for Class Coupling warning, default = 20")]
+        public InArgument<int> CouplingWarningThreshold
+        {
+            get
+            {
+                return this.couplingWarningThreshold;
+            }
+            set
+            {
+                this.couplingWarningThreshold = value;
+            }
+        }
+
+        /// <summary>
+        /// Threshold value for what Coupling should fail the build on methods
+        /// </summary>
+        [Description("Optional: Sets threshold for Class Coupling error, default = 40")]
+        public InArgument<int> CouplingErrorThreshold
+        {
+            get
+            {
+                return this.couplingErrorThreshold;
+            }
+            set
+            {
+                this.couplingErrorThreshold = value;
+            }
+        }
+
+        /// <summary>
+        /// Threshold value for what Lines Of Code should partially fail the build on methods
+        /// </summary>
+        [Description("Optional: Sets threshold for Lines of Code, warning, default = 20")]
+        public InArgument<int> LinesOfCodeWarningThreshold
+        {
+            get
+            {
+                return this.linesOfCodeWarningThreshold;
+            }
+            set
+            {
+                this.linesOfCodeWarningThreshold = value;
+            }
+        }
+
+        /// <summary>
+        /// Threshold value for what Lines Of Code should fail the build on methods
+        /// </summary>
+        [Description("Optional: Sets threshold for Lines of Code, error, default = 40")]
+        public InArgument<int> LinesOfCodeErrorThreshold
+        {
+            get
+            {
+                return this.linesOfCodeErrorThreshold;
+            }
+            set
+            {
+                this.linesOfCodeErrorThreshold = value;
+            }
+        }
+
+        /// <summary>
+        /// Threshold value for what Depth Of Inheritance should partially fail the build on methods
+        /// </summary>
+        [Description("Optional: Sets threshold for Depth of Inheritance, warning, default = 5")]
+        public InArgument<int> DepthOfInheritanceWarningThreshold
+        {
+            get
+            {
+                return this.depthOfInheritanceWarningThreshold;
+            }
+            set
+            {
+                this.depthOfInheritanceWarningThreshold = value;
+            }
+        }
+
+        /// <summary>
+        /// Threshold value for what Depth Of Inheritance should fail the build on methods
+        /// </summary>
+        [Description("Optional: Sets threshold for Depth of Inheritance, error, default = 10")]
+        public InArgument<int> DepthOfInheritanceErrorThreshold
+        {
+            get
+            {
+                return this.depthOfInheritanceErrorThreshold;
+            }
+            set
+            {
+                this.depthOfInheritanceErrorThreshold = value;
+            }
+        }
 
         /// <summary>
         /// Overrides the global thresholds for the Assembly Metric Level by specific one.  
@@ -112,6 +283,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// <exception cref="ArgumentOutOfRangeException">
         /// Raise this exception if the string contains a part that is not an integer.
         /// </exception>
+        [Obsolete("Use specific arguments instead of this string based.This is now ignored in the code")]
         [Description("Optional: Overrides the global thresholds for the Assembly Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
         public InArgument<string> AssemblyThresholdsString { get; set; }
 
@@ -122,6 +294,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// <exception cref="ArgumentOutOfRangeException">
         /// Raise this exception if the string contains a part that is not an integer.
         /// </exception>
+        [Obsolete("Use specific arguments instead of this string based.This is now ignored in the code")]
         [Description("Optional: Overrides the global thresholds for the Namespace Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
         public InArgument<string> NamespaceThresholdsString { get; set; }
 
@@ -132,6 +305,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// <exception cref="ArgumentOutOfRangeException">
         /// Raise this exception if the string contains a part that is not an integer.
         /// </exception>
+        [Obsolete("Use specific arguments instead of this string based.This is now ignored in the code")]
         [Description("Optional: Overrides the global thresholds for the Type Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
         public InArgument<string> TypeThresholdsString { get; set; }
 
@@ -142,19 +316,52 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// <exception cref="ArgumentOutOfRangeException">
         /// Raise this exception if the string contains a part that is not an integer.
         /// </exception>
+        [Obsolete("Use specific arguments instead of this string based. This is now ignored in the code")]
         [Description("Optional: Overrides the global thresholds for the Member Metric Level by specific one.  The expected format is 9999;9999;9999;9999 where the values are metric's thresholds for the Maintainability Index Error, Maintainability Index Warning, Cyclo Complexity Error and Cyclo Complexity Warning.")]
         public InArgument<string> MemberThresholdsString { get; set; }
 
         /// <summary>
-        /// Gets or sets ta value indicating if code metrics should be logged.
+        /// Gets or sets ta value indicating if code metrics should be logged in detail. Normally keep this false. 
+        /// When enabled, all detailed metrics are logged, not only those that fails/warns. 
         /// </summary>
-        public InArgument<bool> LogCodeMetrics { get; set; }
+        public InArgument<bool> LogCodeMetrics
+        {
+            get
+            {
+                return this.logCodeMetricsArg;
+            }
+            set
+            {
+                this.logCodeMetricsArg = value;
+            }
+        }
 
         /// <summary>
-        /// Optional: Indicates whether to ignore elements with the GeneratedCode attribute. Default false
+        /// Optional: Indicates whether to ignore elements with the GeneratedCode attribute. Default true
         /// </summary>
-        [Description("Indicates whether to ignore elements with the GeneratedCode attribute. Default false")]
-        public InArgument<bool> IgnoreGeneratedCode { get; set; }
+        [Description("Indicates whether to ignore elements with the GeneratedCode attribute. Default true")]
+        public InArgument<bool> IgnoreGeneratedCode
+        {
+            get
+            {
+                return this.ignoreGeneratedCode;
+            }
+            set
+            {
+                this.ignoreGeneratedCode = value;
+            }
+        }
+
+        /// <summary>
+        /// ActivityContext for use by Threshold logic
+        /// </summary>
+        internal CodeActivityContext Context
+        {
+            get
+            {
+                return this.ActivityContext;
+            }
+        }
 
         private IBuildDetail BuildDetail { get; set; }
 
@@ -177,6 +384,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// </summary>
         protected override void InternalExecute()
         {
+            this.logCodeMetrics = this.LogCodeMetrics.Get(this.ActivityContext);
             this.BuildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
             string generatedFile = "Metrics.xml";
             if (this.GeneratedFileName != null && !string.IsNullOrEmpty(this.GeneratedFileName.Get(this.ActivityContext)))
@@ -193,7 +401,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
             if (!this.AnalyzeMetricsResult.Get(this.ActivityContext))
             {
-                AddTextNode("Skipped code metrics analysis", currentTracking.Node);
+                AddTextNode("Skipped code metrics analysis (not set to run)", currentTracking.Node);
                 return;
             }
 
@@ -206,43 +414,48 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             CodeMetricsReport result = CodeMetricsReport.LoadFromFile(generatedFile);
             if (result == null)
             {
-                LogBuildMessage("Could not load metric result file ");
+                this.LogBuildMessage("Could not load metric result file ");
                 return;
             }
 
             // Get thresholds for each level.
-            SpecificMetricThresholds assemblyMetricThresholds = CodeMetricsThresholds.GetForAssembly(this, this.ActivityContext);
-            SpecificMetricThresholds namespaceMetricThresholds = CodeMetricsThresholds.GetForNamespace(this, this.ActivityContext);
-            SpecificMetricThresholds typeMetricThresholds = CodeMetricsThresholds.GetForType(this, this.ActivityContext);
-            SpecificMetricThresholds memberMetricThresholds = CodeMetricsThresholds.GetForMember(this, this.ActivityContext);
-
-            // Check if metrics should be logged.
-            bool logCodeMetrics = this.ActivityContext.GetValue(this.LogCodeMetrics);
-
+            var memberMetricThresholds = new MethodMetricsThresholds(this);
+            var typeMetricThresholds = new TypeMetricsThresholds(this, memberMetricThresholds);
+            // var namespaceMetricThresholds = new NameSpaceMetricsThresholds(this);  //Uncomment in this if you want to perform metric checks on namespaces
+            // var assemblyMetricThresholds = new AssemblyMetricsThresholds(this);  // Uncomment in this if you want to perform metric checks on assemblies
+            int noOfTypeViolations = 0;
+            int noOfMethodViolations = 0;
             foreach (var target in result.Targets)
             {
-                var targetNode = logCodeMetrics ? AddTextNode("Target: " + target.Name, rootNode) : null;
+                var targetNode = this.logCodeMetrics ? AddTextNode("Target: " + target.Name, rootNode) : null;
                 foreach (var module in target.Modules)
                 {
-                    var moduleNode = logCodeMetrics ? AddTextNode("Module: " + module.Name, targetNode) : null;
-                    this.ProcessMetrics(module.Name, module.Metrics, moduleNode, assemblyMetricThresholds);
+                    var moduleNode = this.logCodeMetrics ? AddTextNode("Module: " + module.Name, targetNode) : null;
+
                     foreach (var ns in module.Namespaces)
                     {
-                        var namespaceNode = logCodeMetrics ? AddTextNode("Namespace: " + ns.Name, moduleNode) : null;
-                        this.ProcessMetrics(ns.Name, ns.Metrics, namespaceNode, namespaceMetricThresholds);
+                        var namespaceNode = this.logCodeMetrics ? AddTextNode("Namespace: " + ns.Name, moduleNode) : null;
+
                         foreach (var type in ns.Types)
                         {
-                            var typeNode = logCodeMetrics ? AddTextNode("Type: " + type.Name, namespaceNode) : null;
-                            this.ProcessMetrics(type.Name, type.Metrics, typeNode, typeMetricThresholds);
+                            var typeNode = this.logCodeMetrics ? AddTextNode("Type: " + type.Name, namespaceNode) : null;
+                            var typeInformation = new MemberInformation(null, type, ns, module);
+                            noOfTypeViolations += this.ProcessMetrics(typeNode, typeInformation.TheClass.Metrics, typeMetricThresholds, typeInformation.FullyQualifiedName, typeInformation.TheClass.Name);
                             foreach (var member in type.Members)
                             {
-                                var memberNode = logCodeMetrics ? AddTextNode("Member: " + member.Name, typeNode) : null;
-                                this.ProcessMetrics(member.Name, member.Metrics, memberNode, memberMetricThresholds, type.Name);
+                                var memberNode = this.logCodeMetrics ? AddTextNode("Member: " + member.Name + " " + member.MetricsInformation, typeNode) : null;
+                                var memberInformation = new MemberInformation(member, type, ns, module);
+                                noOfMethodViolations += this.ProcessMetrics(memberNode, memberInformation.TheMember.Metrics, memberMetricThresholds, memberInformation.FullyQualifiedName, memberInformation.TheMember.Name);
                             }
                         }
                     }
                 }
             }
+
+            var numberMessageTypes = string.Format("Number of Code Metric warnings/errors on types: {0}", noOfTypeViolations);
+            var numberMessageMethods = string.Format("Number of Code Metric warnings/errors on methods: {0}", noOfMethodViolations);
+            AddTextNode(numberMessageTypes, rootNode);
+            AddTextNode(numberMessageMethods, rootNode);
         }
 
         /// <summary>
@@ -255,22 +468,68 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             metadata.RequireExtension(typeof(IBuildDetail));
         }
 
-        private static string GetMemberRootForOutput(string memberRootDesc)
+        /// <summary>
+        /// Analyzes the resulting metrics file and compares the metrics against the threshold values
+        /// </summary>
+        /// <param name="parent">The parent node in the build log</param>
+        /// <param name="metrics">List of metric values</param>
+        /// <param name="thresholds">Thresholds for errors and warnings </param>
+        /// <param name="fullyQualifiedName">FQN for the method/type under test</param>
+        /// <param name="currentName">Name of current method/type </param>
+        /// <returns>Number if violations</returns>
+        private int ProcessMetrics(IBuildInformationNode parent, IEnumerable<Metric> metrics, SpecificMetricThresholds thresholds, string fullyQualifiedName, string currentName)
         {
-            if (!string.IsNullOrWhiteSpace(memberRootDesc))
+            var thecomplainlist = new List<string>();
+            foreach (var metric in metrics.Where(metric => metric != null && !string.IsNullOrEmpty(metric.Value)))
             {
-                return string.Format(" [Root:{0}]", memberRootDesc);
+                switch (metric.Name)
+                {
+                    case MaintainabilityIndex:
+                        this.CheckLimits(metric, thresholds.MIMetricChecker, fullyQualifiedName, thecomplainlist);
+                        break;
+                    case CyclomaticComplexity:
+                        this.CheckLimits(metric, thresholds.CCMetricChecker, fullyQualifiedName, thecomplainlist);
+                        break;
+                    case ClassCoupling:
+                        this.CheckLimits(metric, thresholds.COMetricChecker, fullyQualifiedName, thecomplainlist);
+                        break;
+                    case DepthOfInheritance:
+                        this.CheckLimits(metric, thresholds.DOIMetricChecker, fullyQualifiedName, thecomplainlist);
+                        break;
+                    case LinesOfCode:
+                        this.CheckLimits(metric, thresholds.LOCMetricChecker, fullyQualifiedName, thecomplainlist);
+                        break;
+                    default:
+                        throw new UnknownMetricNameException(metric.Name);
+                }
             }
 
-            return string.Empty;
+            if (this.logCodeMetrics && parent != null && thecomplainlist.Count > 0)
+            {
+                var result = "Metrics for " + currentName + @"\n";
+                thecomplainlist.ForEach(s => result += s + @"\n");
+                AddTextNode(result, parent);
+            }
+
+            return thecomplainlist.Count;
         }
+
+        //private static string GetMemberRootForOutput(string memberRootDesc)
+        //{
+        //    if (!string.IsNullOrWhiteSpace(memberRootDesc))
+        //    {
+        //        return string.Format(" [Root:{0}]", memberRootDesc);
+        //    }
+
+        //    return string.Empty;
+        //}
 
         private bool RunCodeMetrics(string output)
         {
             string metricsExePath = Path.Combine(ProgramFilesX86(), @"Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\metrics.exe");
             if (!File.Exists(metricsExePath))
             {
-                LogBuildError("Could not locate " + metricsExePath + ". Please download Visual Studio Code Metrics PowerTool 10.0 at http://www.microsoft.com/downloads/en/details.aspx?FamilyID=edd1dfb0-b9fe-4e90-b6a6-5ed6f6f6e615");
+                this.LogBuildError("Could not locate " + metricsExePath + ". Please download Visual Studio Code Metrics PowerTool 10.0 at http://www.microsoft.com/downloads/en/details.aspx?FamilyID=edd1dfb0-b9fe-4e90-b6a6-5ed6f6f6e615");
                 return false;
             }
 
@@ -301,19 +560,19 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                                                           }
                                                           else
                                                           {
-                                                              LogBuildMessage(e.Data);
+                                                              this.LogBuildMessage(e.Data);
                                                           }
                                                       };
                     process.BeginOutputReadLine();
                     process.ErrorDataReceived += (o, e) =>
                                                      {
-                                                         if (e.Data == null) 
+                                                         if (e.Data == null)
                                                          {
-                                                             mreErr.Set(); 
-                                                         } 
+                                                             mreErr.Set();
+                                                         }
                                                          else
                                                          {
-                                                             LogBuildMessage(e.Data);
+                                                             this.LogBuildMessage(e.Data);
                                                          }
                                                      };
                     process.BeginErrorReadLine();
@@ -331,7 +590,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
                     if (!File.Exists(output))
                     {
-                        LogBuildError("Could not locate file " + output);
+                        this.LogBuildError("Could not locate file " + output);
                         return false;
                     }
                 }
@@ -346,73 +605,42 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             return metricsFiles.Get();
         }
 
-        /// <summary>
-        /// Analyzes the resulting metrics file and compares the Maintainability Index and Cyclomatic Complexity against the threshold values
-        /// </summary>
-        /// <param name="member">Name of the member (namespace, module, type...)</param>
-        /// <param name="metrics">The metrics for this member</param>
-        /// <param name="parent">The parent node in the build log</param>
-        /// <param name="thresholds"> The thresholds for this level, member</param>
-        private void ProcessMetrics(string member, IEnumerable<Metric> metrics, IBuildInformationNode parent, SpecificMetricThresholds thresholds)
+        private void CheckLimits(Metric metric, MetricCheck metricCheck, string fullyQualifiedName, ICollection<string> thecomplainlist)
         {
-            this.ProcessMetrics(member, metrics, parent, thresholds, string.Empty);
-        }
-
-        /// <summary>
-        /// Analyzes the resulting metrics file and compares the Maintainability Index and Cyclomatic Complexity against the threshold values
-        /// </summary>
-        /// <param name="member">Name of the member (namespace, module, type...)</param>
-        /// <param name="metrics">The metrics for this member</param>
-        /// <param name="parent">The parent node in the build log</param>
-        /// <param name="thresholds"> The thresholds for this level, member</param>
-        /// <param name="memberRootDesc">The memberRootDesc</param>
-        private void ProcessMetrics(string member, IEnumerable<Metric> metrics, IBuildInformationNode parent, SpecificMetricThresholds thresholds, string memberRootDesc)
-        {
-            foreach (var metric in metrics)
+            if (metricCheck == null)
             {
-                int metricValue;
-                if (metric != null && !string.IsNullOrEmpty(metric.Value) && int.TryParse(metric.Value, out metricValue))
-                {
-                    if (metric.Name == MaintainabilityIndex && metricValue < thresholds.MaintainabilityIndexErrorThreshold)
-                    {
-                        LogBuildError(string.Format("{0} for {1} is {2} which is below threshold ({3}){4}", MaintainabilityIndex, member, metric.Value, thresholds.MaintainabilityIndexErrorThreshold, GetMemberRootForOutput(memberRootDesc)));
-                        if (this.FailBuildOnError.Get(this.ActivityContext))
-                        {
-                            this.FailCurrentBuild();
-                        }
-                    }
+                return;
+            }
 
-                    if (metric.Name == MaintainabilityIndex && metricValue < thresholds.MaintainabilityIndexWarningThreshold)
-                    {
-                        LogBuildWarning(string.Format("{0} for {1} is {2} which is below threshold ({3}){4}", MaintainabilityIndex, member, metric.Value, thresholds.MaintainabilityIndexWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
-                    }
+            int metricValue;
+            if (!int.TryParse(metric.Value, out metricValue))
+            {
+                return;
+            }
 
-                    if (metric.Name == CyclomaticComplexity && metricValue > thresholds.CyclomaticComplexityErrorThreshold)
-                    {
-                        this.LogBuildError(string.Format("{0} for {1} is {2} which is above threshold ({3}){4}", CyclomaticComplexity, member, metric.Value, thresholds.CyclomaticComplexityErrorThreshold, GetMemberRootForOutput(memberRootDesc)));
-                        if (this.FailBuildOnError.Get(this.ActivityContext))
-                        {
-                            this.FailCurrentBuild();
-                        }
-                    }
-
-                    if (metric.Name == CyclomaticComplexity && metricValue > thresholds.CyclomaticComplexityWarningThreshold)
-                    {
-                        this.LogBuildWarning(string.Format("{0} for {1} is {2} which is above threshold ({3}){4}", CyclomaticComplexity, member, metric.Value, thresholds.CyclomaticComplexityWarningThreshold, GetMemberRootForOutput(memberRootDesc)));
-                    }
-
-                    if (this.LogCodeMetrics.Get(this.ActivityContext))
-                    {
-                        AddTextNode(metric.Name + ": " + metric.Value, parent);
-                    }
-                }
+            if (metricCheck.CheckError(metricValue))
+            {
+                this.CreateErrorLogs(metricCheck, metricValue, BuildStatus.Failed, this.LogBuildError, fullyQualifiedName, thecomplainlist);
+            }
+            else if (metricCheck.CheckWarning(metricValue))
+            {
+                this.CreateErrorLogs(metricCheck, metricValue, BuildStatus.PartiallySucceeded, this.LogBuildWarning, fullyQualifiedName, thecomplainlist);
             }
         }
 
-        private void FailCurrentBuild()
+        private void ChangeStatusCurrentBuild(BuildStatus newStatus)
         {
-            this.BuildDetail.Status = BuildStatus.Failed;
+            this.BuildDetail.Status = newStatus;
             this.BuildDetail.Save();
+        }
+
+        private void CreateErrorLogs(MetricCheck metricCheck, int metricValue, BuildStatus status, LogToBuild logToBuild, string fullyQualifiedName, ICollection<string> thecomplainlist)
+        {
+            string typeFail = (status == BuildStatus.Failed) ? "error" : "warning";
+            string message = string.Format(metricCheck.Format, fullyQualifiedName, metricValue, typeFail, metricCheck.LimitThatFailed(status));
+            logToBuild(message);
+            this.ChangeStatusCurrentBuild(status);
+            thecomplainlist.Add(metricCheck.Name + ": " + metricValue + " fails on " + message);
         }
     }
 }

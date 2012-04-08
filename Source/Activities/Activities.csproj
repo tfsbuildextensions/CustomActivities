@@ -25,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Common\TFSBuildExtensions.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>..\BuildBinaries\TfsBuildExtensions.Activities.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -117,19 +117,22 @@
     <Compile Include="ClickOnce\ClickOnceDeployment.cs" />
     <Compile Include="CodeQuality\CodeMetrics\CodeMetrics.cs" />
     <Compile Include="CodeQuality\CodeMetrics\CodeMetricsFilesToProcess.cs" />
-    <Compile Include="CodeQuality\CodeMetrics\CodeMetricsThresholds.cs" />
     <Compile Include="CodeQuality\CodeMetrics\History\ActivityContextProxy.cs" />
     <Compile Include="CodeQuality\CodeMetrics\History\CodeMetricsHistory.cs" />
     <Compile Include="CodeQuality\CodeMetrics\History\ParametersValidations.cs" />
     <Compile Include="CodeQuality\CodeMetrics\ICodeMetricsLogger.cs" />
     <Compile Include="CodeQuality\CodeMetrics\IMetricsLogger.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\MetricCheckClasses.cs" />
     <Compile Include="CodeQuality\CodeMetrics\MetricsInvoker.cs" />
     <Compile Include="CodeQuality\CodeMetrics\MetricsLogger.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\MetricsReport.cs">
+      <DependentUpon>MetricsReport.xsd</DependentUpon>
+    </Compile>
     <Compile Include="CodeQuality\CodeMetrics\MetricsReport.designer.cs" />
-    <Compile Include="CodeQuality\CodeMetrics\MetricThresholdsByLevel.cs" />
     <Compile Include="CodeQuality\CodeMetrics\Proxy\ActivityContextProxy.cs" />
     <Compile Include="CodeQuality\CodeMetrics\Proxy\FileSystemProxy.cs" />
     <Compile Include="CodeQuality\CodeMetrics\SpecificMetricThresholds.cs" />
+    <Compile Include="CodeQuality\CodeMetrics\UnknownMetricNameException.cs" />
     <Compile Include="CodeQuality\NUnit\NUnit.cs" />
     <Compile Include="CodeQuality\NUnit\SimpleCommandLineBuilder.cs" />
     <Compile Include="CodeQuality\StatLight\StatLight.cs" />
