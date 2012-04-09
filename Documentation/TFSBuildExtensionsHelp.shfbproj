@@ -42,7 +42,7 @@
     </BuildLogFile>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <FrameworkVersion>.NET 4.0.30319</FrameworkVersion>
-    <HelpTitle>TFS Build Extensions Help %28v1.2.0.0%29</HelpTitle>
+    <HelpTitle>TFS Build Extensions Help %28v1.4.0.0%29</HelpTitle>
     <CopyrightHref>http://tfsbuildextensions.codeplex.com/</CopyrightHref>
     <CopyrightText>Copyright &amp;#169%3b http://tfsbuildextensions.codeplex.com/ All rights reserved.</CopyrightText>
     <FeedbackEMailAddress>
@@ -71,18 +71,19 @@
     </DocumentationSources>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
-<NamespaceSummaryItem name="COMAdmin" isDocumented="False" />
-<NamespaceSummaryItem name="CodeActivitySamples" isDocumented="False" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.Deployment.ToUnix" isDocumented="True" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeMetrics" isDocumented="True" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.SqlServer.Extended" isDocumented="False" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.Virtualization.Extended" isDocumented="False" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeQuality.Extended" isDocumented="False" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.AWS.Extended" isDocumented="False" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeMetrics.Extended" isDocumented="False" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeQuality.History" isDocumented="False" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeQuality.Proxy" isDocumented="False" />
-<NamespaceSummaryItem name="TfsBuildExtensions.Activities.Azure.Extended" isDocumented="False" /></NamespaceSummaries>
+      <NamespaceSummaryItem name="COMAdmin" isDocumented="False" />
+      <NamespaceSummaryItem name="CodeActivitySamples" isDocumented="False" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.Deployment.ToUnix" isDocumented="True" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeMetrics" isDocumented="True" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.SqlServer.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.Virtualization.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeQuality.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.AWS.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeMetrics.Extended" isDocumented="False" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeQuality.History" isDocumented="False" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.CodeQuality.Proxy" isDocumented="False" />
+      <NamespaceSummaryItem name="TfsBuildExtensions.Activities.Azure.Extended" isDocumented="False" />
+    </NamespaceSummaries>
     <HelpFileVersion>1.2.0.0</HelpFileVersion>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in

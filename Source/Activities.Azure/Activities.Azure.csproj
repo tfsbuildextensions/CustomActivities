@@ -40,24 +40,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
+      <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Build.Workflow, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.WindowsAzure.Diagnostics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>AssemblyReferences\Microsoft.WindowsAzure.Diagnostics.dll</HintPath>
+      <HintPath>..\AssemblyReferences\Microsoft.WindowsAzure.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>AssemblyReferences\Microsoft.WindowsAzure.ServiceRuntime.dll</HintPath>
+      <HintPath>..\AssemblyReferences\Microsoft.WindowsAzure.ServiceRuntime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>AssemblyReferences\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
+      <HintPath>..\AssemblyReferences\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceManagement">
-      <HintPath>AssemblyReferences\ServiceManagement.dll</HintPath>
+    <Reference Include="ServiceManagement, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\AssemblyReferences\ServiceManagement.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Activities" />
@@ -122,10 +118,6 @@
     <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
       <Link>Properties\CodeAnalysis.Dictionary.xml</Link>
     </CodeAnalysisDictionary>
-    <Content Include="AssemblyReferences\Microsoft.WindowsAzure.Diagnostics.dll" />
-    <Content Include="AssemblyReferences\Microsoft.WindowsAzure.ServiceRuntime.dll" />
-    <Content Include="AssemblyReferences\Microsoft.WindowsAzure.StorageClient.dll" />
-    <Content Include="AssemblyReferences\ServiceManagement.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Activities\Activities.csproj">

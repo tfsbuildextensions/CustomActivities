@@ -1399,5 +1399,71 @@ namespace TfsBuildExtensions.Activities.Tests
         }
 
         #endregion
+
+        #region Long attribute name Tests
+
+        /// <summary>
+        /// Tests if the attributes with long names (suffixes with Attribute) are updated in a csharp file.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem("TfsBuildExtensions.Activities.dll")]
+        [DeploymentItem(@"Framework\TestFiles\AssemblyInfo (7).cs")]
+        public void AssemblyInfo_UpdatesAttributes_WhenExecuteInvokedOnCSharpFileWithLongAttributeNames()
+        {
+            // arrange
+            File.Copy(@"AssemblyInfo (7).cs", TestFilePrefix + ".cs", true);
+
+            var target = new AssemblyInfo();
+            var expectedGuid = System.Guid.NewGuid();
+            var parameters = new Dictionary<string, object>
+            {
+                { "Files", new[] { TestFilePrefix + ".cs" } },
+                { "AssemblyVersion", "$(current).$(current).0.0" },
+                { "AssemblyFileVersion", "$(current).$(current).$(increment).0" },
+                { "AssemblyInformationalVersion", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" },
+                { "AssemblyCompany", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" },
+                { "AssemblyConfiguration", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" },
+                { "AssemblyCopyright", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" },
+                { "AssemblyDescription", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" },
+                { "AssemblyProduct", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" },
+                { "AssemblyTitle", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" },
+                { "AssemblyTrademark", "Value $(version)/$(fileversion) at $(date:yyyyMMdd)" },
+                { "AssemblyCulture", "NewCulture" },
+                { "AssemblyDelaySign", false },
+                { "Guid", expectedGuid },
+                { "AssemblyKeyFile", "NewKeyFile" },
+                { "AssemblyKeyName", "NewKeyName" },
+                { "CLSCompliant", false },
+                { "ComVisible", false },
+            };
+
+            var invoker = new WorkflowInvoker(target);
+
+            // act
+            var actual = invoker.Invoke(parameters);
+
+            // assert
+            var text = File.ReadAllText(TestFilePrefix + ".cs");
+
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyVersionAttribute(\"1.2.0.0\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyFileVersionAttribute(\"1.2.4.0\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf(string.Format("[assembly: AssemblyInformationalVersionAttribute(\"Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}\")]", DateTime.Today), StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf(string.Format("[assembly: AssemblyCompanyAttribute(\"Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}\")]", DateTime.Today), StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf(string.Format("[assembly: AssemblyConfigurationAttribute(\"Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}\")]", DateTime.Today), StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf(string.Format("[assembly: AssemblyCopyrightAttribute(\"Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}\")]", DateTime.Today), StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf(string.Format("[assembly: AssemblyDescriptionAttribute(\"Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}\")]", DateTime.Today), StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf(string.Format("[assembly: AssemblyProductAttribute(\"Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}\")]", DateTime.Today), StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf(string.Format("[assembly: AssemblyTitleAttribute(\"Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}\")]", DateTime.Today), StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf(string.Format("[assembly: AssemblyTrademarkAttribute(\"Value 1.2.0.0/1.2.4.0 at {0:yyyyMMdd}\")]", DateTime.Today), StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyCultureAttribute(\"NewCulture\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyDelaySignAttribute(false)]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: GuidAttribute(\"" + expectedGuid.ToString() + "\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyKeyFileAttribute(\"NewKeyFile\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: AssemblyKeyNameAttribute(\"NewKeyName\")]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: CLSCompliantAttribute(false)]", StringComparison.Ordinal));
+            Assert.AreNotEqual(-1, text.IndexOf("[assembly: ComVisibleAttribute(false)]", StringComparison.Ordinal));
+        }
+
+        #endregion
     }
 }

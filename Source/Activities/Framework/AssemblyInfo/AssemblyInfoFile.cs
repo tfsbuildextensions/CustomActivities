@@ -20,7 +20,7 @@ namespace TfsBuildExtensions.Activities.Framework
 
         // parser for assembly attributes in C#, VB.Net and F#
         private static readonly Regex assemblyAttributeParser = new Regex(
-            @"^(?<start>\s*[\[<]<?\s*[Aa]ssembly\s*:\s*)(?<name>\w+)(?<middle>\s*\(\s*""?)(?<value>.*?)(?<end>""?\s*\)\s*>?[>\]])",
+            @"^(?<start>\s*[\[<]<?\s*[Aa]ssembly\s*:\s*)(?<longname>(?<shortname>\w+?)(Attribute)?)(?<middle>\s*\(\s*""?)(?<value>.*?)(?<end>""?\s*\)\s*>?[>\]])",
             RegexOptions.Compiled);
 
         // parser for line comment in C#, VB.Net and F#
@@ -105,13 +105,13 @@ namespace TfsBuildExtensions.Activities.Framework
                     if (matches.Success)
                     {
                         // line contains assembly attribute, save result
-                        var attributeName = matches.Groups["name"].Value;
+                        var attributeName = matches.Groups["shortname"].Value;
 
                         if (!this.attributes.ContainsKey(attributeName))
                         {
                             this.attributes[attributeName] = new MatchResult
                             {
-                                Format = matches.Groups["start"].Value + matches.Groups["name"].Value + matches.Groups["middle"].Value + "{0}" + matches.Groups["end"].Value,
+                                Format = matches.Groups["start"].Value + matches.Groups["longname"].Value + matches.Groups["middle"].Value + "{0}" + matches.Groups["end"].Value,
                                 LineNumber = lineNumber,
                                 Value = matches.Groups["value"].Value
                             };
