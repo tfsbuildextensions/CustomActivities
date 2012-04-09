@@ -5,6 +5,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
 {
     using System;
     using System.Activities;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Class for holding the pair of error and warning limits
@@ -74,13 +75,14 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
     /// <summary>
     /// Represents the specific set of thresholds for a metric's level.
     /// </summary>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "*", Justification = "Fine in this case")]
     internal abstract class SpecificMetricThresholds
     {
-        private MIMetricCheck miMetricCheck;
-        private CCMetricCheck ccMetricCheck;
-        private COMetricCheck coMetricCheck;
-        private LOCMetricCheck locMetricCheck;
-        private DOIMetricCheck doiMetricCheck;
+        private MIMetricCheck mimetricCheck;
+        private CCMetricCheck ccmetricCheck;
+        private COMetricCheck cometricCheck;
+        private LOCMetricCheck locmetricCheck;
+        private DOIMetricCheck doimetricCheck;
 
         /// <summary>
         /// Threshold values for  Maintainability Index should fail or partially fail a build. Default is no thresholds, returning null
@@ -141,7 +143,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
         {
             get
             {
-                return this.miMetricCheck ?? (this.miMetricCheck = new MIMetricCheck(this));
+                return this.mimetricCheck ?? (this.mimetricCheck = new MIMetricCheck(this));
             }
         }
 
@@ -154,7 +156,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
                     return null;
                 }
 
-                return this.ccMetricCheck ?? (this.ccMetricCheck = new CCMetricCheck(this));
+                return this.ccmetricCheck ?? (this.ccmetricCheck = new CCMetricCheck(this));
             }
         }
 
@@ -167,7 +169,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
                     return null;
                 }
 
-                return this.coMetricCheck ?? (this.coMetricCheck = new COMetricCheck(this));
+                return this.cometricCheck ?? (this.cometricCheck = new COMetricCheck(this));
             }
         }
 
@@ -180,7 +182,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
                     return null;
                 }
 
-                return this.locMetricCheck ?? (this.locMetricCheck = new LOCMetricCheck(this));
+                return this.locmetricCheck ?? (this.locmetricCheck = new LOCMetricCheck(this));
             }
         }
 
@@ -193,7 +195,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
                     return null;
                 }
 
-                return this.doiMetricCheck ?? (this.doiMetricCheck = new DOIMetricCheck(this));
+                return this.doimetricCheck ?? (this.doimetricCheck = new DOIMetricCheck(this));
             }
         }
     }

@@ -1,8 +1,10 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="MetricCheckClasses.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
+
 namespace TfsBuildExtensions.Activities.CodeQuality
 {
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.TeamFoundation.Build.Client;
     using TfsBuildExtensions.Activities.CodeMetrics.Extended;
     using TfsBuildExtensions.Activities.CodeQuality.Extended;
@@ -49,6 +51,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         }
     }
 
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "*", Justification = "Fine in this case")]
     internal class MIMetricCheck : MetricCheck
     {
         internal MIMetricCheck(SpecificMetricThresholds thresholds)

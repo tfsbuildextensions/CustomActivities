@@ -86,6 +86,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.generatedFileName;
             }
+
             set
             {
                 this.generatedFileName = value;
@@ -123,6 +124,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.maintainabilityIndexErrorThreshold;
             }
+
             set
             {
                 this.maintainabilityIndexErrorThreshold = value;
@@ -140,6 +142,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.maintainabilityIndexWarningThreshold;
             }
+
             set
             {
                 this.maintainabilityIndexWarningThreshold = value;
@@ -157,6 +160,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.cyclomaticComplexityErrorThreshold;
             }
+
             set
             {
                 this.cyclomaticComplexityErrorThreshold = value;
@@ -174,6 +178,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.cyclomaticComplexityWarningThreshold;
             }
+
             set
             {
                 this.cyclomaticComplexityWarningThreshold = value;
@@ -190,6 +195,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.couplingWarningThreshold;
             }
+
             set
             {
                 this.couplingWarningThreshold = value;
@@ -206,6 +212,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.couplingErrorThreshold;
             }
+
             set
             {
                 this.couplingErrorThreshold = value;
@@ -222,6 +229,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.linesOfCodeWarningThreshold;
             }
+
             set
             {
                 this.linesOfCodeWarningThreshold = value;
@@ -238,6 +246,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.linesOfCodeErrorThreshold;
             }
+
             set
             {
                 this.linesOfCodeErrorThreshold = value;
@@ -254,6 +263,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.depthOfInheritanceWarningThreshold;
             }
+
             set
             {
                 this.depthOfInheritanceWarningThreshold = value;
@@ -270,6 +280,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.depthOfInheritanceErrorThreshold;
             }
+
             set
             {
                 this.depthOfInheritanceErrorThreshold = value;
@@ -330,6 +341,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.logCodeMetricsArg;
             }
+
             set
             {
                 this.logCodeMetricsArg = value;
@@ -346,6 +358,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 return this.ignoreGeneratedCode;
             }
+
             set
             {
                 this.ignoreGeneratedCode = value;
@@ -421,6 +434,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             // Get thresholds for each level.
             var memberMetricThresholds = new MethodMetricsThresholds(this);
             var typeMetricThresholds = new TypeMetricsThresholds(this, memberMetricThresholds);
+
             // var namespaceMetricThresholds = new NameSpaceMetricsThresholds(this);  //Uncomment in this if you want to perform metric checks on namespaces
             // var assemblyMetricThresholds = new AssemblyMetricsThresholds(this);  // Uncomment in this if you want to perform metric checks on assemblies
             int noOfTypeViolations = 0;
@@ -513,16 +527,6 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
             return thecomplainlist.Count;
         }
-
-        //private static string GetMemberRootForOutput(string memberRootDesc)
-        //{
-        //    if (!string.IsNullOrWhiteSpace(memberRootDesc))
-        //    {
-        //        return string.Format(" [Root:{0}]", memberRootDesc);
-        //    }
-
-        //    return string.Empty;
-        //}
 
         private bool RunCodeMetrics(string output)
         {

@@ -20,23 +20,31 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Extended
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         ////
 
+        /// <summary>
+        /// UnknownMetricNameException
+        /// </summary>
         public UnknownMetricNameException()
         {
         }
 
-        public UnknownMetricNameException(string message)
-            : base(message)
+        /// <summary>
+        /// UnknownMetricNameException
+        /// </summary>
+        public UnknownMetricNameException(string message) : base(message)
         {
         }
 
-        public UnknownMetricNameException(string message, Exception inner)
-            : base(message, inner)
+        /// <summary>
+        /// UnknownMetricNameException
+        /// </summary>
+        public UnknownMetricNameException(string message, Exception inner) : base(message, inner)
         {
         }
 
-        protected UnknownMetricNameException(
-            SerializationInfo info, StreamingContext context)
-            : base(info, context)
+        /// <summary>
+        /// UnknownMetricNameException
+        /// </summary>
+        protected UnknownMetricNameException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
