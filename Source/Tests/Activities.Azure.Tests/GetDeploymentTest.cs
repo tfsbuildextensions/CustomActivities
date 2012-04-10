@@ -7,8 +7,9 @@ namespace TfsBuildExtensions.Activities.Azure.Tests
     using System.Collections.Generic;
     using Microsoft.Samples.WindowsAzure.ServiceManagement;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using TfsBuildExtensions.Activities.Azure.HostedServices;
     using TfsBuildExtensions.Activities.Azure.Extended;
+    using TfsBuildExtensions.Activities.Azure.HostedServices;
+
     [TestClass]
     public class GetDeploymentTest
     {

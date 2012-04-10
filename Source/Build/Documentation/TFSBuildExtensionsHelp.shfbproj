@@ -42,7 +42,7 @@
     </BuildLogFile>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <FrameworkVersion>.NET 4.0.30319</FrameworkVersion>
-    <HelpTitle>TFS Build Extensions Help %28v1.4.0.0%29</HelpTitle>
+    <HelpTitle>TFS Build Extensions Help %28v1.5.0.0%29</HelpTitle>
     <CopyrightHref>http://tfsbuildextensions.codeplex.com/</CopyrightHref>
     <CopyrightText>Copyright &amp;#169%3b http://tfsbuildextensions.codeplex.com/ All rights reserved.</CopyrightText>
     <FeedbackEMailAddress>
@@ -52,22 +52,22 @@
     <PresentationStyle>vs2005</PresentationStyle>
     <SyntaxFilters>None</SyntaxFilters>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.AWS.dll" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.AWS.xml" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.Azure.dll" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.Azure.xml" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TFSBuildExtensions.Activities.dll" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.IIS7.dll" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.IIS7.xml" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.ILMerge.dll" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.ILMerge.xml" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.dll" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.xml" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.dll" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.xml" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.VirtualPC.dll" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TfsBuildExtensions.Activities.VirtualPC.xml" />
-      <DocumentationSource sourceFile="..\Source\BuildBinaries\TFSBuildExtensions.Activities.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.AWS.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.AWS.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.Azure.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.Azure.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TFSBuildExtensions.Activities.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.IIS7.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.IIS7.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.ILMerge.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.ILMerge.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VirtualPC.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VirtualPC.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TFSBuildExtensions.Activities.xml" />
     </DocumentationSources>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
