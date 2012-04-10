@@ -10,7 +10,7 @@
 
     <Target Name="PreCheckin" DependsOnTargets="StyleCop;Compile"/>
     
-    <Target Name="Package" DependsOnTargets="StyleCop;Compile;CleanFiles;Touch"/>
+    <Target Name="Package" DependsOnTargets="StyleCop;Compile;BuildChm;CleanFiles;Touch"/>
 
     <Target Name="StyleCop">
         <Message Text="$(MSBuildProjectDirectory)\..\Settings.StyleCop"/>
@@ -34,6 +34,10 @@
         </MSBuild.ExtensionPack.VisualStudio.VSDevEnv>
         <Message Text="ExitCode: $(Exit)"/>
         <Error Condition="'$(Exit)' != '0'" Text="Compile Failed" />
+    </Target>
+
+    <Target Name="BuildChm" Condition="$(BuildChm) != 'false'">
+        <MSBuild Projects="Documentation\TFSBuildExtensionsHelp.shfbproj"/>
     </Target>
 
     <Target Name="CleanFiles">
