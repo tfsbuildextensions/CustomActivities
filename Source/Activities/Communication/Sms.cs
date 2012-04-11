@@ -125,7 +125,7 @@ namespace TfsBuildExtensions.Activities.Communication
             string accountsid = this.AccountSid.Get(this.ActivityContext);
             string authtoken = this.AuthToken.Get(this.ActivityContext);
 
-            Uri uri = new Uri(string.Format("https://api.twilio.com/{0}/Accounts/{1}/SMS/Messages", apiversion, accountsid));
+            Uri uri = new Uri(string.Format("https://api.twilio.com/{0}/Accounts/{1}/SMS/Messages", this.apiversion, accountsid));
 
             foreach (string recipient in this.To.Get(this.ActivityContext))
             {
