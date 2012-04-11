@@ -1,0 +1,124 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- 
+        This file is used to build the TFS 2010 versions of the Custom Assemblies
+    -->
+    <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
+    <PropertyGroup>
+        <ReleaseVersion>June 2012</ReleaseVersion>
+        <Configuration>Release|Any CPU</Configuration>
+        <!-- If you only have VS11 installed, pass this VisualStudioVersion property in as 11.0 -->
+        <VisualStudioVersion>10.0</VisualStudioVersion>
+    </PropertyGroup>
+
+    <Target Name="PreCheckin" DependsOnTargets="StyleCop;Compile"/>
+
+    <Target Name="PreCompile" BeforeTargets="Compile">
+        <!-- Gather up the files we need to shuffle around to produce the TFS 2010 activities-->
+        <ItemGroup>
+            <FilesToCleanUp Include="..\Common\CommonAssemblyInfo.cs" Condition="Exists('..\Common\CommonAssemblyInfo.cs')"/>
+            <FilesToCleanUp Include="..\Common\CommonAssemblyInfo2010.cs" Condition="Exists('..\Common\CommonAssemblyInfo2010.cs')"/>
+            <FilesToCleanUp Include="..\Common\CommonAssemblyInfo11.cs" Condition="Exists('..\Common\CommonAssemblyInfo11.cs')"/>
+            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs')"/>
+            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition2010.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition2010.cs')"/>
+            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition11.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition11.cs')"/>
+            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs')"/>
+            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail2010.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDetail2010.cs')"/>
+            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail11.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDetail11.cs')"/>
+            <FileAtt Include="@(FilesToCleanUp)">
+                <Attributes>Normal</Attributes>
+            </FileAtt>
+        </ItemGroup>
+        
+        <!-- We remove the files we use to produce the builds and Get Latest from TFS. Keep this in mind if you have edited any of them -->
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(FileAtt)" ContinueOnError="true"/>
+        <RemoveDir Directories="..\AssemblyReferences" Condition="Exists('..\AssemblyReferences')"/>
+        <RemoveDir Directories="..\AssemblyReferences2010" Condition="Exists('..\AssemblyReferences2010')"/>
+        <RemoveDir Directories="..\AssemblyReferences11" Condition="Exists('..\AssemblyReferences11')"/>
+        <Delete Files="@(FilesToCleanUp)" />
+
+        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/Tests/Activities.Tests/MockObjects /recursive /force"/>
+        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/AssemblyReferences /recursive /force"/>
+        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/AssemblyReferences2010 /recursive /force"/>
+        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/Common/CommonAssemblyInfo.cs /force"/>
+        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/Common/CommonAssemblyInfo2010.cs /force"/>
+
+        <!-- Shuffle the required files -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences" TargetPath="..\AssemblyReferences11"/>
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences2010" TargetPath="..\AssemblyReferences"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo.cs" TargetPath="..\Common\CommonAssemblyInfo11.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo2010.cs" TargetPath="..\Common\CommonAssemblyInfo.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail11.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail2010.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition11.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition2010.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs"/>
+    </Target>
+
+    <Target Name="PostCompile" AfterTargets="Compile">
+        <!-- Move the shuffled files back again -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences" TargetPath="..\AssemblyReferences2010"/>
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences11" TargetPath="..\AssemblyReferences"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo.cs" TargetPath="..\Common\CommonAssemblyInfo2010.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo11.cs" TargetPath="..\Common\CommonAssemblyInfo.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail2010.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail11.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition2010.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition11.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs"/>
+    </Target>
+
+    <Target Name="Package" DependsOnTargets="StyleCop;Compile;CleanFiles;Touch"/>
+
+    <Target Name="StyleCop">
+        <Message Text="$(MSBuildProjectDirectory)\..\Settings.StyleCop"/>
+        <ItemGroup>
+            <StyleCopFiles Include="$(MSBuildProjectDirectory)\..\**\*.cs" Exclude="$(MSBuildProjectDirectory)\..\**\*.designer.cs;
+                                                                                    $(MSBuildProjectDirectory)\..\Test*\**\*.*;
+                                                                                    $(MSBuildProjectDirectory)\..\Common\Common*;
+                                                                                    $(MSBuildProjectDirectory)\..\Buildbinaries\**\*.*"/>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.CodeQuality.StyleCop TaskAction="Scan" SourceFiles="@(StyleCopFiles)" ShowOutput="false" ForceFullAnalysis="true" CacheResults="false" logFile="StyleCopLog.txt" SettingsFile="$(MSBuildProjectDirectory)\..\Settings.StyleCop">
+            <Output TaskParameter="Succeeded" PropertyName="AllPassed"/>
+            <Output TaskParameter="ViolationCount" PropertyName="Violations"/>
+            <Output TaskParameter="FailedFiles" ItemName="Failures"/>
+        </MSBuild.ExtensionPack.CodeQuality.StyleCop>
+        <Message Text="...StyleCop complete. $(Violations) violations"/>
+        <Error Condition="'$(Violations)' != '0'" Text="Stylecop Failed: $(Violations) violations" />
+    </Target>
+
+    <Target Name="Compile">
+        <MSBuild.ExtensionPack.VisualStudio.VSDevEnv FilePath="..\TFSBuildExtensions.sln" Version="$(VisualStudioVersion)" Configuration="$(Configuration)" Rebuild="true">
+            <Output TaskParameter="ExitCode" PropertyName="Exit" />
+        </MSBuild.ExtensionPack.VisualStudio.VSDevEnv>
+        <Message Text="ExitCode: $(Exit)"/>
+        <Error Condition="'$(Exit)' != '0'" Text="Compile Failed" />
+    </Target>
+
+    <Target Name="CleanFiles">
+        <ItemGroup>
+            <FilesToDelete Include="..\BuildBinaries\*.*"
+                           Exclude="..\BuildBinaries\TfsBuildExtensions*.dll;
+                                    ..\BuildBinaries\TfsBuildExtensions*.pdb;
+                                    ..\BuildBinaries\Ionic*.dll;"/>
+        </ItemGroup>
+        <Microsoft.Build.Tasks.Delete Files="@(FilesToDelete)"/>
+    </Target>
+
+    <Target Name="Touch">
+        <ItemGroup>
+            <TouchFiles Include="$(MSBuildProjectDirectory)\..\Buildbinaries\**\*.*"/>
+        </ItemGroup>
+        <Touch Files="@(TouchFiles)" ForceTouch="true"/>
+    </Target>
+
+    <Target Name="UpdateSourceControl">
+        <PropertyGroup>
+            <WorkspaceFolder Condition="'$(WorkspaceFolder)' == ''">D:\Projects\FreeToDev</WorkspaceFolder>
+            <CustomActivitiesFolder Condition="'$(CustomActivitiesFolder)' == ''">$(WorkspaceFolder)\BuildProcessTemplates\CustomActivities</CustomActivitiesFolder>
+        </PropertyGroup>
+        <ItemGroup>
+            <NewAssemblies Include="..\BuildBinaries\TFSBuildExtensions*.dll;..\BuildBinaries\TFSBuildExtensions*.pdb" Exclude="..\BuildBinaries\*Test*;..\BuildBinaries\*_Accessor*;;..\BuildBinaries\*.instr.*"/>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkout" ItemCol="@(FilesToCheckout)" WorkingDirectory="$(WorkspaceFolder)" Version="2012"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="@(NewAssemblies)" DestinationFolder="$(CustomActivitiesFolder)"/>
+        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemCol="@(FilesToCheckout)" WorkingDirectory="$(WorkspaceFolder)" Version="2012"/>
+    </Target>
+</Project>
