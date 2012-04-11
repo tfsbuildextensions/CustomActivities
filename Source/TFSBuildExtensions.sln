@@ -17,7 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A24CE1
 		Common\BaseCodeActivityGeneric.cs = Common\BaseCodeActivityGeneric.cs
 		Common\BaseRemoteCodeActivity.cs = Common\BaseRemoteCodeActivity.cs
 		Common\CodeAnalysis.Dictionary.xml = Common\CodeAnalysis.Dictionary.xml
-		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
 		Common\FailingBuildException.cs = Common\FailingBuildException.cs
 		Common\IBaseActivityMinimumArguments.cs = Common\IBaseActivityMinimumArguments.cs
 		Common\License.rtf = Common\License.rtf

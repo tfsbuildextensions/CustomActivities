@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -150,6 +150,7 @@
     <Compile Include="CodeQuality\StatLight\StatLight.cs" />
     <Compile Include="CodeQuality\FxCop.cs" />
     <Compile Include="Communication\Email.cs" />
+    <Compile Include="Communication\Sms.cs" />
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Compression\Zip.cs" />
     <Compile Include="FileSystem\WriteToFile.cs" />
