@@ -18,12 +18,6 @@
             <FilesToCleanUp Include="..\Common\CommonAssemblyInfo.cs" Condition="Exists('..\Common\CommonAssemblyInfo.cs')"/>
             <FilesToCleanUp Include="..\Common\CommonAssemblyInfo2010.cs" Condition="Exists('..\Common\CommonAssemblyInfo2010.cs')"/>
             <FilesToCleanUp Include="..\Common\CommonAssemblyInfo11.cs" Condition="Exists('..\Common\CommonAssemblyInfo11.cs')"/>
-            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs')"/>
-            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition2010.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition2010.cs')"/>
-            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition11.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition11.cs')"/>
-            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs')"/>
-            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail2010.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDetail2010.cs')"/>
-            <FilesToCleanUp Include="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail11.cs" Condition="Exists('..\Tests\Activities.Tests\MockObjects\MockIBuildDetail11.cs')"/>
             <FileAtt Include="@(FilesToCleanUp)">
                 <Attributes>Normal</Attributes>
             </FileAtt>
@@ -36,7 +30,6 @@
         <RemoveDir Directories="..\AssemblyReferences11" Condition="Exists('..\AssemblyReferences11')"/>
         <Delete Files="@(FilesToCleanUp)" />
 
-        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/Tests/Activities.Tests/MockObjects /recursive /force"/>
         <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/AssemblyReferences /recursive /force"/>
         <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/AssemblyReferences2010 /recursive /force"/>
         <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/Common/CommonAssemblyInfo.cs /force"/>
@@ -47,10 +40,6 @@
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences2010" TargetPath="..\AssemblyReferences"/>
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo.cs" TargetPath="..\Common\CommonAssemblyInfo11.cs"/>
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo2010.cs" TargetPath="..\Common\CommonAssemblyInfo.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail11.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail2010.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition11.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition2010.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs"/>
     </Target>
 
     <Target Name="PostCompile" AfterTargets="Compile">
@@ -59,10 +48,6 @@
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences11" TargetPath="..\AssemblyReferences"/>
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo.cs" TargetPath="..\Common\CommonAssemblyInfo2010.cs"/>
         <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo11.cs" TargetPath="..\Common\CommonAssemblyInfo.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail2010.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail11.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDetail.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition2010.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition11.cs" TargetPath="..\Tests\Activities.Tests\MockObjects\MockIBuildDefinition.cs"/>
     </Target>
 
     <Target Name="Package" DependsOnTargets="StyleCop;Compile;CleanFiles;Touch"/>
