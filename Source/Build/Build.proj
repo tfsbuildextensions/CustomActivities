@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <Target Name="PreCheckin" DependsOnTargets="StyleCop;Compile"/>
-    
+
     <Target Name="Package" DependsOnTargets="StyleCop;Compile;BuildChm;CleanFiles;Touch"/>
 
-    <Target Name="StyleCop">
+    <Target Name="StyleCop" Condition="$(SkipStyleCop) != 'true'">
         <Message Text="$(MSBuildProjectDirectory)\..\Settings.StyleCop"/>
         <ItemGroup>
             <StyleCopFiles Include="$(MSBuildProjectDirectory)\..\**\*.cs" Exclude="$(MSBuildProjectDirectory)\..\**\*.designer.cs;
@@ -25,6 +25,23 @@
         </MSBuild.ExtensionPack.CodeQuality.StyleCop>
         <Message Text="...StyleCop complete. $(Violations) violations"/>
         <Error Condition="'$(Violations)' != '0'" Text="Stylecop Failed: $(Violations) violations" />
+    </Target>
+
+    <Target Name="PreCompile" BeforeTargets="Compile">
+        <ItemGroup>
+            <VS11Files Include="..\AssemblyReferences11\*.*"/>
+            <FileAtt Include="..\Common\CommonAssemblyInfo.cs">
+                <Attributes>Normal</Attributes>
+            </FileAtt>
+        </ItemGroup>
+        <!-- Clean out AssemblyReferences -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="..\AssemblyReferences" Force="true"/>
+        <!-- Add the VS11 versions -->
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="@(VS11Files)" DestinationFolder="..\AssemblyReferences"/>
+
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(FileAtt)"/>
+        <Delete Files="..\Common\CommonAssemblyInfo.cs" />
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Common\CommonAssemblyInfo11.cs" DestinationFiles="..\Common\CommonAssemblyInfo.cs"/>
     </Target>
 
     <Target Name="Compile">
@@ -55,7 +72,7 @@
         </ItemGroup>
         <Touch Files="@(TouchFiles)" ForceTouch="true"/>
     </Target>
-    
+
     <Target Name="UpdateSourceControl">
         <ItemGroup>
             <FilesToCheckout Include="$(CustomActivitiesFolder)\TFSBuildExtensions.*"/>

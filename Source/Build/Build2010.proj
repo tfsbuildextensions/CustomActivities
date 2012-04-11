@@ -13,46 +13,42 @@
     <Target Name="PreCheckin" DependsOnTargets="StyleCop;Compile"/>
 
     <Target Name="PreCompile" BeforeTargets="Compile">
-        <!-- Gather up the files we need to shuffle around to produce the TFS 2010 activities-->
         <ItemGroup>
-            <FilesToCleanUp Include="..\Common\CommonAssemblyInfo.cs" Condition="Exists('..\Common\CommonAssemblyInfo.cs')"/>
-            <FilesToCleanUp Include="..\Common\CommonAssemblyInfo2010.cs" Condition="Exists('..\Common\CommonAssemblyInfo2010.cs')"/>
-            <FilesToCleanUp Include="..\Common\CommonAssemblyInfo11.cs" Condition="Exists('..\Common\CommonAssemblyInfo11.cs')"/>
-            <FileAtt Include="@(FilesToCleanUp)">
+            <VS2010Files Include="..\AssemblyReferences2010\*.*"/>
+            <FileAtt Include="..\Common\CommonAssemblyInfo.cs">
                 <Attributes>Normal</Attributes>
             </FileAtt>
         </ItemGroup>
-        
-        <!-- We remove the files we use to produce the builds and Get Latest from TFS. Keep this in mind if you have edited any of them -->
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(FileAtt)" ContinueOnError="true"/>
-        <RemoveDir Directories="..\AssemblyReferences" Condition="Exists('..\AssemblyReferences')"/>
-        <RemoveDir Directories="..\AssemblyReferences2010" Condition="Exists('..\AssemblyReferences2010')"/>
-        <RemoveDir Directories="..\AssemblyReferences11" Condition="Exists('..\AssemblyReferences11')"/>
-        <Delete Files="@(FilesToCleanUp)" />
+        <!-- Clean out AssemblyReferences -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="..\AssemblyReferences" Force="true"/>
+        <!-- Add the VS2010 versions -->
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="@(VS2010Files)" DestinationFolder="..\AssemblyReferences"/>
 
-        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/AssemblyReferences /recursive /force"/>
-        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/AssemblyReferences2010 /recursive /force"/>
-        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/Common/CommonAssemblyInfo.cs /force"/>
-        <Exec Command="tf get $/teambuild2010contrib/CustomActivities/MAIN/Source/Common/CommonAssemblyInfo2010.cs /force"/>
-
-        <!-- Shuffle the required files -->
-        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences" TargetPath="..\AssemblyReferences11"/>
-        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences2010" TargetPath="..\AssemblyReferences"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo.cs" TargetPath="..\Common\CommonAssemblyInfo11.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo2010.cs" TargetPath="..\Common\CommonAssemblyInfo.cs"/>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(FileAtt)"/>
+        <Delete Files="..\Common\CommonAssemblyInfo.cs" />
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Common\CommonAssemblyInfo2010.cs" DestinationFiles="..\Common\CommonAssemblyInfo.cs"/>
     </Target>
 
     <Target Name="PostCompile" AfterTargets="Compile">
-        <!-- Move the shuffled files back again -->
-        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences" TargetPath="..\AssemblyReferences2010"/>
-        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="..\AssemblyReferences11" TargetPath="..\AssemblyReferences"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo.cs" TargetPath="..\Common\CommonAssemblyInfo2010.cs"/>
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Move" Path="..\Common\CommonAssemblyInfo11.cs" TargetPath="..\Common\CommonAssemblyInfo.cs"/>
+        <ItemGroup>
+            <VS11Files Include="..\AssemblyReferences11\*.*"/>
+            <FileAtt Include="..\Common\CommonAssemblyInfo.cs">
+                <Attributes>Normal</Attributes>
+            </FileAtt>
+        </ItemGroup>
+        <!-- Clean out AssemblyReferences -->
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="..\AssemblyReferences" Force="true"/>
+        <!-- Add the VS11 versions -->
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="@(VS11Files)" DestinationFolder="..\AssemblyReferences"/>
+
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(FileAtt)"/>
+        <Delete Files="..\Common\CommonAssemblyInfo.cs" />
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Common\CommonAssemblyInfo11.cs" DestinationFiles="..\Common\CommonAssemblyInfo.cs"/>
     </Target>
 
     <Target Name="Package" DependsOnTargets="StyleCop;Compile;CleanFiles;Touch"/>
 
-    <Target Name="StyleCop">
+    <Target Name="StyleCop" Condition="$(SkipStyleCop) != 'true'">
         <Message Text="$(MSBuildProjectDirectory)\..\Settings.StyleCop"/>
         <ItemGroup>
             <StyleCopFiles Include="$(MSBuildProjectDirectory)\..\**\*.cs" Exclude="$(MSBuildProjectDirectory)\..\**\*.designer.cs;
