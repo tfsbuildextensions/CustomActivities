@@ -111,7 +111,7 @@ namespace TfsBuildExtensions.Activities.Communication
             }
         }
 
-        private void SetBasicAuthHeader(WebRequest req, string userName, string userPassword)
+        private static void SetBasicAuthHeader(WebRequest req, string userName, string userPassword)
         {
             string authInfo = userName + ":" + userPassword;
             authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
@@ -141,7 +141,7 @@ namespace TfsBuildExtensions.Activities.Communication
 
                 request.ContentType = "application/x-www-form-urlencoded";
                 request.Method = "POST";
-                this.SetBasicAuthHeader(request, accountsid, authtoken);
+                SetBasicAuthHeader(request, accountsid, authtoken);
 
                 byte[] bytes = System.Text.Encoding.ASCII.GetBytes(parameters);
                 request.ContentLength = bytes.Length;
