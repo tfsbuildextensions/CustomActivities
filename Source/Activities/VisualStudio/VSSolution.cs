@@ -98,7 +98,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
 
                 if (this.Version == 12)
                 {
-                    return VSVersionInternal.VS11;
+                    return VSVersionInternal.VS2012;
                 }
 
                 if (this.Version == 11)

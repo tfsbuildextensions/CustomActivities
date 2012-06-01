@@ -8,16 +8,14 @@ namespace TfsBuildExtensions.Activities.VisualStudio
     /// <para>
     /// Internally the value is stored as the VS internal number multiplied by 10 (eg: VS2010 is 100 since it's internal version number is 10.0).
     /// </para>
-    /// It also contains two reserved versions one for versious previous do VS .Net 2002 and another for versions we do not know about (versions
-    /// above VS 2010)
     /// <remarks>The value of the enums MUST be kept in sync with <see cref="TfsBuildExtensions.Activities.VisualStudio.VSVersionInternal"/></remarks>
     /// </summary>
     public enum VSVersion
     {
         /// <summary>
-        /// Visual Studio Dev 11 (preview for new. But expect this number will be kept for the final version (name pending :-)))
+        /// Visual Studio 2012
         /// </summary>
-        VS11 = 120,
+        VS2012 = 110,
 
         /// <summary>
         /// Visual Studio 2010

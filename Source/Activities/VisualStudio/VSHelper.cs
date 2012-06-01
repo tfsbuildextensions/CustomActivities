@@ -49,7 +49,8 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                 version == VSVersionInternal.VSNet2003 ||
                 version == VSVersionInternal.VS2005 ||
                 version == VSVersionInternal.VS2008 ||
-                version == VSVersionInternal.VS2010)
+                version == VSVersionInternal.VS2010 ||
+                version == VSVersionInternal.VS2012)
             {
                 return true;
             }
