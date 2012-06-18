@@ -1,0 +1,125 @@
+﻿<Activity mc:Ignorable="sap" x:Class="TfsBuildExtensions.Activities.Azure.RemoveDeployment" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.Azure;assembly=TfsBuildExtensions.Activities.Azure" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mtbw="clr-namespace:Microsoft.TeamFoundation.Build.Workflow;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mv="clr-namespace:Microsoft.VisualBasic;assembly=System" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:s1="clr-namespace:System;assembly=System.Core" xmlns:s2="clr-namespace:System;assembly=System" xmlns:s3="clr-namespace:System;assembly=System.ServiceModel" xmlns:s4="clr-namespace:System;assembly=System.Xml" xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:si="clr-namespace:System.IO;assembly=mscorlib" xmlns:sl="clr-namespace:System.Linq;assembly=System.Core" xmlns:srs="clr-namespace:System.Runtime.Serialization;assembly=System.Runtime.Serialization" xmlns:srs1="clr-namespace:System.Runtime.Serialization;assembly=mscorlib" xmlns:st="clr-namespace:System.Text;assembly=mscorlib" xmlns:t="clr-namespace:TfsBuild;assembly=ProcessTemplateTesting" xmlns:taac="clr-namespace:TfsBuildExtensions.Activities.Azure.Common" xmlns:taah="clr-namespace:TfsBuildExtensions.Activities.Azure.HostedServices" xmlns:taam="clr-namespace:TfsBuildExtensions.Activities.Azure.Extended" xmlns:taas="clr-namespace:TfsBuildExtensions.Activities.Azure.StorageAccounts" xmlns:tas="clr-namespace:TfsBuildExtensions.Activities.SqlServer;assembly=TfsBuildExtensions.Activities" xmlns:tat="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer;assembly=TfsBuildExtensions.Activities" xmlns:tax="clr-namespace:TfsBuildExtensions.Activities.Xml;assembly=TfsBuildExtensions.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="CertificateThumbprintId" Type="InArgument(x:String)" />
+    <x:Property Name="SubscriptionId" Type="InArgument(x:String)" />
+    <x:Property Name="ServiceName" Type="InArgument(x:String)" />
+    <x:Property Name="Slot" Type="InArgument(x:String)" />
+    <x:Property Name="Result" Type="OutArgument(x:Boolean)" />
+  </x:Members>
+  <sap:VirtualizedContainerService.HintSize>1215,1394</sap:VirtualizedContainerService.HintSize>
+  <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
+  <Sequence DisplayName="Remove Deployment" sap:VirtualizedContainerService.HintSize="1175,1354">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="taam:DeploymentInfoContext" Name="LocalDeploymentContext" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Assign DisplayName="Initialize Result" sap:VirtualizedContainerService.HintSize="1153,58">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Boolean">[Result]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Boolean">False</InArgument>
+      </Assign.Value>
+    </Assign>
+    <taah:GetDeployment CertificateThumbprintId="[CertificateThumbprintId]" DeploymentContext="[LocalDeploymentContext]" DisplayName="Get Staging Deployment" FailBuildOnError="False" sap:VirtualizedContainerService.HintSize="1153,22" IgnoreExceptions="True" LogExceptionStack="False" ServiceName="[ServiceName]" Slot="[Slot]" SubscriptionId="[SubscriptionId]" TreatWarningsAsErrors="False" />
+    <If Condition="[LocalDeploymentContext IsNot Nothing]" DisplayName="Remove Slot If Deployment Exists" sap:VirtualizedContainerService.HintSize="1153,1070">
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          <x:Boolean x:Key="IsPinned">False</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+      <If.Then>
+        <Sequence DisplayName="Suspend and Remove Deployment" sap:VirtualizedContainerService.HintSize="864,964">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="842,22" Message="[String.Format(&quot;Suspending {0} deployment...&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+          <local:AzureAsyncOperation CertificateThumbprintId="[CertificateThumbprintId]" sap:VirtualizedContainerService.HintSize="842,778" PollingInterval="15" SubscriptionId="[SubscriptionId]" TimeoutSeconds="300">
+            <local:AzureAsyncOperation.Failure>
+              <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="200,22" Message="[String.Format(&quot;Failed to suspend current {0} deployment.&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+            </local:AzureAsyncOperation.Failure>
+            <local:AzureAsyncOperation.Operation>
+              <taah:SetDeploymentStatus CertificateThumbprintId="[CertificateThumbprintId]" DisplayName="Suspend Deployment" FailBuildOnError="False" sap:VirtualizedContainerService.HintSize="200,22" IgnoreExceptions="True" LogExceptionStack="True" ServiceName="[ServiceName]" ServiceStatus="Suspended" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" Slot="[Slot]" SubscriptionId="[SubscriptionId]" TreatWarningsAsErrors="False" />
+            </local:AzureAsyncOperation.Operation>
+            <local:AzureAsyncOperation.Success>
+              <Sequence DisplayName="Remove Deployment" sap:VirtualizedContainerService.HintSize="564,635">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                    <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="542,22" Message="Service suspended" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="542,22" Message="[String.Format(&quot;Removing current {0} deployment...&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                <local:AzureAsyncOperation CertificateThumbprintId="[CertificateThumbprintId]" sap:VirtualizedContainerService.HintSize="542,387" PollingInterval="15" SubscriptionId="[SubscriptionId]" TimeoutSeconds="300">
+                  <local:AzureAsyncOperation.Failure>
+                    <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="200,22" Message="[String.Format(&quot;Failed to remove current {0} deployment.&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                  </local:AzureAsyncOperation.Failure>
+                  <local:AzureAsyncOperation.Operation>
+                    <taah:RemoveDeployment CertificateThumbprintId="[CertificateThumbprintId]" DisplayName="Remove Deployment" FailBuildOnError="False" sap:VirtualizedContainerService.HintSize="200,22" IgnoreExceptions="True" LogExceptionStack="True" ServiceName="[ServiceName]" Slot="[Slot]" SubscriptionId="[SubscriptionId]" TreatWarningsAsErrors="False" />
+                  </local:AzureAsyncOperation.Operation>
+                  <local:AzureAsyncOperation.Success>
+                    <Sequence sap:VirtualizedContainerService.HintSize="264,244">
+                      <sap:WorkflowViewStateService.ViewState>
+                        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                        </scg:Dictionary>
+                      </sap:WorkflowViewStateService.ViewState>
+                      <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="242,22" Message="[String.Format(&quot;{0} deployment removed&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                      <Assign sap:VirtualizedContainerService.HintSize="242,58">
+                        <Assign.To>
+                          <OutArgument x:TypeArguments="x:Boolean">[Result]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                          <InArgument x:TypeArguments="x:Boolean">True</InArgument>
+                        </Assign.Value>
+                      </Assign>
+                    </Sequence>
+                  </local:AzureAsyncOperation.Success>
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                      <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                </local:AzureAsyncOperation>
+              </Sequence>
+            </local:AzureAsyncOperation.Success>
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                <x:Boolean x:Key="IsPinned">False</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+          </local:AzureAsyncOperation>
+        </Sequence>
+      </If.Then>
+      <If.Else>
+        <Sequence sap:VirtualizedContainerService.HintSize="264,964">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="242,22" Message="[String.Format(&quot;No current {0} deployment...&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+          <Assign sap:VirtualizedContainerService.HintSize="242,58">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:Boolean">[Result]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:Boolean">True</InArgument>
+            </Assign.Value>
+          </Assign>
+        </Sequence>
+      </If.Else>
+    </If>
+  </Sequence>
+</Activity>

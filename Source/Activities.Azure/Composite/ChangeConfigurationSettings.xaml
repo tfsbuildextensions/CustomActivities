@@ -1,0 +1,136 @@
+﻿<Activity mc:Ignorable="sap" x:Class="TfsBuildExtensions.Activities.Azure.ChangeConfigurationSettings" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.Azure;assembly=TfsBuildExtensions.Activities.Azure" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mv="clr-namespace:Microsoft.VisualBasic;assembly=System" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:s1="clr-namespace:System;assembly=System.Core" xmlns:s2="clr-namespace:System;assembly=System" xmlns:s3="clr-namespace:System;assembly=System.ServiceModel" xmlns:s4="clr-namespace:System;assembly=System.Xml" xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:si="clr-namespace:System.IO;assembly=mscorlib" xmlns:sl="clr-namespace:System.Linq;assembly=System.Core" xmlns:srs="clr-namespace:System.Runtime.Serialization;assembly=System.Runtime.Serialization" xmlns:srs1="clr-namespace:System.Runtime.Serialization;assembly=mscorlib" xmlns:st="clr-namespace:System.Text;assembly=mscorlib" xmlns:t="clr-namespace:TfsBuild;assembly=ProcessTemplateTesting" xmlns:taac="clr-namespace:TfsBuildExtensions.Activities.Azure.Common" xmlns:taah="clr-namespace:TfsBuildExtensions.Activities.Azure.HostedServices" xmlns:taam="clr-namespace:TfsBuildExtensions.Activities.Azure.Extended" xmlns:taas="clr-namespace:TfsBuildExtensions.Activities.Azure.StorageAccounts" xmlns:tas="clr-namespace:TfsBuildExtensions.Activities.SqlServer;assembly=TfsBuildExtensions.Activities" xmlns:tat="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer;assembly=TfsBuildExtensions.Activities" xmlns:tax="clr-namespace:TfsBuildExtensions.Activities.Xml;assembly=TfsBuildExtensions.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="CertificateThumbprintId" Type="InArgument(x:String)" />
+    <x:Property Name="SubscriptionId" Type="InArgument(x:String)" />
+    <x:Property Name="ServiceName" Type="InArgument(x:String)" />
+    <x:Property Name="Slot" Type="InArgument(x:String)" />
+    <x:Property Name="ConfigurationFilePath" Type="InArgument(x:String)" />
+    <x:Property Name="SettingName" Type="InArgument(x:String)" />
+    <x:Property Name="SettingValue" Type="InArgument(x:String)" />
+    <x:Property Name="Result" Type="OutArgument(x:Boolean)" />
+  </x:Members>
+  <sap:VirtualizedContainerService.HintSize>1162,1635</sap:VirtualizedContainerService.HintSize>
+  <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
+  <Sequence DisplayName="Change Deployment Configuration Settings" sap:VirtualizedContainerService.HintSize="1122,1595">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="ConfigOperationId" />
+      <Variable x:TypeArguments="x:String" Name="ConfigOperationState" />
+      <Variable x:TypeArguments="x:String" Default="true" Name="CurrentSettingValue" />
+      <Variable x:TypeArguments="taam:DeploymentInfoContext" Name="LocalDeploymentContext" />
+      <Variable x:TypeArguments="x:String" Name="ConfigurationData" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsPinned">False</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Assign DisplayName="Initialize Result" sap:VirtualizedContainerService.HintSize="1100,58">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Boolean">[Result]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Boolean">False</InArgument>
+      </Assign.Value>
+    </Assign>
+    <taah:GetDeployment CertificateThumbprintId="[CertificateThumbprintId]" DeploymentContext="[LocalDeploymentContext]" DisplayName="Get Deployment Context" FailBuildOnError="False" sap:VirtualizedContainerService.HintSize="1100,22" IgnoreExceptions="True" LogExceptionStack="True" ServiceName="[ServiceName]" Slot="[Slot]" SubscriptionId="[SubscriptionId]" TreatWarningsAsErrors="False" />
+    <If Condition="[LocalDeploymentContext IsNot Nothing]" DisplayName="Ensure Deployment Exists" sap:VirtualizedContainerService.HintSize="1100,1311">
+      <If.Then>
+        <Sequence sap:VirtualizedContainerService.HintSize="875,1205">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <InvokeMethod DisplayName="Hack to UTF-8" sap:VirtualizedContainerService.HintSize="853,130" MethodName="Replace">
+            <InvokeMethod.Result>
+              <OutArgument x:TypeArguments="x:String">[ConfigurationData]</OutArgument>
+            </InvokeMethod.Result>
+            <InvokeMethod.TargetObject>
+              <InArgument x:TypeArguments="x:String">[LocalDeploymentContext.Configuration]</InArgument>
+            </InvokeMethod.TargetObject>
+            <InArgument x:TypeArguments="x:String">utf-16</InArgument>
+            <InArgument x:TypeArguments="x:String">utf-8</InArgument>
+          </InvokeMethod>
+          <InvokeMethod DisplayName="Save Configuration to Temporary File" sap:VirtualizedContainerService.HintSize="853,130" MethodName="WriteAllText" TargetType="si:File">
+            <InArgument x:TypeArguments="x:String">[ConfigurationFilePath]</InArgument>
+            <InArgument x:TypeArguments="x:String">[ConfigurationData]</InArgument>
+            <InArgument x:TypeArguments="st:Encoding">[System.Text.Encoding.UTF8]</InArgument>
+          </InvokeMethod>
+          <tax:XmlFile Element="{x:Null}" InnerText="{x:Null}" InnerXml="{x:Null}" InsertAfterXPath="{x:Null}" InsertBeforeXPath="{x:Null}" Key="{x:Null}" ParentElement="{x:Null}" Prefix="{x:Null}" Action="ReadAttribute" DisplayName="Get Current Setting" FailBuildOnError="False" File="[ConfigurationFilePath]" sap:VirtualizedContainerService.HintSize="853,22" IgnoreExceptions="False" LogExceptionStack="True" Namespaces="[New Dictionary(Of String, String) From&#xA;    {{&quot;tns&quot;, &quot;http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration&quot;}}]" RetryCount="5" TreatWarningsAsErrors="False" Value="[CurrentSettingValue]" XPath="[String.Format(&quot;descendant::tns:Setting[@name='{0}']/attribute::value&quot;, SettingName)]" />
+          <If Condition="[SettingValue &lt;&gt; CurrentSettingValue]" DisplayName="If Setting Not Desired Value, Update" sap:VirtualizedContainerService.HintSize="853,679">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                <x:Boolean x:Key="IsPinned">False</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <If.Then>
+              <Sequence sap:VirtualizedContainerService.HintSize="564,573">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <tax:XmlFile Element="{x:Null}" InnerText="{x:Null}" InnerXml="{x:Null}" InsertAfterXPath="{x:Null}" InsertBeforeXPath="{x:Null}" Key="{x:Null}" ParentElement="{x:Null}" Prefix="{x:Null}" Action="UpdateAttribute" DisplayName="Update Configuration File" FailBuildOnError="False" File="[ConfigurationFilePath]" sap:VirtualizedContainerService.HintSize="542,22" IgnoreExceptions="False" LogExceptionStack="True" Namespaces="[New Dictionary(Of String, String) From&#xA;    {{&quot;tns&quot;, &quot;http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration&quot;}}]" RetryCount="5" TreatWarningsAsErrors="False" Value="[SettingValue]" XPath="[String.Format(&quot;descendant::tns:Setting[@name='{0}']/attribute::value&quot;, SettingName)]" />
+                <local:AzureAsyncOperation CertificateThumbprintId="[CertificateThumbprintId]" sap:VirtualizedContainerService.HintSize="542,387" PollingInterval="15" SubscriptionId="[SubscriptionId]" TimeoutSeconds="300">
+                  <local:AzureAsyncOperation.Failure>
+                    <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="200,22" Message="[String.Format(&quot;Failed to change configuration for {0}.&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                  </local:AzureAsyncOperation.Failure>
+                  <local:AzureAsyncOperation.Operation>
+                    <taah:ChangeDeploymentConfiguration DeploymentName="{x:Null}" Action="ChangeBySlot" CertificateThumbprintId="[CertificateThumbprintId]" ConfigurationFilePath="[ConfigurationFilePath]" DisplayName="Change Slot Configuration" FailBuildOnError="False" sap:VirtualizedContainerService.HintSize="200,22" IgnoreExceptions="True" LogExceptionStack="True" ServiceName="[ServiceName]" Slot="[Slot]" SubscriptionId="[SubscriptionId]" TreatWarningsAsErrors="False" />
+                  </local:AzureAsyncOperation.Operation>
+                  <local:AzureAsyncOperation.Success>
+                    <Sequence sap:VirtualizedContainerService.HintSize="264,244">
+                      <sap:WorkflowViewStateService.ViewState>
+                        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                        </scg:Dictionary>
+                      </sap:WorkflowViewStateService.ViewState>
+                      <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="242,22" Message="[String.Format(&quot;{0} configuration changed.&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                      <Assign sap:VirtualizedContainerService.HintSize="242,58">
+                        <Assign.To>
+                          <OutArgument x:TypeArguments="x:Boolean">[Result]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                          <InArgument x:TypeArguments="x:Boolean">True</InArgument>
+                        </Assign.Value>
+                      </Assign>
+                    </Sequence>
+                  </local:AzureAsyncOperation.Success>
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                      <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                </local:AzureAsyncOperation>
+              </Sequence>
+            </If.Then>
+            <If.Else>
+              <Sequence sap:VirtualizedContainerService.HintSize="264,573">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="242,22" Message="[String.Format(&quot;{0} configuration already in desired state.&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                <Assign sap:VirtualizedContainerService.HintSize="242,58">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="x:Boolean">[Result]</OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="x:Boolean">True</InArgument>
+                  </Assign.Value>
+                </Assign>
+              </Sequence>
+            </If.Else>
+          </If>
+        </Sequence>
+      </If.Then>
+      <If.Else>
+        <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="200,1205" Message="[String.Format(&quot;No deployment exists for configuration change.&quot;)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+      </If.Else>
+    </If>
+  </Sequence>
+</Activity>

@@ -31,6 +31,13 @@ namespace TfsBuildExtensions.Activities.Azure
             var binding = new WebHttpBinding(WebHttpSecurityMode.Transport);
             binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Certificate;
 
+            // Increase buffer sizes due to unknown message lengths from Azure API
+            const int fiveMegaBytes = 5242880;
+            binding.MaxReceivedMessageSize = fiveMegaBytes;
+            binding.MaxBufferSize = fiveMegaBytes;
+            binding.MaxBufferPoolSize = fiveMegaBytes;
+            binding.ReaderQuotas.MaxStringContentLength = fiveMegaBytes;
+
             return binding;
         }
     }

@@ -54,21 +54,27 @@
     <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\AssemblyReferences\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="ServiceManagement, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\AssemblyReferences\ServiceManagement.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Activities" />
+    <Reference Include="System.Activities.Presentation" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Channels" />
     <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
@@ -83,6 +89,13 @@
     <Compile Include="Certificates\GetCertificates.cs" />
     <Compile Include="ChannelManager.cs" />
     <Compile Include="Common\GetOperationStatus.cs" />
+    <Compile Include="Composite\AzureAsyncOperation.cs" />
+    <Compile Include="Composite\AzureOperationDesigner.xaml.cs">
+      <DependentUpon>AzureOperationDesigner.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Composite\ChangeConfigurationSettings.cs" />
+    <Compile Include="Composite\RemoveDeployment.cs" />
+    <Compile Include="Composite\StartOrStopDeployment.cs" />
     <Compile Include="ConfigurationConstants.cs" />
     <Compile Include="BaseAzureAsynchronousActivity.cs" />
     <Compile Include="BaseAzureActivityGeneric.cs" />
@@ -102,12 +115,12 @@
     <Compile Include="HostedServices\GetHostedService.cs" />
     <Compile Include="HostedServices\GetDeployment.cs" />
     <Compile Include="Locations\GetLocations.cs" />
-    <Compile Include="Model\CertificateConfiguration.cs" />
-    <Compile Include="Model\HostedServiceContext.cs" />
-    <Compile Include="Model\DeploymentInfoContext.cs" />
-    <Compile Include="Model\ManagementOperationContext.cs" />
-    <Compile Include="Model\RoleConfiguration.cs" />
-    <Compile Include="Model\RoleInstance.cs" />
+    <Compile Include="Extended\CertificateConfiguration.cs" />
+    <Compile Include="Extended\HostedServiceContext.cs" />
+    <Compile Include="Extended\DeploymentInfoContext.cs" />
+    <Compile Include="Extended\ManagementOperationContext.cs" />
+    <Compile Include="Extended\RoleConfiguration.cs" />
+    <Compile Include="Extended\RoleInstance.cs" />
     <Compile Include="OperatingSystems\GetOSFamilies.cs" />
     <Compile Include="OperatingSystems\GetOSVersions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -127,7 +140,24 @@
       <Name>Activities</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Page Include="Composite\AzureOperationDesigner.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <XamlAppDef Include="Composite\ChangeConfigurationSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppDef>
+    <XamlAppDef Include="Composite\RemoveDeployment.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppDef>
+    <XamlAppDef Include="Composite\StartOrStopDeployment.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppDef>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

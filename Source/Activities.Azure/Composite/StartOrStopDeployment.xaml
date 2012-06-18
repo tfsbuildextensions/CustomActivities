@@ -1,0 +1,165 @@
+﻿<Activity mc:Ignorable="sap" x:Class="TfsBuildExtensions.Activities.Azure.StartOrStopDeployment" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.Azure;assembly=TfsBuildExtensions.Activities.Azure" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mtbw="clr-namespace:Microsoft.TeamFoundation.Build.Workflow;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow" xmlns:mv="clr-namespace:Microsoft.VisualBasic;assembly=System" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:s1="clr-namespace:System;assembly=System.Core" xmlns:s2="clr-namespace:System;assembly=System" xmlns:s3="clr-namespace:System;assembly=System.ServiceModel" xmlns:s4="clr-namespace:System;assembly=System.Xml" xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:si="clr-namespace:System.IO;assembly=mscorlib" xmlns:sl="clr-namespace:System.Linq;assembly=System.Core" xmlns:srs="clr-namespace:System.Runtime.Serialization;assembly=System.Runtime.Serialization" xmlns:srs1="clr-namespace:System.Runtime.Serialization;assembly=mscorlib" xmlns:st="clr-namespace:System.Text;assembly=mscorlib" xmlns:t="clr-namespace:TfsBuild;assembly=ProcessTemplateTesting" xmlns:taac="clr-namespace:TfsBuildExtensions.Activities.Azure.Common" xmlns:taah="clr-namespace:TfsBuildExtensions.Activities.Azure.HostedServices" xmlns:taam="clr-namespace:TfsBuildExtensions.Activities.Azure.Extended" xmlns:taas="clr-namespace:TfsBuildExtensions.Activities.Azure.StorageAccounts" xmlns:tas="clr-namespace:TfsBuildExtensions.Activities.SqlServer;assembly=TfsBuildExtensions.Activities" xmlns:tat="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer;assembly=TfsBuildExtensions.Activities" xmlns:tax="clr-namespace:TfsBuildExtensions.Activities.Xml;assembly=TfsBuildExtensions.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="CertificateThumbprintId" Type="InArgument(x:String)" />
+    <x:Property Name="SubscriptionId" Type="InArgument(x:String)" />
+    <x:Property Name="Slot" Type="InArgument(x:String)" />
+    <x:Property Name="ServiceName" Type="InArgument(x:String)" />
+    <x:Property Name="StartOrStop" Type="InArgument(x:Boolean)" />
+    <x:Property Name="Result" Type="OutArgument(x:Boolean)" />
+  </x:Members>
+  <sap:VirtualizedContainerService.HintSize>888,1799</sap:VirtualizedContainerService.HintSize>
+  <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
+  <Sequence DisplayName="Start Or Stop Deployment" sap:VirtualizedContainerService.HintSize="848,1759">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="TargetStatus" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Sequence DisplayName="Initialize" sap:VirtualizedContainerService.HintSize="826,51">
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+          <x:Boolean x:Key="IsPinned">False</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+      <Assign DisplayName="Initialize Result" sap:VirtualizedContainerService.HintSize="509,58">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:Boolean">[Result]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:Boolean">False</InArgument>
+        </Assign.Value>
+      </Assign>
+      <If Condition="[StartOrStop = True]" DisplayName="Initialize Target Status" sap:VirtualizedContainerService.HintSize="509,206">
+        <If.Then>
+          <Assign sap:VirtualizedContainerService.HintSize="242,100">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[TargetStatus]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">Running</InArgument>
+            </Assign.Value>
+          </Assign>
+        </If.Then>
+        <If.Else>
+          <Assign sap:VirtualizedContainerService.HintSize="242,100">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[TargetStatus]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">Suspended</InArgument>
+            </Assign.Value>
+          </Assign>
+        </If.Else>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Set Target Deployment Status" sap:VirtualizedContainerService.HintSize="826,1544">
+      <Sequence.Variables>
+        <Variable x:TypeArguments="x:String" Default="[Guid.NewGuid().ToString()]" Name="OperationID" />
+        <Variable x:TypeArguments="x:String" Default="InProgress" Name="OperationState" />
+      </Sequence.Variables>
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          <x:Boolean x:Key="IsPinned">False</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+      <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="804,22" Message="[String.Format(&quot;Setting {0} instance to: {1}...&quot;, Slot, TargetStatus)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+      <local:AzureAsyncOperation CertificateThumbprintId="[CertificateThumbprintId]" sap:VirtualizedContainerService.HintSize="804,1358" PollingInterval="15" SubscriptionId="[SubscriptionId]" TimeoutSeconds="300">
+        <local:AzureAsyncOperation.Failure>
+          <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="200,22" Message="[String.Format(&quot;Failed to change current {0} deployment status.&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+        </local:AzureAsyncOperation.Failure>
+        <local:AzureAsyncOperation.Operation>
+          <taah:SetDeploymentStatus CertificateThumbprintId="[CertificateThumbprintId]" DisplayName="Set Deployment Status" FailBuildOnError="False" sap:VirtualizedContainerService.HintSize="200,22" IgnoreExceptions="True" LogExceptionStack="True" ServiceName="[ServiceName]" ServiceStatus="[TargetStatus]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" Slot="[Slot]" SubscriptionId="[SubscriptionId]" TreatWarningsAsErrors="False" />
+        </local:AzureAsyncOperation.Operation>
+        <local:AzureAsyncOperation.Success>
+          <Sequence DisplayName="Wait for Deployment Change to Complete" sap:VirtualizedContainerService.HintSize="526,1215">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                <x:Boolean x:Key="IsPinned">False</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="504,22" Message="[String.Format(&quot;Deployment set to {0}...&quot;, TargetStatus)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+            <TryCatch DisplayName="Don't Fail While Waiting For Status To Change" sap:VirtualizedContainerService.HintSize="504,1029">
+              <sap:WorkflowViewStateService.ViewState>
+                <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                  <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                </scg:Dictionary>
+              </sap:WorkflowViewStateService.ViewState>
+              <TryCatch.Try>
+                <Sequence DisplayName="Wait For Status Change And Test" sap:VirtualizedContainerService.HintSize="486,842">
+                  <Sequence.Variables>
+                    <Variable x:TypeArguments="taam:DeploymentInfoContext" Name="LocalDeploymentContext" />
+                  </Sequence.Variables>
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <DoWhile DisplayName="Wait For Status Change" sap:VirtualizedContainerService.HintSize="464,328" Condition="[LocalDeploymentContext.Status &lt;&gt; TargetStatus And LocalDeploymentContext.Status &lt;&gt; &quot;Suspended&quot;]">
+                    <Sequence DisplayName="Wait And Get Status" sap:VirtualizedContainerService.HintSize="438,208">
+                      <sap:WorkflowViewStateService.ViewState>
+                        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                        </scg:Dictionary>
+                      </sap:WorkflowViewStateService.ViewState>
+                      <Delay DisplayName="Wait 30 Seconds" Duration="[TimeSpan.FromSeconds(30)]" sap:VirtualizedContainerService.HintSize="200,22" />
+                      <taah:GetDeployment CertificateThumbprintId="[CertificateThumbprintId]" DeploymentContext="[LocalDeploymentContext]" FailBuildOnError="False" sap:VirtualizedContainerService.HintSize="200,22" IgnoreExceptions="True" LogExceptionStack="True" ServiceName="[ServiceName]" Slot="[Slot]" SubscriptionId="[SubscriptionId]" TreatWarningsAsErrors="False" />
+                    </Sequence>
+                  </DoWhile>
+                  <If Condition="[LocalDeploymentContext.Status = TargetStatus]" sap:VirtualizedContainerService.HintSize="464,350">
+                    <If.Then>
+                      <Sequence sap:VirtualizedContainerService.HintSize="301,244">
+                        <sap:WorkflowViewStateService.ViewState>
+                          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                          </scg:Dictionary>
+                        </sap:WorkflowViewStateService.ViewState>
+                        <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="242,22" Message="[String.Format(&quot;{0} deployment status change complete.&quot;, Slot)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                        <Assign sap:VirtualizedContainerService.HintSize="242,58">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:Boolean">[Result]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:Boolean">True</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                      </Sequence>
+                    </If.Then>
+                  </If>
+                </Sequence>
+              </TryCatch.Try>
+              <TryCatch.Catches>
+                <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="490,21">
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                      <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <ActivityAction x:TypeArguments="s:Exception">
+                    <ActivityAction.Argument>
+                      <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                    </ActivityAction.Argument>
+                    <mtbwa:WriteBuildMessage sap:VirtualizedContainerService.HintSize="484,75" Message="[String.Format(&quot;Error changing service status: {0}.&quot;, exception.Message)]" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces" />
+                  </ActivityAction>
+                </Catch>
+              </TryCatch.Catches>
+            </TryCatch>
+          </Sequence>
+        </local:AzureAsyncOperation.Success>
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </local:AzureAsyncOperation>
+    </Sequence>
+  </Sequence>
+</Activity>
