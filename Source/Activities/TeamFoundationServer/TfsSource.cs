@@ -120,7 +120,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// ]]></code>    
     /// </example>
     [BuildActivity(HostEnvironmentOption.All)]
-    [System.ComponentModel.Description("Activity to wrap TF.exe commands for simple integration in the build process")]
+    [Description("Activity to wrap TF.exe commands for simple integration in the build process")]
     public class TfsSource : BaseCodeActivity
     {
         private InArgument<string> toolPath = string.Empty;
@@ -187,6 +187,12 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// </summary>
         [Browsable(true)]
         public InArgument<bool> Recursive { get; set; }
+
+        /// <summary>
+        /// If true, ignores warning about items that already exists in source control during add. Defaults to false
+        /// </summary>
+        [Browsable(true)]
+        public InArgument<bool> IgnoreItemAlreadyHasPendingChangesWarning { get; set; }
 
         /// <summary>
         /// Gets the Return Code from TF checkout
@@ -267,9 +273,9 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
             this.ExecuteCommand("checkin", string.Format("{0} {1} {2}", comment, note, overrideReason), "/noprompt /recursive");
         }
 
-        private void Add()
+        private void  Add()
         {
-            this.ExecuteCommand("add", string.Empty, "/noprompt /recursive");
+            this.ExecuteCommand("add", string.Empty, "/noprompt /recursive /noignore");
         }
 
         private void ExecuteCommand(string action, string options, string lastOptions)
@@ -340,7 +346,10 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                         var message = e.Data;
                         if (!string.IsNullOrWhiteSpace(message))
                         {
-                            this.LogBuildWarning(e.Data);
+                            if (!IgnoreItemAlreadyHasPendingChangesWarning.Get(this.ActivityContext) || !message.Contains("already has pending changes"))
+                            {
+                                this.LogBuildWarning(e.Data);
+                            }
                         }
                     };
 
