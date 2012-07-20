@@ -58,11 +58,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.StyleCop.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.Tests", "Tests\Activities.Tests\Activities.Tests.csproj", "{AACA7634-9FDD-44E1-AAB4-7CC38739BEC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWorkflow", "TestWorkflow\TestWorkflow.csproj", "{035ACC53-63B2-4D1F-852C-DA309136983D}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 19
+		SccNumberOfProjects = 18
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
@@ -125,9 +123,6 @@ Global
 		SccProjectTopLevelParentUniqueName17 = TFSBuildExtensions.sln
 		SccProjectName17 = Tests/Activities.Tests
 		SccLocalPath17 = Tests\\Activities.Tests
-		SccProjectUniqueName18 = TestWorkflow\\TestWorkflow.csproj
-		SccProjectName18 = TestWorkflow
-		SccLocalPath18 = TestWorkflow
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Community.TeamFoundation.Build.vsmdi
@@ -302,16 +297,6 @@ Global
 		{AACA7634-9FDD-44E1-AAB4-7CC38739BEC6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{AACA7634-9FDD-44E1-AAB4-7CC38739BEC6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AACA7634-9FDD-44E1-AAB4-7CC38739BEC6}.Release|x86.ActiveCfg = Release|Any CPU
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Debug|x86.ActiveCfg = Debug|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Debug|x86.Build.0 = Debug|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Release|Any CPU.ActiveCfg = Release|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Release|Mixed Platforms.Build.0 = Release|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Release|x86.ActiveCfg = Release|x86
-		{035ACC53-63B2-4D1F-852C-DA309136983D}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
