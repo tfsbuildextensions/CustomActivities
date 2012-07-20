@@ -123,6 +123,9 @@
     <Compile Include="..\Common\IBaseActivityMinimumArguments.cs">
       <Link>IBaseActivityMinimumArguments.cs</Link>
     </Compile>
+    <Compile Include="..\Common\PropertiesType.cs">
+      <Link>PropertiesType.cs</Link>
+    </Compile>
     <Compile Include="..\Common\StringExtension.cs">
       <Link>StringExtension.cs</Link>
     </Compile>
@@ -188,6 +191,8 @@
     <Compile Include="TeamFoundationServer\BuildReport\BuildReport.cs" />
     <Compile Include="TeamFoundationServer\BuildWorkspace.cs" />
     <Compile Include="TeamFoundationServer\CompareLabels.cs" />
+    <Compile Include="TeamFoundationServer\ConvertToProperties.cs" />
+    <Compile Include="TeamFoundationServer\ConvertFromProperties.cs" />
     <Compile Include="TeamFoundationServer\ExecuteWorkflow.cs" />
     <Compile Include="TeamFoundationServer\GetBuild.cs" />
     <Compile Include="TeamFoundationServer\GetBuildController.cs">

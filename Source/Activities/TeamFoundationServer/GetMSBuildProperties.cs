@@ -12,6 +12,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// <summary>
     ///  Returns Dictionary string, string  of key-value pairs of msbuild arguments that were passed in from another process
     ///  Please use: '/p:Property=Value /p:Property2=Value2 explicit notation (Not /p:Property=Value;Property2=Value2 which poses greater risk because of complexity.  There's actually internal msbuild engine issues handling these scenarios also.)
+    ///  Note:  GetMSBuildProperties will eventually be replaced by ConvertProperties which converts msbuild, powershell, and ntshell.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
     public sealed class GetMSBuildProperties : BaseCodeActivity<Dictionary<string, string>>
