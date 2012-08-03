@@ -45,7 +45,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
     [BuildActivity(HostEnvironmentOption.All)]
     public sealed class SqlExecute : BaseCodeActivity
     {
-        private static readonly Regex splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private static readonly Regex Splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         private SqlExecuteAction action = SqlExecuteAction.Execute;
         private int commandTimeout = 30;
         private DateTime timer;
@@ -194,7 +194,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
                         {
                             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Loading {0}.", new[] { fullfilename }), BuildMessageImportance.Low);
                             sqlCommandText = this.SubstituteParameters(LoadScript(fullfilename)) + Environment.NewLine;
-                            string[] batches = splitter.Split(sqlCommandText);
+                            string[] batches = Splitter.Split(sqlCommandText);
                             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Split {0} into {1} batches.", new object[] { fullfilename, batches.Length }), BuildMessageImportance.Low);
                             SqlTransaction sqlTransaction = null;
                             SqlCommand command = sqlConnection.CreateCommand();

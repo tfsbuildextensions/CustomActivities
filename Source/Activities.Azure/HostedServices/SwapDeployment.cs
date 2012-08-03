@@ -49,7 +49,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                 try
                 {
                     this.RetryCall(s => this.Channel.SwapDeployment(s, this.ServiceName.Get(this.ActivityContext), swapDeploymentInput));
-                    return RetrieveOperationId();
+                    return BaseAzureAsynchronousActivity.RetrieveOperationId();
                 }
                 catch (EndpointNotFoundException ex)
                 {

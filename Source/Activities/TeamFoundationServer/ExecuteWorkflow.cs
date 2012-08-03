@@ -52,7 +52,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             this.ConnectToTfs();
             this.LaunchBuild();
-            this.ActivityContext.SetValue(Result, this.qb);
+            this.ActivityContext.SetValue(this.Result, this.qb);
             return this.qb;
         }
 

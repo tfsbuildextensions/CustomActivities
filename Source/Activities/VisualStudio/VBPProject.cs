@@ -14,7 +14,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
     /// </summary>
     internal class VBPProject
     {
-        private readonly List<string> Lines = new List<string>();
+        private readonly List<string> lines = new List<string>();
         private string projectFile;
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                 lineStream = new StreamReader(this.projectFile, Encoding.Default);
                 while (!lineStream.EndOfStream)
                 {
-                    this.Lines.Add(lineStream.ReadLine());
+                    this.lines.Add(lineStream.ReadLine());
                 }
             }
             catch 
@@ -95,7 +95,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
         /// <returns>True if project was loaded successfully, false otherwise</returns>
         public bool Save()
         {
-            if (string.IsNullOrEmpty(this.projectFile) | this.Lines.Count == 0)
+            if (string.IsNullOrEmpty(this.projectFile) | this.lines.Count == 0)
             {
                 return false;
             }
@@ -111,7 +111,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                 }
 
                 lineStream = new StreamWriter(this.projectFile, false, Encoding.Default);
-                foreach (string line in this.Lines)
+                foreach (string line in this.lines)
                 {
                     lineStream.WriteLine(line);
                 }
@@ -152,20 +152,20 @@ namespace TfsBuildExtensions.Activities.VisualStudio
 
             int index;
 
-            for (index = 0; index <= this.Lines.Count - 1; index++)
+            for (index = 0; index <= this.lines.Count - 1; index++)
             {
-                string buffer = this.Lines[index].ToUpper(CultureInfo.InvariantCulture);
+                string buffer = this.lines[index].ToUpper(CultureInfo.InvariantCulture);
 
                 if (buffer.StartsWith(name.ToUpper(CultureInfo.InvariantCulture) + "=", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.Lines[index] = this.Lines[index].Substring(0, (name + "=").Length) + value;
+                    this.lines[index] = this.lines[index].Substring(0, (name + "=").Length) + value;
                     return true;
                 }
             }
 
             if (addProp)
             {
-                this.Lines.Add(name + "=" + value);
+                this.lines.Add(name + "=" + value);
                 return true;
             }
 

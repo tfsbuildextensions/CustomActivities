@@ -37,7 +37,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 this.GetValue();
             }
 
-            this.ActivityContext.SetValue(Result, this.msbuildProperties);
+            this.ActivityContext.SetValue(this.Result, this.msbuildProperties);
             return this.msbuildProperties;
         }
 

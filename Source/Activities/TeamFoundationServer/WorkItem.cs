@@ -104,7 +104,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                     var returnedWorkItem = WorkItems.GetWorkItemById(ProjectCollection, id);
                     returnedWorkItem.Reset();
                     returnedWorkItem.Open();
-                    this.WorkItem.Set(ActivityContext, returnedWorkItem);
+                    this.WorkItem.Set(this.ActivityContext, returnedWorkItem);
                     break;
 
                 case WorkItemTrackingAction.Save:
@@ -136,7 +136,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                     if (workItem.Fields.Contains(fieldName))
                     {
                         fieldValue = workItem.Fields[fieldName].Value;
-                        this.ItemValue.Set(ActivityContext, fieldValue);
+                        this.ItemValue.Set(this.ActivityContext, fieldValue);
                     }
                     else
                     {

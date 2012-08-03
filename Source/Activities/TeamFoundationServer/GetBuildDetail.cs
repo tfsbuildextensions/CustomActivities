@@ -35,7 +35,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             this.ConnectToTfs();
             IBuildDetail build = this.RetrieveBuild();
-            this.ActivityContext.SetValue(Result, build);
+            this.ActivityContext.SetValue(this.Result, build);
             return build;
         }
 

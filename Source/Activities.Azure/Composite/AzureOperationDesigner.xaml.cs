@@ -1,12 +1,11 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="AzureOperationDesigner.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="AzureOperationDesigner.xaml.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.Azure
 {
     using System;
     using System.Activities.Presentation;
     using System.Activities.Presentation.Metadata;
-    using System.Activities.Presentation.Toolbox;
     using System.ComponentModel;
 
     /// <summary>
@@ -16,9 +15,8 @@ namespace TfsBuildExtensions.Activities.Azure
     {
         public AzureOperationDesigner()
         {
-            InitializeComponent();
-
-            RegisterMetadata();
+            this.InitializeComponent();
+            this.RegisterMetadata();
         }
 
         private void RegisterMetadata()

@@ -18,7 +18,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     {
         private Dictionary<string, string> properties;
         private PropertiesType inputType;
-        private String inputProperties;
+        private string inputProperties;
 
         /// <summary>
         /// Properties you wish to convert
@@ -42,15 +42,21 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
             if (this.Properties.Expression != null)
             {
-                switch (inputType)
+                switch (this.inputType)
                 {
-                    case PropertiesType.MSBuild: InputMSBuild(); break;
-                    case PropertiesType.Ntshell: InputNtshell(); break;
-                    case PropertiesType.Powershell: InputPowershell(); break;
+                    case PropertiesType.MSBuild:
+                        this.InputMSBuild();
+                        break;
+                    case PropertiesType.NTShell:
+                        this.InputNtshell();
+                        break;
+                    case PropertiesType.PowerShell:
+                        this.InputPowershell();
+                        break;
                 }
             }
 
-            this.ActivityContext.SetValue(Result, this.properties);
+            this.ActivityContext.SetValue(this.Result, this.properties);
             return this.properties;
         }
 
@@ -58,23 +64,26 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             try
             {
-                const String pattern = "/[pP]:[\\w]+=(\"[^\"]*\"|[^\"\\s]*)";
-                MatchCollection matches = Regex.Matches(inputProperties, pattern);
+                const string Pattern = "/[pP]:[\\w]+=(\"[^\"]*\"|[^\"\\s]*)";
+                MatchCollection matches = Regex.Matches(this.inputProperties, Pattern);
                 foreach (Match match in matches)
                 {
-                    String matchWithoutPrefix = match.Value.Remove(0, 3);
-                    String[] pair = matchWithoutPrefix.Split(new String[]{"="}, 2, StringSplitOptions.RemoveEmptyEntries);
-                    if (properties.ContainsKey(pair[0]))
-                        properties.Remove(pair[0]);
-                    properties.Add(pair[0], pair[1]);
+                    string matchWithoutPrefix = match.Value.Remove(0, 3);
+                    string[] pair = matchWithoutPrefix.Split(new[] { "=" }, 2, StringSplitOptions.RemoveEmptyEntries);
+                    if (this.properties.ContainsKey(pair[0]))
+                    {
+                        this.properties.Remove(pair[0]);
+                    }
+
+                    this.properties.Add(pair[0], pair[1]);
                 }
             }
-            catch (Exception e)
+            catch
             {
                 this.LogBuildError("The parameters could not be processed.");
-                this.LogBuildError("Passed parameters were: " + inputProperties);
+                this.LogBuildError("Passed parameters were: " + this.inputProperties);
                 this.LogBuildError("For MSBuild: Please use: '/p:Property1=Value1 /p:Property2=Value2 explicit notation (Not /p:Property1=Value1;Property2=Value2).");
-                throw new Exception();
+                throw;
             }
         }
 
@@ -82,27 +91,34 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             try
             {
-                const String pattern = "(\"[^\"]*\"|[^\"\\s]+)(\\s+|$)";
-                MatchCollection matches = Regex.Matches(inputProperties, pattern);
+                const string Pattern = "(\"[^\"]*\"|[^\"\\s]+)(\\s+|$)";
+                MatchCollection matches = Regex.Matches(this.inputProperties, Pattern);
 
                 if (matches.Count % 2 != 0)
+                {
                     throw new FailingBuildException("There should be an even number of parameters to represent key/value pairs.  Current number of arguments: " + matches.Count + "  Example:  Key1 Value1 Key2 Value2");
+                }
 
                 for (int i = 0; i < matches.Count; i = i + 2)
+                {
                     if (Regex.IsMatch(matches[i].Value.Trim(), "\\W"))
+                    {
                         throw new FailingBuildException("Key names should be alphanumeric strings without quotes.  Invalid key name detected: " + matches[i].Value.Trim());
-                    else properties.Add(matches[i].Value.Trim(), matches[i + 1].Value.Trim());
+                    }
+
+                    this.properties.Add(matches[i].Value.Trim(), matches[i + 1].Value.Trim());
+                }
             }
             catch (FailingBuildException ke)
             {
                 Console.WriteLine(ke.Message);
             }
-            catch (Exception e)
+            catch
             {
                 this.LogBuildError("The parameters could not be processed.");
-                this.LogBuildError("Passed parameters were: " + inputProperties);
+                this.LogBuildError("Passed parameters were: " + this.inputProperties);
                 this.LogBuildError("For Batchshell: Please use: 'Property1 Value1 Property2 Value2'");
-                throw e;
+                throw;
             }
         }
 
@@ -110,32 +126,43 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             try
             {
-                const String pattern = "(\"[^\"]*\"|[^\"\\s]+)(\\s+|$)";
+                const string Pattern = "(\"[^\"]*\"|[^\"\\s]+)(\\s+|$)";
 
-                MatchCollection matches = Regex.Matches(inputProperties, pattern);
+                MatchCollection matches = Regex.Matches(this.inputProperties, Pattern);
 
                 if (matches.Count % 2 != 0)
+                {
                     throw new FailingBuildException("There should be an even number of parameters to represent key/value pairs.  Current number of arguments: " + matches.Count + "  Example:  -Key1 Value1 -Key2 Value2");
+                }
 
                 for (int i = 0; i < matches.Count; i = i + 2)
-                    if (!Regex.IsMatch(matches[i].Value.Trim(), "^-[A-Za-z][\\w]*$") || properties.ContainsKey(matches[i].Value.Trim()))
+                {
+                    if (!Regex.IsMatch(matches[i].Value.Trim(), "^-[A-Za-z][\\w]*$") || this.properties.ContainsKey(matches[i].Value.Trim()))
+                    {
                         throw new FailingBuildException("Key names should be alphanumeric strings without quotes, preceded by a dash, and with the first character not a number or special character.  Also, the key name cannot be duplicated.  [Example:  -Key1 Value1 -Key2 Value2].  Invalid key name detected: " + matches[i].Value.Trim());
-                    else properties.Add(matches[i].Value.Trim().TrimStart(new Char[] { '-' }), matches[i + 1].Value.Trim());
+                    }
+
+                    this.properties.Add(matches[i].Value.Trim().TrimStart(new[] { '-' }), matches[i + 1].Value.Trim());
+                }
 
                 for (int i = 0; i < matches.Count; i = i + 2)
-                    if (properties.ContainsKey(matches[i + 1].Value.Trim()))
+                {
+                    if (this.properties.ContainsKey(matches[i + 1].Value.Trim()))
+                    {
                         throw new FailingBuildException("The key name cannot be duplicated.  [Example:  -Key1 Value1 -Key2 Value2].  Key name duplicated: " + matches[i + 1].Value.Trim());
+                    }
+                }
             }
             catch (FailingBuildException ke)
             {
                 Console.WriteLine(ke.Message);
             }
-            catch (Exception e)
+            catch
             {
                 this.LogBuildError("The parameters could not be processed.");
-                this.LogBuildError("Passed parameters were: " + inputProperties);
+                this.LogBuildError("Passed parameters were: " + this.inputProperties);
                 this.LogBuildError("For Powershell: Please use: '-Property1 Value1 -Property2 Value2'");
-                throw e;
+                throw;
             }
         }
     }

@@ -467,7 +467,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
 
                 if (string.IsNullOrWhiteSpace(filePath) || File.Exists(filePath) == false)
                 {
-                    LogBuildError(string.Format("File {0} not found.", filePath));
+                    this.LogBuildError(string.Format("File {0} not found.", filePath));
 
                     this.HasErrors.Set(this.ActivityContext, true);
 
@@ -476,7 +476,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
 
                 if (version == VSVersion.Auto && VSSolution.CanAutoDetectVersion(filePath) == false)
                 {
-                    LogBuildError("Can only auto detect DevEnv version for solution files. For project files you need to explicitily set the version");
+                    this.LogBuildError("Can only auto detect DevEnv version for solution files. For project files you need to explicitily set the version");
 
                     this.HasErrors.Set(this.ActivityContext, true);
 
@@ -575,7 +575,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                 return string.Format(
                     "\"{0}\" {1} \"{2}|{3}\" /Out \"{4}\" ",
                     this.FilePath.Get(context),
-                    GetActionCommandLineOption(this.Action.Get(context)),
+                    VSDevEnv.GetActionCommandLineOption(this.Action.Get(context)),
                     this.Configuration.Get(context),
                     this.Platform.Get(context),
                     this.OutputFile.Get(context));
@@ -673,10 +673,10 @@ namespace TfsBuildExtensions.Activities.VisualStudio
 
                 if (string.IsNullOrWhiteSpace(outputLogFile))
                 {
-                    outputLogFile = this.GenerateLogFile(ActivityContext);
+                    outputLogFile = this.GenerateLogFile(this.ActivityContext);
                 }
 
-                this.LogFile.Set(ActivityContext, outputLogFile);
+                this.LogFile.Set(this.ActivityContext, outputLogFile);
             }
 
             /// <summary>

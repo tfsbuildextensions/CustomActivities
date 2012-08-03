@@ -414,7 +414,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
             if (!this.AnalyzeMetricsResult.Get(this.ActivityContext))
             {
-                AddTextNode("Skipped code metrics analysis (not set to run)", currentTracking.Node);
+                BaseCodeActivity.AddTextNode("Skipped code metrics analysis (not set to run)", currentTracking.Node);
                 return;
             }
 
@@ -422,7 +422,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
             string fileName = Path.GetFileName(generatedFile);
             string pathToFileInDropFolder = Path.Combine(this.BuildDetail.DropLocation, fileName);
-            AddLinkNode(fileName, new Uri(pathToFileInDropFolder), rootNode);
+            BaseCodeActivity.AddLinkNode(fileName, new Uri(pathToFileInDropFolder), rootNode);
 
             CodeMetricsReport result = CodeMetricsReport.LoadFromFile(generatedFile);
             if (result == null)
@@ -455,12 +455,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                             var typeNode = this.logCodeMetrics ? AddTextNode("Type: " + type.Name, namespaceNode) : null;
                             var typeInformation = new MemberInformation(null, type, ns, module);
                             noOfTypeViolations += this.ProcessMetrics(typeNode, typeInformation.TheClass.Metrics, typeMetricThresholds, typeInformation.FullyQualifiedName, typeInformation.TheClass.Name);
-                            foreach (var member in type.Members)
-                            {
-                                var memberNode = this.logCodeMetrics ? AddTextNode("Member: " + member.Name + " " + member.MetricsInformation, typeNode) : null;
-                                var memberInformation = new MemberInformation(member, type, ns, module);
-                                noOfMethodViolations += this.ProcessMetrics(memberNode, memberInformation.TheMember.Metrics, memberMetricThresholds, memberInformation.FullyQualifiedName, memberInformation.TheMember.Name);
-                            }
+                            noOfMethodViolations += (from member in type.Members let memberNode = this.logCodeMetrics ? AddTextNode("Member: " + member.Name + " " + member.MetricsInformation, typeNode) : null let memberInformation = new MemberInformation(member, type, ns, module) select this.ProcessMetrics(memberNode, memberInformation.TheMember.Metrics, memberMetricThresholds, memberInformation.FullyQualifiedName, memberInformation.TheMember.Name)).Sum();
                         }
                     }
                 }
@@ -468,8 +463,8 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
             var numberMessageTypes = string.Format("Number of Code Metric warnings/errors on types: {0}", noOfTypeViolations);
             var numberMessageMethods = string.Format("Number of Code Metric warnings/errors on methods: {0}", noOfMethodViolations);
-            AddTextNode(numberMessageTypes, rootNode);
-            AddTextNode(numberMessageMethods, rootNode);
+            BaseCodeActivity.AddTextNode(numberMessageTypes, rootNode);
+            BaseCodeActivity.AddTextNode(numberMessageMethods, rootNode);
         }
 
         /// <summary>
@@ -522,7 +517,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 var result = "Metrics for " + currentName + @"\n";
                 thecomplainlist.ForEach(s => result += s + @"\n");
-                AddTextNode(result, parent);
+                BaseCodeActivity.AddTextNode(result, parent);
             }
 
             return thecomplainlist.Count;

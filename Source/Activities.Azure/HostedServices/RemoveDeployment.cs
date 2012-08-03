@@ -37,7 +37,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                 try
                 {
                     this.RetryCall(s => this.Channel.DeleteDeploymentBySlot(s, this.ServiceName.Get(this.ActivityContext), this.Slot.Get(this.ActivityContext)));
-                    return RetrieveOperationId();
+                    return BaseAzureAsynchronousActivity.RetrieveOperationId();
                 }
                 catch (EndpointNotFoundException ex)
                 {

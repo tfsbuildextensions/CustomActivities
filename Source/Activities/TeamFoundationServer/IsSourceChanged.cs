@@ -74,7 +74,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
             bool containsChanges = string.IsNullOrEmpty(this.serverPath) ? this.CheckWorkspaces() : this.CheckServerPath();
 
-            context.SetValue(Result, containsChanges);
+            context.SetValue(this.Result, containsChanges);
             return containsChanges;
         }
 

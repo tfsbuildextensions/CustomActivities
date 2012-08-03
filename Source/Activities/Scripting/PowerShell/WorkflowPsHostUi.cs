@@ -15,12 +15,12 @@ namespace TfsBuildExtensions.Activities.Scripting
 
     internal class WorkflowPsHostUi : PSHostUserInterface
     {
-        private readonly CodeActivityContext ActivityContext;
+        private readonly CodeActivityContext activityContext;
         private readonly WorkflowRawPsHostUi rawUI;
 
         public WorkflowPsHostUi(CodeActivityContext activityContext)
         {
-            this.ActivityContext = activityContext;
+            this.activityContext = activityContext;
             this.rawUI = new WorkflowRawPsHostUi();
         }
 
@@ -61,27 +61,27 @@ namespace TfsBuildExtensions.Activities.Scripting
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            this.ActivityContext.TrackBuildMessage(value, BuildMessageImportance.Normal);
+            this.activityContext.TrackBuildMessage(value, BuildMessageImportance.Normal);
         }
 
         public override void Write(string value)
         {
-            this.ActivityContext.TrackBuildMessage(value, BuildMessageImportance.Normal);
+            this.activityContext.TrackBuildMessage(value, BuildMessageImportance.Normal);
         }
 
         public override void WriteDebugLine(string message)
         {
-            this.ActivityContext.TrackBuildMessage(message, BuildMessageImportance.Low);
+            this.activityContext.TrackBuildMessage(message, BuildMessageImportance.Low);
         }
 
         public override void WriteErrorLine(string value)
         {
-            this.ActivityContext.TrackBuildError(value);
+            this.activityContext.TrackBuildError(value);
         }
 
         public override void WriteLine(string value)
         {
-            this.ActivityContext.TrackBuildMessage(value, BuildMessageImportance.Normal);
+            this.activityContext.TrackBuildMessage(value, BuildMessageImportance.Normal);
         }
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
@@ -91,17 +91,17 @@ namespace TfsBuildExtensions.Activities.Scripting
                 throw new ArgumentNullException("record");
             }
 
-            this.ActivityContext.TrackBuildMessage(string.Format(CultureInfo.CurrentCulture, "{0} Progress {1}% Complete", record.CurrentOperation, record.PercentComplete));
+            this.activityContext.TrackBuildMessage(string.Format(CultureInfo.CurrentCulture, "{0} Progress {1}% Complete", record.CurrentOperation, record.PercentComplete));
         }
 
         public override void WriteVerboseLine(string message)
         {
-            this.ActivityContext.TrackBuildMessage(message, BuildMessageImportance.Low);
+            this.activityContext.TrackBuildMessage(message, BuildMessageImportance.Low);
         }
 
         public override void WriteWarningLine(string message)
         {
-            this.ActivityContext.TrackBuildMessage(message, BuildMessageImportance.Normal);
+            this.activityContext.TrackBuildMessage(message, BuildMessageImportance.Normal);
         }
     }
 }

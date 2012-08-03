@@ -630,7 +630,7 @@ namespace TfsBuildExtensions.Activities.Virtualization
             }
             else
             {
-                LogBuildError("Cannot merge undo disks as VM is not stopped or saved");
+                this.LogBuildError("Cannot merge undo disks as VM is not stopped or saved");
             }
 
             return completed;
@@ -646,7 +646,7 @@ namespace TfsBuildExtensions.Activities.Virtualization
             }
             else
             {
-                LogBuildError("Cannot discard saved state as VM is not stopped");
+                this.LogBuildError("Cannot discard saved state as VM is not stopped");
             }
 
             return completed;
@@ -662,7 +662,7 @@ namespace TfsBuildExtensions.Activities.Virtualization
             }
             else
             {
-                LogBuildError("Cannot discard undo disks as VM is not stopped");
+                this.LogBuildError("Cannot discard undo disks as VM is not stopped");
                 completed = true;
             }
 

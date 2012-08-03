@@ -26,7 +26,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// </summary>
         public FileCopyRemote()
         {
-            LinkMessage = "File copy remote log file";
+            this.LinkMessage = "File copy remote log file";
         }
 
         /// <summary>
@@ -235,20 +235,15 @@ namespace TfsBuildExtensions.Activities.SSH
 
                 if (string.IsNullOrWhiteSpace(source))
                 {
-                    LogBuildError("You have to specify the source where the files will be copied from");
-
+                    this.LogBuildError("You have to specify the source where the files will be copied from");
                     this.HasErrors.Set(this.ActivityContext, true);
-
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(target))
                 {
-                    LogBuildError("You have to specify the target where the files will be copied to");
-
+                    this.LogBuildError("You have to specify the target where the files will be copied to");
                     this.HasErrors.Set(this.ActivityContext, true);
-
-                    return;
                 }
             }
         }

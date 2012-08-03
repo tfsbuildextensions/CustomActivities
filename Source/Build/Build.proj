@@ -8,7 +8,7 @@
 
     <Target Name="PreCheckin" DependsOnTargets="StyleCop;Compile"/>
 
-    <Target Name="Package" DependsOnTargets="StyleCop;Compile;BuildChm;CleanFiles;Touch"/>
+    <Target Name="Package" DependsOnTargets="Compile;BuildChm;CleanFiles;Touch"/>
 
     <Target Name="StyleCop" Condition="$(SkipStyleCop) != 'true'">
         <Message Text="$(MSBuildProjectDirectory)\..\Settings.StyleCop"/>

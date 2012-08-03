@@ -186,7 +186,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                     {
                         if (this.ShowOutput.Get(this.ActivityContext))
                         {
-                            LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding file to check [{0}", inputSourceLocation) + "]", BuildMessageImportance.Low);
+                            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding file to check [{0}", inputSourceLocation) + "]", BuildMessageImportance.Low);
                         }
 
                         console.Core.Environment.AddSourceCode(project, inputSourceLocation, null);
@@ -197,7 +197,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                         {
                             if (this.ShowOutput.Get(this.ActivityContext))
                             {
-                                LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding file to check [{0}", fileInDirectory) + "]", BuildMessageImportance.Low);
+                                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding file to check [{0}", fileInDirectory) + "]", BuildMessageImportance.Low);
                             }
 
                             console.Core.Environment.AddSourceCode(project, fileInDirectory, null);
@@ -205,7 +205,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                     }
                     else
                     {
-                        LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Cannot add file to check [{0}", inputSourceLocation) + "]", BuildMessageImportance.Low);
+                        this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Cannot add file to check [{0}", inputSourceLocation) + "]", BuildMessageImportance.Low);
                     }
                 }
 
@@ -286,11 +286,11 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 {
                     if (e.Warning || this.TreatViolationsErrorsAsWarnings.Get(this.ActivityContext))
                     {
-                        LogBuildWarning(string.Format(CultureInfo.CurrentCulture, "{0} [{1}] Line {2}", message, file, e.LineNumber));
+                        this.LogBuildWarning(string.Format(CultureInfo.CurrentCulture, "{0} [{1}] Line {2}", message, file, e.LineNumber));
                     }
                     else
                     {
-                        LogBuildError(string.Format(CultureInfo.CurrentCulture, "{0} [{1}] Line {2}", message, file, e.LineNumber));
+                        this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "{0} [{1}] Line {2}", message, file, e.LineNumber));
                     }
                 }
             }

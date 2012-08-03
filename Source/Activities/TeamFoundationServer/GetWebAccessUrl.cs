@@ -90,17 +90,16 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
             switch (this.Action)
             {
                 case GetWebAccessUrlAction.BuildDetails:
-                    result = WebAccess.GetBuildDetailsUri(ProjectCollection, itemUri); 
+                    result = WebAccess.GetBuildDetailsUri(this.ProjectCollection, itemUri); 
                     break;
-
                 case GetWebAccessUrlAction.WorkItemEditor:
-                    result = WebAccess.GetWorkItemEditorUri(ProjectCollection, itemId); 
+                    result = WebAccess.GetWorkItemEditorUri(this.ProjectCollection, itemId); 
                     break;
                 default:
                     throw new ArgumentException("Action not supported");
             }
 
-            this.Result.Set(ActivityContext, result); 
+            this.Result.Set(this.ActivityContext, result); 
         }
     }
 }

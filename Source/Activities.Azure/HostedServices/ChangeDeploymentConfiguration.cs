@@ -94,7 +94,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                         this.RetryCall(s => this.Channel.ChangeConfigurationBySlot(s, this.ServiceName.Get(this.ActivityContext), this.Slot.Get(this.ActivityContext), changeInput));
                     }
 
-                    return RetrieveOperationId();
+                    return BaseAzureAsynchronousActivity.RetrieveOperationId();
                 }
                 catch (EndpointNotFoundException ex)
                 {

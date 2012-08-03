@@ -389,7 +389,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             Stream s = this.GetType().Assembly.GetManifestResourceStream("TfsBuildExtensions.Activities.CodeQuality.NUnit.NUnitToMSTest.xslt");
             if (s == null)
             {
-                LogBuildError("Could not load NUnitToMSTest.xslt from embedded resources");
+                this.LogBuildError("Could not load NUnitToMSTest.xslt from embedded resources");
                 return;
             }
 
@@ -437,7 +437,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         private void ProcessXmlResultsFile(ActivityContext context, string folder)
         {
             string filename = Path.Combine(folder, this.GetResultFileName(context));
-            LogBuildMessage("Processing " + filename, BuildMessageImportance.High);
+            this.LogBuildMessage("Processing " + filename, BuildMessageImportance.High);
             if (File.Exists(filename))
             {
                 XmlDocument doc = new XmlDocument();
@@ -454,7 +454,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 XmlNode root = doc.DocumentElement;
                 if (root == null)
                 {
-                    LogBuildError("Failed to load the OutputXmlFile");
+                    this.LogBuildError("Failed to load the OutputXmlFile");
                     return;
                 }
 

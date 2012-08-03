@@ -5,18 +5,11 @@ namespace TfsBuildExtensions.Activities.Azure
 {
     using System;
     using System.Activities;
-    using System.Activities.Expressions;
     using System.Activities.Statements;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ComponentModel;
-    using System.Linq;
-    using System.Reflection;
     using Microsoft.Samples.WindowsAzure.ServiceManagement;
     using Microsoft.TeamFoundation.Build.Client;
-    using Microsoft.TeamFoundation.Build.Workflow.Activities;
     using Microsoft.TeamFoundation.Build.Workflow.Tracking;
-    using Microsoft.VisualBasic.Activities;
     using TfsBuildExtensions.Activities.Azure.Common;
 
     /// <summary>
@@ -27,29 +20,11 @@ namespace TfsBuildExtensions.Activities.Azure
     [BuildActivity(HostEnvironmentOption.All)]
     public sealed class AzureAsyncOperation : NativeActivity
     {
-        #region Private Variables
         private int timeoutSeconds = 300;
         private int pollingInterval = 15;
         private ActivityFunc<string, string, string, string> pollingBody;
         private ActivityAction<int> delayBody;
 
-        /// <summary>
-        /// Gets or sets the time at which polling must end.
-        /// </summary>
-        private Variable<DateTime> PollingEndTime { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Azure aynchronous operation ID.
-        /// </summary>
-        private Variable<string> OperationId { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether an exception occured during execution of the Azure activity or polling.
-        /// </summary>
-        private Variable<bool> AzureActivityExceptionCaught { get; set; }
-        #endregion
-
-        #region Constructor
         /// <summary>
         /// Initializes a new instance of the AzureAsyncOperation class.
         /// </summary>
@@ -59,9 +34,7 @@ namespace TfsBuildExtensions.Activities.Azure
             this.OperationId = new Variable<string>() { Default = null, Name = "LocalOperationId" };
             this.AzureActivityExceptionCaught = new Variable<bool>() { Default = false, Name = "AzureExceptionCaught" };
         }
-        #endregion
 
-        #region Public Activity arguments
         /// <summary>
         /// The Azure operation to perform and monitor.
         /// </summary>
@@ -95,7 +68,11 @@ namespace TfsBuildExtensions.Activities.Azure
         /// <remarks>This timeout will be a minimum of 30 seconds, and a default of 5 minutes.</remarks>
         public int TimeoutSeconds
         {
-            get { return this.timeoutSeconds; }
+            get
+            {
+                return this.timeoutSeconds;
+            }
+
             set
             {
                 if (value > 30)
@@ -115,7 +92,11 @@ namespace TfsBuildExtensions.Activities.Azure
         /// <remarks>This interval will be between 1 and 30 seconds, and a default of 15 seconds.</remarks>
         public int PollingInterval
         {
-            get { return this.pollingInterval; }
+            get
+            {
+                return this.pollingInterval;
+            }
+
             set
             {
                 if (value >= 1 && value <= 30)
@@ -128,73 +109,38 @@ namespace TfsBuildExtensions.Activities.Azure
                 }
             }
         }
-        #endregion
 
-        #region Child activity definitions
         /// <summary>
-        /// Gets or sets the body of the internal status polling activities.
+        /// Gets or sets the time at which polling must end.
+        /// </summary>
+        private Variable<DateTime> PollingEndTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Azure aynchronous operation ID.
+        /// </summary>
+        private Variable<string> OperationId { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether an exception occured during execution of the Azure activity or polling.
+        /// </summary>
+        private Variable<bool> AzureActivityExceptionCaught { get; set; }
+
+        /// <summary>
+        /// Gets the body of the internal status polling activities.
         /// </summary>
         private ActivityFunc<string, string, string, string> PollingBody
         {
-            get { return this.pollingBody ?? (this.pollingBody = CreatePollingBody()); }
+            get { return this.pollingBody ?? (this.pollingBody = this.CreatePollingBody()); }
         }
 
         /// <summary>
-        /// Create the structure of the activity for polling Azure for operation status.
-        /// </summary>
-        /// <returns>An activity delegate.</returns>
-        private ActivityFunc<string, string, string, string> CreatePollingBody()
-        {
-            var operationId = new DelegateInArgument<string>() { Name = "FuncOperationId" };
-            var subscriptionId = new DelegateInArgument<string>() { Name = "FuncSubscriptionId" };
-            var certificateThumbprintId = new DelegateInArgument<string>() { Name = "FuncThumbprintId" };
-
-            return new ActivityFunc<string, string, string, string>
-            {
-                Argument1 = operationId,
-                Argument2 = subscriptionId,
-                Argument3 = certificateThumbprintId,
-                Handler = new GetOperationStatus
-                {
-                    CertificateThumbprintId = new InArgument<string>(certificateThumbprintId),
-                    FailBuildOnError = new InArgument<bool>(false),                     
-                    IgnoreExceptions = new InArgument<bool>(false),
-                    LogExceptionStack = new InArgument<bool>(false),
-                    OperationId = new InArgument<string>(operationId),
-                    SubscriptionId = new InArgument<string>(subscriptionId),
-                    TreatWarningsAsErrors = new InArgument<bool>(false)
-                }
-            };
-        }
-
-        /// <summary>
-        /// Gets or sets the body of the internal delay activity.
+        /// Gets the body of the internal delay activity.
         /// </summary>
         private ActivityAction<int> DelayBody
         {
-            get { return this.delayBody ?? (this.delayBody = CreateDelayBody()); }
+            get { return this.delayBody ?? (this.delayBody = this.CreateDelayBody()); }
         }
 
-        /// <summary>
-        /// Create the structure of the activity for pausing between successive polling activities.
-        /// </summary>
-        /// <returns>An activity delegate.</returns>
-        private ActivityAction<int> CreateDelayBody()
-        {
-            var timeout = new DelegateInArgument<int>() { Name = "FuncTimeout" };
-
-            return new ActivityAction<int>
-            {
-                Argument = timeout,
-                Handler = new Delay
-                {
-                    Duration = new InArgument<TimeSpan>(ctx => TimeSpan.FromSeconds(timeout.Get(ctx)))
-                }
-            };
-        }
-        #endregion
-
-        #region Activity implementation
         /// <summary>
         /// Creates and validates a description of the activity's arguments, variables, child activities, and activity delegates.
         /// </summary>
@@ -203,7 +149,7 @@ namespace TfsBuildExtensions.Activities.Azure
         {
             // Add a validation error if the Operation is not defined.
             if (this.Operation == null)
-            {                
+            {
                 metadata.AddValidationError("AzureAsyncOperation requires an Azure activity to execute.");
                 return;
             }
@@ -241,7 +187,53 @@ namespace TfsBuildExtensions.Activities.Azure
             this.AzureActivityExceptionCaught.Set(context, false);
 
             // Schedule the Operation for evaluation
-            context.ScheduleActivity(this.Operation, new CompletionCallback<string>(OnOperationCompleted), new FaultCallback(OnOperationFault));
+            context.ScheduleActivity(this.Operation, new CompletionCallback<string>(this.OnOperationCompleted), new FaultCallback(this.OnOperationFault));
+        }
+
+        /// <summary>
+        /// Create the structure of the activity for polling Azure for operation status.
+        /// </summary>
+        /// <returns>An activity delegate.</returns>
+        private ActivityFunc<string, string, string, string> CreatePollingBody()
+        {
+            var operationId = new DelegateInArgument<string>() { Name = "FuncOperationId" };
+            var subscriptionId = new DelegateInArgument<string>() { Name = "FuncSubscriptionId" };
+            var certificateThumbprintId = new DelegateInArgument<string>() { Name = "FuncThumbprintId" };
+
+            return new ActivityFunc<string, string, string, string>
+            {
+                Argument1 = operationId,
+                Argument2 = subscriptionId,
+                Argument3 = certificateThumbprintId,
+                Handler = new GetOperationStatus
+                {
+                    CertificateThumbprintId = new InArgument<string>(certificateThumbprintId),
+                    FailBuildOnError = new InArgument<bool>(false),                     
+                    IgnoreExceptions = new InArgument<bool>(false),
+                    LogExceptionStack = new InArgument<bool>(false),
+                    OperationId = new InArgument<string>(operationId),
+                    SubscriptionId = new InArgument<string>(subscriptionId),
+                    TreatWarningsAsErrors = new InArgument<bool>(false)
+                }
+            };
+        }
+
+        /// <summary>
+        /// Create the structure of the activity for pausing between successive polling activities.
+        /// </summary>
+        /// <returns>An activity delegate.</returns>
+        private ActivityAction<int> CreateDelayBody()
+        {
+            var timeout = new DelegateInArgument<int>() { Name = "FuncTimeout" };
+
+            return new ActivityAction<int>
+            {
+                Argument = timeout,
+                Handler = new Delay
+                {
+                    Duration = new InArgument<TimeSpan>(ctx => TimeSpan.FromSeconds(timeout.Get(ctx)))
+                }
+            };
         }
 
         /// <summary>
@@ -269,8 +261,8 @@ namespace TfsBuildExtensions.Activities.Azure
                 this.OperationId.Get(context),
                 this.SubscriptionId.Get(context),
                 this.CertificateThumbprintId.Get(context),
-                new CompletionCallback<string>(OnGetStatusCompleted),
-                new FaultCallback(OnOperationFault));
+                new CompletionCallback<string>(this.OnGetStatusCompleted),
+                new FaultCallback(this.OnOperationFault));
         }
 
         /// <summary>
@@ -309,8 +301,8 @@ namespace TfsBuildExtensions.Activities.Azure
                     // Otherwise delay for the requested interval
                     context.ScheduleAction<int>(
                         this.DelayBody, 
-                        this.PollingInterval, 
-                        new CompletionCallback(OnDelayCompleted));
+                        this.PollingInterval,
+                        new CompletionCallback(this.OnDelayCompleted));
                     break;
             }            
         }
@@ -328,8 +320,8 @@ namespace TfsBuildExtensions.Activities.Azure
                 this.OperationId.Get(context),
                 this.SubscriptionId.Get(context),
                 this.CertificateThumbprintId.Get(context),
-                new CompletionCallback<string>(OnGetStatusCompleted),
-                new FaultCallback(OnOperationFault));
+                new CompletionCallback<string>(this.OnGetStatusCompleted),
+                new FaultCallback(this.OnOperationFault));
         }
 
         /// <summary>
@@ -344,8 +336,8 @@ namespace TfsBuildExtensions.Activities.Azure
             context.HandleFault();
 
             // TODO: Make this logging dependent on the operation configuration
-            LogBuildError(context, string.Format("AzureAsyncOperation Fault {0} during execution of {1}\r\n{2}", exception.GetType().Name, instance.Activity.GetType().Name, exception.Message));
-            LogBuildMessage(context, exception.StackTrace, BuildMessageImportance.High);
+            this.LogBuildError(context, string.Format("AzureAsyncOperation Fault {0} during execution of {1}\r\n{2}", exception.GetType().Name, instance.Activity.GetType().Name, exception.Message));
+            this.LogBuildMessage(context, exception.StackTrace, BuildMessageImportance.High);
 
             // Cancel the running activity
             context.CancelChild(instance);
@@ -355,9 +347,7 @@ namespace TfsBuildExtensions.Activities.Azure
             // This makes a better design choice to do any scheduling or further logic there.
             this.AzureActivityExceptionCaught.Set(context, true);
         }
-        #endregion
 
-        #region Utilities
         /// <summary>
         /// Log an error message to the build tracking participant.
         /// </summary>
@@ -395,6 +385,5 @@ namespace TfsBuildExtensions.Activities.Azure
             };
             context.Track(record);
         }
-        #endregion
     }
 }

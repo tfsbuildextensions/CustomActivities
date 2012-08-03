@@ -45,7 +45,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             this.ConnectToTfs();
             bool isBuildRunning = this.BuildId.Get(this.ActivityContext) == 0 ? this.CheckDefinition() : this.CheckBuildId();
-            this.ActivityContext.SetValue(Result, isBuildRunning);
+            this.ActivityContext.SetValue(this.Result, isBuildRunning);
             return isBuildRunning;
         }
 

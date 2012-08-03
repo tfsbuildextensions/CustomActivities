@@ -56,7 +56,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
             this.ConnectToTFS();
             this.build = this.GetGoodBuild() ?? this.build;
-            context.SetValue(Result, this.build);
+            context.SetValue(this.Result, this.build);
             return this.build;
         }
 

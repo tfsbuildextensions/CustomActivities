@@ -44,7 +44,7 @@ namespace TfsBuildExtensions.Activities.Azure.Certificates
             try
             {
                 this.RetryCall(s => this.Channel.AddCertificates(s, this.ServiceName.Get(this.ActivityContext), file));
-                return RetrieveOperationId();
+                return BaseAzureAsynchronousActivity.RetrieveOperationId();
             }
             catch (EndpointNotFoundException ex)
             {

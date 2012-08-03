@@ -439,7 +439,7 @@ namespace TfsBuildExtensions.Activities.SSH
                     case SSHAuthenticationType.UserNamePassword:
                         if (string.IsNullOrWhiteSpace(auth.User) || string.IsNullOrWhiteSpace(auth.Key))
                         {
-                            LogBuildError("You have to specify the username/password (key) to authenticate on the remote host");
+                            this.LogBuildError("You have to specify the username/password (key) to authenticate on the remote host");
                             error = true;
                         }
 
@@ -447,7 +447,7 @@ namespace TfsBuildExtensions.Activities.SSH
                     case SSHAuthenticationType.PrivateKey:
                         if (string.IsNullOrWhiteSpace(auth.User) || string.IsNullOrWhiteSpace(auth.Key))
                         {
-                            LogBuildError("You have to specify the username and private key file (key) to authenticate on the remote host");
+                            this.LogBuildError("You have to specify the username and private key file (key) to authenticate on the remote host");
                             error = true;
                         }
 
@@ -523,10 +523,10 @@ namespace TfsBuildExtensions.Activities.SSH
 
                 if (string.IsNullOrWhiteSpace(outputLogFile) == false)
                 {
-                    outputLogFile = this.GenerateLogFile(ActivityContext);
+                    outputLogFile = this.GenerateLogFile(this.ActivityContext);
                 }
 
-                this.LogFile.Set(ActivityContext, outputLogFile);
+                this.LogFile.Set(this.ActivityContext, outputLogFile);
             }
 
             /// <summary>
@@ -663,7 +663,7 @@ namespace TfsBuildExtensions.Activities.SSH
                     return;
                 }
 
-                LogBuildMessage(string.Format("Loading know hosts file from {0}", fileName));
+                this.LogBuildMessage(string.Format("Loading know hosts file from {0}", fileName));
 
                 using (var autoTracker = new AutoFileTrackerFromSourceControl(this.ActivityContext.GetExtension<TfsTeamProjectCollection>()))
                 {

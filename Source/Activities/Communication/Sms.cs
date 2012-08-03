@@ -161,7 +161,7 @@ namespace TfsBuildExtensions.Activities.Communication
                             var ex = document.Element("TwilioResponse").Element("RestException");
                             if (ex != null)
                             {
-                                LogBuildWarning(
+                                this.LogBuildWarning(
                                     string.Format(
                                         CultureInfo.InvariantCulture,
                                         "Failed to send SMS message.  The following response was returned: '{0}: {1}'.",

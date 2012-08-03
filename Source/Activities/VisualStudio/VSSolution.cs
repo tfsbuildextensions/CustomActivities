@@ -10,31 +10,31 @@ namespace TfsBuildExtensions.Activities.VisualStudio
 
     internal class VSSolution
     {
-        private static readonly Type solutionParser;
-        private static readonly PropertyInfo solutionParserSolutionReader;
-        private static readonly MethodInfo solutionParserParseSolution;
-        private static readonly PropertyInfo solutionParserVersion;
+        private static readonly Type SolutionParser;
+        private static readonly PropertyInfo SolutionParserSolutionReader;
+        private static readonly MethodInfo SolutionParserParseSolution;
+        private static readonly PropertyInfo SolutionParserVersion;
 
         private readonly string solutionPath;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Would lead to null pointer exceptions if .Net 4.0 not installed")]
         static VSSolution()
         {
-            solutionParser = Type.GetType("Microsoft.Build.Construction.SolutionParser, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
+            SolutionParser = Type.GetType("Microsoft.Build.Construction.SolutionParser, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
 
-            if (solutionParser == null)
+            if (SolutionParser == null)
             {
                 return;
             }
 
-            solutionParserSolutionReader = solutionParser.GetProperty("SolutionReader", BindingFlags.NonPublic | BindingFlags.Instance);
-            solutionParserParseSolution = solutionParser.GetMethod("ParseSolution", BindingFlags.NonPublic | BindingFlags.Instance);
-            solutionParserVersion = solutionParser.GetProperty("Version", BindingFlags.NonPublic | BindingFlags.Instance);
+            SolutionParserSolutionReader = SolutionParser.GetProperty("SolutionReader", BindingFlags.NonPublic | BindingFlags.Instance);
+            SolutionParserParseSolution = SolutionParser.GetMethod("ParseSolution", BindingFlags.NonPublic | BindingFlags.Instance);
+            SolutionParserVersion = SolutionParser.GetProperty("Version", BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         public VSSolution(string solutionFileName)
         {
-            if (solutionParser == null)
+            if (SolutionParser == null)
             {
                 throw new InvalidOperationException("Can not find type 'Microsoft.Build.Construction.SolutionParser' .Net 4.0 or higher not installed?");
             }
@@ -58,15 +58,15 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                 throw new NotSupportedException("relative paths not supported");
             }
 
-            var solutionParserInstance = solutionParser.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).First().Invoke(null);
+            var solutionParserInstance = SolutionParser.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).First().Invoke(null);
 
             using (var streamReader = new StreamReader(this.FileName))
             {
-                solutionParserSolutionReader.SetValue(solutionParserInstance, streamReader, null);
-                solutionParserParseSolution.Invoke(solutionParserInstance, null);
+                SolutionParserSolutionReader.SetValue(solutionParserInstance, streamReader, null);
+                SolutionParserParseSolution.Invoke(solutionParserInstance, null);
             }
 
-            var intObject = solutionParserVersion.GetValue(solutionParserInstance, null);
+            var intObject = SolutionParserVersion.GetValue(solutionParserInstance, null);
 
             if (intObject != null)
             {

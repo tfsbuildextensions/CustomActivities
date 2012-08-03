@@ -39,7 +39,7 @@ namespace TfsBuildExtensions.Activities.Azure.Certificates
                     this.ServiceName.Get(this.ActivityContext),
                     this.ThumbprintAlgorithm.Get(this.ActivityContext), 
                     this.CertificateThumbprintId.Get(this.ActivityContext)));
-                return RetrieveOperationId();
+                return BaseAzureAsynchronousActivity.RetrieveOperationId();
             }
             catch (EndpointNotFoundException ex)
             {

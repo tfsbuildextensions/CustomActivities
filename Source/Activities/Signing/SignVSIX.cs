@@ -89,7 +89,7 @@ namespace TfsBuildExtensions.Activities.Signing
                 return false;
             }
 
-            LogBuildMessage(string.Format("Signing {0} ", Path.GetFileName(vsixFileName)), BuildMessageImportance.High);
+            this.LogBuildMessage(string.Format("Signing {0} ", Path.GetFileName(vsixFileName)), BuildMessageImportance.High);
 
             using (var package = Package.Open(vsixFileName, FileMode.Open))
             {

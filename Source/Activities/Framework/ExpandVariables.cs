@@ -30,7 +30,7 @@ namespace TfsBuildExtensions.Activities.Framework
         #region Fields
 
         // variable match regex
-        private static readonly Regex variableRegex = new Regex(@"\$\(([^)]+)\)", RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly Regex VariableRegex = new Regex(@"\$\(([^)]+)\)", RegexOptions.Singleline | RegexOptions.Compiled);
 
         #endregion
 
@@ -169,7 +169,7 @@ namespace TfsBuildExtensions.Activities.Framework
 
                 if (input != null)
                 {
-                    var matches = variableRegex.Matches(input);
+                    var matches = VariableRegex.Matches(input);
                     for (var i = matches.Count - 1; i >= 0; --i)
                     {
                         if (matches[i].Success)

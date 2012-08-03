@@ -19,22 +19,22 @@ namespace TfsBuildExtensions.Activities.Framework
         #region Fields
 
         // parser for assembly attributes in C#, VB.Net and F#
-        private static readonly Regex assemblyAttributeParser = new Regex(
+        private static readonly Regex AssemblyAttributeParser = new Regex(
             @"^(?<start>\s*[\[<]<?\s*[Aa]ssembly\s*:\s*)(?<longname>(?<shortname>\w+?)(Attribute)?)(?<middle>\s*\(\s*""?)(?<value>.*?)(?<end>""?\s*\)\s*>?[>\]])",
             RegexOptions.Compiled);
 
         // parser for line comment in C#, VB.Net and F#
-        private static readonly Regex lineCommentParser = new Regex(
+        private static readonly Regex LineCommentParser = new Regex(
             @"^\s*(//|')",
             RegexOptions.Compiled);
 
         // parser for multiline comment start in C# and F#
-        private static readonly Regex multilineCommentStartParser = new Regex(
+        private static readonly Regex MultilineCommentStartParser = new Regex(
             @"^\s*(/\*|\(\*)",
             RegexOptions.Compiled);
 
         // parser for multiline comment end in C# and F#
-        private static readonly Regex multilineCommentEndParser = new Regex(
+        private static readonly Regex MultilineCommentEndParser = new Regex(
             @".*?(\*/|\*\))",
             RegexOptions.Compiled);
 
@@ -67,7 +67,7 @@ namespace TfsBuildExtensions.Activities.Framework
                 {
                     this.lines.Add(line);
 
-                    if (lineCommentParser.IsMatch(line))
+                    if (LineCommentParser.IsMatch(line))
                     {
                         // line comment
                         ++lineNumber;
@@ -75,7 +75,7 @@ namespace TfsBuildExtensions.Activities.Framework
                         continue;
                     }
 
-                    if (multilineCommentStartParser.IsMatch(line))
+                    if (MultilineCommentStartParser.IsMatch(line))
                     {
                         // multiline comment starts
                         ++lineNumber;
@@ -84,7 +84,7 @@ namespace TfsBuildExtensions.Activities.Framework
                         continue;
                     }
 
-                    if (multilineCommentEndParser.IsMatch(line) && isComment)
+                    if (MultilineCommentEndParser.IsMatch(line) && isComment)
                     {
                         // multiline comment ends
                         ++lineNumber;
@@ -101,7 +101,7 @@ namespace TfsBuildExtensions.Activities.Framework
                         continue;
                     }
 
-                    var matches = assemblyAttributeParser.Match(line);
+                    var matches = AssemblyAttributeParser.Match(line);
                     if (matches.Success)
                     {
                         // line contains assembly attribute, save result

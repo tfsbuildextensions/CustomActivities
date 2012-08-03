@@ -13,13 +13,13 @@ namespace TfsBuildExtensions.Activities.Scripting
 
     internal class WorkflowPsHost : PSHost
     {
-        private readonly CodeActivityContext ActivityContext;
+        private readonly CodeActivityContext activityContext;
         private readonly WorkflowPsHostUi hostUI;
         private readonly Guid instanceId;
 
         public WorkflowPsHost(CodeActivityContext activityContext)
         {
-            this.ActivityContext = activityContext;
+            this.activityContext = activityContext;
             this.instanceId = Guid.NewGuid();
             this.hostUI = new WorkflowPsHostUi(activityContext);
         }
@@ -70,17 +70,17 @@ namespace TfsBuildExtensions.Activities.Scripting
 
         public override void NotifyBeginApplication()
         {
-            this.ActivityContext.TrackBuildMessage(string.Format(this.CurrentCulture, ActivityResources.BeginActionMessage, "PSHost"), BuildMessageImportance.Low);
+            this.activityContext.TrackBuildMessage(string.Format(this.CurrentCulture, ActivityResources.BeginActionMessage, "PSHost"), BuildMessageImportance.Low);
         }
 
         public override void NotifyEndApplication()
         {
-            this.ActivityContext.TrackBuildMessage(string.Format(this.CurrentCulture, ActivityResources.CompleteActionMessage, "PSHost"), BuildMessageImportance.Low);
+            this.activityContext.TrackBuildMessage(string.Format(this.CurrentCulture, ActivityResources.CompleteActionMessage, "PSHost"), BuildMessageImportance.Low);
         }
 
         public override void SetShouldExit(int exitCode)
         {
-            this.ActivityContext.TrackBuildMessage(string.Format(this.CurrentCulture, "Should Exit {0}", exitCode), BuildMessageImportance.Low);
+            this.activityContext.TrackBuildMessage(string.Format(this.CurrentCulture, "Should Exit {0}", exitCode), BuildMessageImportance.Low);
         }
     }
 }

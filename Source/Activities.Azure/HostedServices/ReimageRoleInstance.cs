@@ -87,7 +87,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                     this.RetryCall(s => this.Channel.ReimageDeploymentRoleInstanceBySlot(s, this.ServiceName.Get(this.ActivityContext), this.Slot.Get(this.ActivityContext), this.InstanceName.Get(this.ActivityContext)));
                 }
 
-                return RetrieveOperationId();
+                return BaseAzureAsynchronousActivity.RetrieveOperationId();
             }
             catch (EndpointNotFoundException ex)
             {

@@ -273,7 +273,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
             this.ExecuteCommand("checkin", string.Format("{0} {1} {2}", comment, note, overrideReason), "/noprompt /recursive");
         }
 
-        private void  Add()
+        private void Add()
         {
             this.ExecuteCommand("add", string.Empty, "/noprompt /recursive /noignore");
         }

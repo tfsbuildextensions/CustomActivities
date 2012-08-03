@@ -24,7 +24,7 @@ namespace TfsBuildExtensions.Activities.Internal
         /// </summary>
         protected override void InternalExecute()
         {
-            LogBuildError(this.Message.Get(ActivityContext));
+            this.LogBuildError(this.Message.Get(this.ActivityContext));
         }
     }
 }

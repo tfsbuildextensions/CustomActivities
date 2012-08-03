@@ -64,12 +64,12 @@ namespace TfsBuildExtensions.Activities.Framework
         #region Fields
 
         // token parser.
-        private static readonly Regex tokenParser = new Regex(
+        private static readonly Regex TokenParser = new Regex(
             @"\$\((?<token>[^:\)]*)(:(?<param>[^\)]+))?\)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // version parser.
-        private static readonly Regex versionParser = new Regex(
+        private static readonly Regex VersionParser = new Regex(
             @"\d+\.\d+\.\d+\.\d+",
             RegexOptions.Compiled);
 
@@ -596,7 +596,7 @@ namespace TfsBuildExtensions.Activities.Framework
                 }                
             }
 
-            if (!versionParser.IsMatch(oldValue))
+            if (!VersionParser.IsMatch(oldValue))
             {
                 throw new FormatException("Current value for attribute '" + attributeName + "' is not in a correct version format.");
             }
@@ -648,7 +648,7 @@ namespace TfsBuildExtensions.Activities.Framework
             this.tokenEvaluators["increment"] = p => (current + 1).ToString();
 
             // replace tokens
-            return tokenParser.Replace(
+            return TokenParser.Replace(
                 value,
                 m =>
                 {

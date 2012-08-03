@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.SSH
 {
-    using System;
     using System.Activities;
     using System.ComponentModel;
     using System.IO;
@@ -24,7 +23,7 @@ namespace TfsBuildExtensions.Activities.SSH
         /// </summary>
         public InvokeRemoteScript()
         {
-            LinkMessage = "Remote script invocation log file";
+            this.LinkMessage = "Remote script invocation log file";
         }
 
         /// <summary>
@@ -240,16 +239,15 @@ namespace TfsBuildExtensions.Activities.SSH
 
                 if (string.IsNullOrWhiteSpace(host))
                 {
-                    LogBuildError("You have to specify the host where the command will be executed");
+                    this.LogBuildError("You have to specify the host where the command will be executed");
                     this.HasErrors.Set(this.ActivityContext, true);
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(command))
                 {
-                    LogBuildError("You have to specify the command to be executed");
+                    this.LogBuildError("You have to specify the command to be executed");
                     this.HasErrors.Set(this.ActivityContext, true);
-                    return;
                 }
             }
         }

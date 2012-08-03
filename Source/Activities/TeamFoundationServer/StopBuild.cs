@@ -34,7 +34,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             this.ConnectToTfs();
             IQueuedBuild build = this.HaltBuild();
-            this.ActivityContext.SetValue(Result, build);
+            this.ActivityContext.SetValue(this.Result, build);
             return build;
         }
 
