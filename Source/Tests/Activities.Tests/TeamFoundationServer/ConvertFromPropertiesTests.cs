@@ -5,11 +5,9 @@ namespace TfsBuildExtensions.Activities.Tests
 {
     using System.Activities;
     using System.Collections.Generic;
-    using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using TfsBuildExtensions.Activities.TeamFoundationServer;
-    using TfsBuildExtensions.Activities.Tests;
     using TfsBuildExtensions.Activities;
+    using TfsBuildExtensions.Activities.TeamFoundationServer;
 
     [TestClass]
     public class ConvertFromPropertiesTests
@@ -54,7 +52,7 @@ namespace TfsBuildExtensions.Activities.Tests
         public void ConvertNtshellFromProperties()
         {
             // Initialize Instance
-            var target = new ConvertFromProperties { Properties = new InArgument<Dictionary<string, string>>((env) => this.properties), OutputType = PropertiesType.Ntshell, FailBuildOnError = true, IgnoreExceptions = false, TreatWarningsAsErrors = true, LogExceptionStack = true };
+            var target = new ConvertFromProperties { Properties = new InArgument<Dictionary<string, string>>((env) => this.properties), OutputType = PropertiesType.NTShell, FailBuildOnError = true, IgnoreExceptions = false, TreatWarningsAsErrors = true, LogExceptionStack = true };
 
             // Invoke the Workflow
             var actual = WorkflowInvoker.Invoke(target);
@@ -73,7 +71,7 @@ namespace TfsBuildExtensions.Activities.Tests
         public void ConvertPowershellFromProperties()
         {
             // Initialize Instance
-            var target = new ConvertFromProperties { Properties = new InArgument<Dictionary<string, string>>((env) => this.properties), OutputType = PropertiesType.Powershell, FailBuildOnError = true, IgnoreExceptions = false, TreatWarningsAsErrors = true, LogExceptionStack = true };
+            var target = new ConvertFromProperties { Properties = new InArgument<Dictionary<string, string>>((env) => this.properties), OutputType = PropertiesType.PowerShell, FailBuildOnError = true, IgnoreExceptions = false, TreatWarningsAsErrors = true, LogExceptionStack = true };
 
             // Invoke the Workflow
             var actual = WorkflowInvoker.Invoke(target);

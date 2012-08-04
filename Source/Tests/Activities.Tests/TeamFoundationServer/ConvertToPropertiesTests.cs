@@ -4,12 +4,9 @@
 namespace TfsBuildExtensions.Activities.Tests
 {
     using System.Activities;
-    using System.Collections.Generic;
-    using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using TfsBuildExtensions.Activities.TeamFoundationServer;
-    using TfsBuildExtensions.Activities.Tests;
     using TfsBuildExtensions.Activities;
+    using TfsBuildExtensions.Activities.TeamFoundationServer;
 
     [TestClass]
     public class ConvertToPropertiesTests
@@ -49,7 +46,7 @@ namespace TfsBuildExtensions.Activities.Tests
         public void ConvertNtshellToProperties()
         {
             // Initialize Instance
-            var target = new ConvertToProperties { Properties = "Property1 \"V a l u e 1\" Property2 ~!@#$%^&*()_=+`-", InputType = PropertiesType.Ntshell, FailBuildOnError = true, IgnoreExceptions = false, TreatWarningsAsErrors = true, LogExceptionStack = true };
+            var target = new ConvertToProperties { Properties = "Property1 \"V a l u e 1\" Property2 ~!@#$%^&*()_=+`-", InputType = PropertiesType.NTShell, FailBuildOnError = true, IgnoreExceptions = false, TreatWarningsAsErrors = true, LogExceptionStack = true };
 
             // Invoke the Workflow
             var actual = WorkflowInvoker.Invoke(target);
@@ -72,7 +69,7 @@ namespace TfsBuildExtensions.Activities.Tests
         public void ConvertPowershellToProperties()
         {
             // Initialize Instance
-            var target = new ConvertToProperties { Properties = "-Property1 \"V a l u e 1\" -Property2 ~!@#$%^&*()_=+`-", InputType = PropertiesType.Powershell, FailBuildOnError = true, IgnoreExceptions = false, TreatWarningsAsErrors = true, LogExceptionStack = true };
+            var target = new ConvertToProperties { Properties = "-Property1 \"V a l u e 1\" -Property2 ~!@#$%^&*()_=+`-", InputType = PropertiesType.PowerShell, FailBuildOnError = true, IgnoreExceptions = false, TreatWarningsAsErrors = true, LogExceptionStack = true };
 
             // Invoke the Workflow
             var actual = WorkflowInvoker.Invoke(target);
