@@ -34,9 +34,10 @@ namespace TfsBuildExtensions.Activities.Tests
             var target = new SqlExecute { Action = SqlExecuteAction.ExecuteScalar };
             var parameters = new Dictionary<string, object>
             {
-                { "Sql", "SELECT CONVERT(CHAR(10), GETDATE(), 103)" },
+                { "Sql", "SELECT CONVERT(CHAR(10), GETDATE(), 103), @P1, @P2" },
                 { "ConnectionString", "Data Source=.;Initial Catalog=;Integrated Security=True" },
                 { "UseTransaction", true },
+                { "Parameters", new [] {"@P1=1", "@P2=2"} }
             };
 
             // Create a WorkflowInvoker and add the IBuildDetail Extension

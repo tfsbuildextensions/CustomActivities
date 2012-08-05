@@ -149,12 +149,13 @@ namespace TfsBuildExtensions.Activities.SqlServer
 
         private string SubstituteParameters(string sqlCommandText)
         {
-            if (this.Parameters.Expression == null)
+            var parameters = this.Parameters.Get(this.ActivityContext);
+            if (parameters == null || parameters.Length == 0)
             {
                 return sqlCommandText;
             }
 
-            return this.Parameters.Get(this.ActivityContext).Aggregate(sqlCommandText, (current, parameter) => current.Replace(parameter.Split(new char['='])[0], parameter.Split(new char['='])[1]));
+            return parameters.Aggregate(sqlCommandText, (current, parameter) => current.Replace(parameter.Split(new char[] { '=' })[0], parameter.Split(new char[] { '=' })[1]));
          }
 
         private void ExecuteSql()
