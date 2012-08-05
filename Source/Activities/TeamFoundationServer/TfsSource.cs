@@ -124,7 +124,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     public class TfsSource : BaseCodeActivity
     {
         private InArgument<string> toolPath = string.Empty;
-        
+
         /// <summary>
         /// The action to perform
         /// </summary>
@@ -169,6 +169,12 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// </summary>
         [Browsable(true)]
         public InArgument<string> OverrideReason { get; set; }
+
+        /// <summary>
+        /// Bypass a gated checkin policy
+        /// </summary>
+        [Browsable(true)]
+        public InArgument<bool> BypassGatedCheckin { get; set; }
 
         /// <summary>
         /// TFS collection to perform action on
@@ -270,7 +276,13 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 overrideReason = string.Format(" /override:\"{0}\"", this.OverrideReason.Get(this.ActivityContext));
             }
 
-            this.ExecuteCommand("checkin", string.Format("{0} {1} {2}", comment, note, overrideReason), "/noprompt /recursive");
+            string bypass = string.Empty;
+            if (this.BypassGatedCheckin.Get(this.ActivityContext))
+            {
+                bypass = " /bypass";
+            }
+
+            this.ExecuteCommand("checkin", string.Format("{0} {1} {2} {3}", comment, note, overrideReason, bypass), "/noprompt /recursive");
         }
 
         private void Add()
