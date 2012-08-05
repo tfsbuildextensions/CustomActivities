@@ -31,11 +31,17 @@ namespace TfsBuildExtensions.Activities.Tests
         public void SqlExecuteScalarTest()
         {
             // Initialise Instance
-            var target = new SqlExecute { Action = SqlExecuteAction.ExecuteScalar, Sql = "SELECT CONVERT(CHAR(10), GETDATE(), 103)", ConnectionString = "Data Source=.;Initial Catalog=;Integrated Security=True", UseTransaction = true };
+            var target = new SqlExecute { Action = SqlExecuteAction.ExecuteScalar };
+            var parameters = new Dictionary<string, object>
+            {
+                { "Sql", "SELECT CONVERT(CHAR(10), GETDATE(), 103)" },
+                { "ConnectionString", "Data Source=.;Initial Catalog=;Integrated Security=True" },
+                { "UseTransaction", true },
+            };
 
             // Create a WorkflowInvoker and add the IBuildDetail Extension
             WorkflowInvoker invoker = new WorkflowInvoker(target);
-            var actual = invoker.Invoke();
+            var actual = invoker.Invoke(parameters);
 
             // Test the result
             Assert.AreEqual(DateTime.Now.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-gb")), actual["ScalarResult"].ToString());
@@ -53,12 +59,15 @@ namespace TfsBuildExtensions.Activities.Tests
             File.WriteAllLines(f.FullName, new[] { "SELECT CONVERT(CHAR(10), GETDATE(), 103)" });
 
             // Initialise Instance
-            var target = new SqlExecute { Action = SqlExecuteAction.Execute, ConnectionString = "Data Source=.;Initial Catalog=;Integrated Security=True", CommandTimeout = 30, UseTransaction = true };
+            var target = new SqlExecute { Action = SqlExecuteAction.Execute };
 
             // Declare additional parameters
             var parameters = new Dictionary<string, object>
             {
                 { "Files", new[] { f.FullName } },
+                { "ConnectionString", "Data Source=.;Initial Catalog=;Integrated Security=True" },
+                { "UseTransaction", true },
+                { "CommandTimeout", 30 },
             };
 
             // Create a WorkflowInvoker and add the IBuildDetail Extension
@@ -79,12 +88,15 @@ namespace TfsBuildExtensions.Activities.Tests
             File.WriteAllLines(f.FullName, new[] { "SELECT CONVERT(CHdAR(10), GETDATE(), 103)" });
 
             // Initialise Instance
-            var target = new SqlExecute { Action = SqlExecuteAction.Execute, ConnectionString = "Data Source=.;Initial Catalog=;Integrated Security=True", CommandTimeout = 30, UseTransaction = true };
+            var target = new SqlExecute { Action = SqlExecuteAction.Execute };
 
             // Declare additional parameters
             var parameters = new Dictionary<string, object>
             {
                 { "Files", new[] { f.FullName } },
+                { "ConnectionString", "Data Source=.;Initial Catalog=;Integrated Security=True" },
+                { "UseTransaction", true },
+                { "CommandTimeout", 30 },
             };
 
             // Create a WorkflowInvoker and add the IBuildDetail Extension

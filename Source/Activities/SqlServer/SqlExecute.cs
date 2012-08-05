@@ -6,6 +6,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
     using System;
     using System.Activities;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Data.SqlClient;
     using System.Globalization;
     using System.IO;
@@ -47,9 +48,17 @@ namespace TfsBuildExtensions.Activities.SqlServer
     {
         private static readonly Regex Splitter = new Regex(@"^\s*GO\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         private SqlExecuteAction action = SqlExecuteAction.Execute;
-        private int commandTimeout = 30;
         private DateTime timer;
         private string[] files;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlExecute"/> class.
+        /// </summary>
+        public SqlExecute()
+        {
+            // sets default values
+            this.CommandTimeout = 30;
+        }
 
         internal delegate void ScriptExecutionEventHandler(object sender, ExecuteEventArgs e);
 
@@ -63,11 +72,8 @@ namespace TfsBuildExtensions.Activities.SqlServer
         /// <summary>
         /// Sets the timeout in seconds. Default is 30
         /// </summary>
-        public int CommandTimeout
-        {
-            get { return this.commandTimeout; }
-            set { this.commandTimeout = value; }
-        }
+        [DefaultValue(30)]
+        public InArgument<int> CommandTimeout { get; set; }
 
         /// <summary>
         /// Sets the files to execute
@@ -87,12 +93,12 @@ namespace TfsBuildExtensions.Activities.SqlServer
         /// <summary>
         /// Specifies whether files should be re-executed if they initially fail
         /// </summary>
-        public bool Retry { get; set; }
+        public InArgument<bool> Retry { get; set; }
 
         /// <summary>
         /// Set to true to run the sql within a transaction
         /// </summary>
-        public bool UseTransaction { get; set; }
+        public InArgument<bool> UseTransaction { get; set; }
 
         /// <summary>
         /// Gets the scalar result
@@ -198,7 +204,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
                             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Split {0} into {1} batches.", new object[] { fullfilename, batches.Length }), BuildMessageImportance.Low);
                             SqlTransaction sqlTransaction = null;
                             SqlCommand command = sqlConnection.CreateCommand();
-                            if (this.UseTransaction)
+                            if (this.UseTransaction.Get(this.ActivityContext))
                             {
                                 sqlTransaction = sqlConnection.BeginTransaction();
                             }
@@ -212,7 +218,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
                                     if (sqlCommandText.Length > 0)
                                     {
                                         command.CommandText = sqlCommandText;
-                                        command.CommandTimeout = this.CommandTimeout;
+                                        command.CommandTimeout = this.CommandTimeout.Get(this.ActivityContext);
                                         command.Connection = sqlConnection;
                                         command.Transaction = sqlTransaction;
                                         this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Executing Batch {0}", new object[] { batchNum++ }), BuildMessageImportance.Low);
@@ -241,7 +247,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
                         catch (SqlException se)
                         {
                             lastException = new ApplicationException(string.Format(CultureInfo.CurrentUICulture, "{0}. {1}", fullfilename, se.Message), se);
-                            if (!this.Retry)
+                            if (!this.Retry.Get(this.ActivityContext))
                             {
                                 throw lastException;
                             }
@@ -252,7 +258,7 @@ namespace TfsBuildExtensions.Activities.SqlServer
                         }
                     }
 
-                    if (!this.Retry)
+                    if (!this.Retry.Get(this.ActivityContext))
                     {
                         retry = false;
                     }
@@ -287,13 +293,13 @@ namespace TfsBuildExtensions.Activities.SqlServer
             using (SqlConnection sqlConnection = this.CreateConnection(this.ConnectionString.Get(this.ActivityContext)))
             using (SqlCommand command = new SqlCommand(this.SubstituteParameters(this.Sql.Get(this.ActivityContext)), sqlConnection))
             {
-                command.CommandTimeout = this.CommandTimeout;
+                command.CommandTimeout = this.CommandTimeout.Get(this.ActivityContext);
                 this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Execute: {0}", command.CommandText), BuildMessageImportance.High);
                 sqlConnection.Open();
                 SqlTransaction sqlTransaction = null;
                 try
                 {
-                    if (this.UseTransaction)
+                    if (this.UseTransaction.Get(this.ActivityContext))
                     {
                         sqlTransaction = sqlConnection.BeginTransaction();
                         command.Transaction = sqlTransaction;
