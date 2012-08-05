@@ -118,6 +118,9 @@
     <None Include="Framework\TestFiles\AssemblyInfo %287%29.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Framework\TestFiles\EmptyAssemblyInfo.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="TeamFoundationServer\ConvertToPropertiesTests.cs" />
     <Compile Include="TeamFoundationServer\ConvertFromPropertiesTests.cs" />
     <Compile Include="Xml\XmlTests.cs" />

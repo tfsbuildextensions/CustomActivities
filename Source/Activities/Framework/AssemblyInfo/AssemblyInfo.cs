@@ -13,6 +13,22 @@ namespace TfsBuildExtensions.Activities.Framework
     using Microsoft.TeamFoundation.Build.Client;
 
     /// <summary>
+    /// AssemblyInfo activity actions.
+    /// </summary>
+    public enum AssemblyInfoAction
+    {
+        /// <summary>
+        /// Get assembly info values.
+        /// </summary>
+        Get,
+
+        /// <summary>
+        /// Set assembly info values.
+        /// </summary>
+        Set
+    }
+
+    /// <summary>
     /// Updates content of AssemblyInfo files.
     /// </summary>
     /// <remarks>
@@ -81,7 +97,25 @@ namespace TfsBuildExtensions.Activities.Framework
 
         #endregion
 
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyInfo"/> class.
+        /// </summary>
+        public AssemblyInfo()
+        {
+            // set default values
+            this.Action = AssemblyInfoAction.Set;
+        }
+
+        #endregion
+
         #region Properties
+
+        /// <summary>
+        /// Sets the action to perform. Default is <see cref="AssemblyInfoAction.Set"/>
+        /// </summary>
+        public AssemblyInfoAction Action { get; set; }
 
         /// <summary>
         /// Sets the AssemblyInfo files to update.
@@ -114,7 +148,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly version. (null to disable update)")]
-        public InArgument<string> AssemblyVersion { get; set; }
+        public InOutArgument<string> AssemblyVersion { get; set; }
 
         /// <summary>
         /// Sets the assembly file version.
@@ -137,7 +171,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly file version. (null to disable update)")]
-        public InArgument<string> AssemblyFileVersion { get; set; }
+        public InOutArgument<string> AssemblyFileVersion { get; set; }
 
         /// <summary>
         /// Sets the assembly informational version.
@@ -160,7 +194,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly informational version. (null to disable update)")]
-        public InArgument<string> AssemblyInformationalVersion { get; set; }
+        public InOutArgument<string> AssemblyInformationalVersion { get; set; }
 
         /// <summary>
         /// Sets the company name.
@@ -183,7 +217,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the company name. (null to disable update)")]
-        public InArgument<string> AssemblyCompany { get; set; }
+        public InOutArgument<string> AssemblyCompany { get; set; }
 
         /// <summary>
         /// Sets the assembly configuration.
@@ -206,7 +240,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly configuration. (null to disable update)")]
-        public InArgument<string> AssemblyConfiguration { get; set; }
+        public InOutArgument<string> AssemblyConfiguration { get; set; }
 
         /// <summary>
         /// Sets the assembly copyright.
@@ -229,7 +263,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly copyright. (null to disable update)")]
-        public InArgument<string> AssemblyCopyright { get; set; }
+        public InOutArgument<string> AssemblyCopyright { get; set; }
 
         /// <summary>
         /// Sets the assembly culture.
@@ -238,7 +272,7 @@ namespace TfsBuildExtensions.Activities.Framework
         /// Setting the value to null will disable updating this attribute.
         /// </remarks>
         [Description("Specify the assembly culture. (null to disable update)")]
-        public InArgument<string> AssemblyCulture { get; set; }
+        public InOutArgument<string> AssemblyCulture { get; set; }
 
         /// <summary>
         /// Set to <b>true</b> to mark the assembly for delay signing.
@@ -247,7 +281,7 @@ namespace TfsBuildExtensions.Activities.Framework
         /// Setting the value to null will disable updating this attribute.
         /// </remarks>
         [Description("Specify whether to delay sign the assembly. (null to disable update)")]
-        public InArgument<bool?> AssemblyDelaySign { get; set; }
+        public InOutArgument<bool?> AssemblyDelaySign { get; set; }
 
         /// <summary>
         /// Sets the assembly description.
@@ -270,7 +304,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly description. (null to disable update)")]
-        public InArgument<string> AssemblyDescription { get; set; }
+        public InOutArgument<string> AssemblyDescription { get; set; }
 
         /// <summary>
         /// Sets the assembly GUID.
@@ -279,7 +313,7 @@ namespace TfsBuildExtensions.Activities.Framework
         /// Setting the value to null will disable updating this attribute.
         /// </remarks>
         [Description("Specify the assembly GUID. (null to disable update)")]
-        public InArgument<System.Guid?> Guid { get; set; }
+        public InOutArgument<System.Guid?> Guid { get; set; }
 
         /// <summary>
         /// Sets the key file to use to sign the assembly.
@@ -288,7 +322,7 @@ namespace TfsBuildExtensions.Activities.Framework
         /// Setting the value to null will disable updating this attribute.
         /// </remarks>
         [Description("Specify the key file to use to sign the assembly. (null to disable update)")]
-        public InArgument<string> AssemblyKeyFile { get; set; }
+        public InOutArgument<string> AssemblyKeyFile { get; set; }
 
         /// <summary>
         /// Sets the name of a key container within the CSP containing the key pair used to generate a strong name.
@@ -297,7 +331,7 @@ namespace TfsBuildExtensions.Activities.Framework
         /// Setting the value to null will disable updating this attribute.
         /// </remarks>
         [Description("Specify the name of the key conteiner to use to generate a strong name. (null to disable update)")]
-        public InArgument<string> AssemblyKeyName { get; set; }
+        public InOutArgument<string> AssemblyKeyName { get; set; }
 
         /// <summary>
         /// Sets the assembly product.
@@ -320,7 +354,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly product. (null to disable update)")]
-        public InArgument<string> AssemblyProduct { get; set; }
+        public InOutArgument<string> AssemblyProduct { get; set; }
 
         /// <summary>
         /// Sets the assembly title.
@@ -343,7 +377,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly title. (null to disable update)")]
-        public InArgument<string> AssemblyTitle { get; set; }
+        public InOutArgument<string> AssemblyTitle { get; set; }
 
         /// <summary>
         /// Sets the assembly trademark.
@@ -366,7 +400,7 @@ namespace TfsBuildExtensions.Activities.Framework
         ///     </para>
         /// </remarks>
         [Description("Specify the assembly trademark. (null to disable update)")]
-        public InArgument<string> AssemblyTrademark { get; set; }
+        public InOutArgument<string> AssemblyTrademark { get; set; }
 
         /// <summary>
         /// Set to <b>true</b> to mark the assembly CLS compliant.
@@ -375,7 +409,7 @@ namespace TfsBuildExtensions.Activities.Framework
         /// Setting the value to null will disable updating this attribute.
         /// </remarks>
         [Description("Specify whether the assembly is CLS compliant. (null to disable update)")]
-        public InArgument<bool?> CLSCompliant { get; set; }
+        public InOutArgument<bool?> CLSCompliant { get; set; }
 
         /// <summary>
         /// Set to <b>true</b> to make the assembly visible to COM.
@@ -384,7 +418,7 @@ namespace TfsBuildExtensions.Activities.Framework
         /// Setting the value to null will disable updating this attribute.
         /// </remarks>
         [Description("Specify whether the assembly is COM visible. (null to disable update)")]
-        public InArgument<bool?> ComVisible { get; set; }
+        public InOutArgument<bool?> ComVisible { get; set; }
 
         /// <summary>
         /// Gets the max updated assembly version.
@@ -430,6 +464,44 @@ namespace TfsBuildExtensions.Activities.Framework
         /// Executes the logic for this workflow activity.
         /// </summary>
         protected override void InternalExecute()
+        {
+            switch (this.Action)
+            {
+                case AssemblyInfoAction.Set:
+                    this.SetValues();
+                    break;
+
+                case AssemblyInfoAction.Get:
+                    this.GetValues();
+                    break;
+
+                default:
+                    throw new ArgumentException("Action not supported");
+            }
+        }
+
+        #endregion
+
+        #region Private Helpers
+
+        // Returns the specified value as a string with the correct case based on the file extension.
+        private static string BooleanToString(string path, bool value)
+        {
+            switch (Path.GetExtension(path))
+            {
+                case ".cs":
+                case ".fs":
+                    return value.ToString().ToLower();
+
+                case ".vb":
+                    return value.ToString();
+            }
+
+            return null;
+        }
+
+        // Update the specified AssembyInfo files.
+        private void SetValues()
         {
             // initialize values
             var now = DateTime.Now;
@@ -548,24 +620,50 @@ namespace TfsBuildExtensions.Activities.Framework
             }
         }
 
-        #endregion
-
-        #region Private Helpers
-
-        // Returns the specified value as a string with the correct case based on the file extension.
-        private static string BooleanToString(string path, bool value)
+        // Read the values from the specified AssemblyInfo file.
+        private void GetValues()
         {
-            switch (Path.GetExtension(path))
+            // validate files
+            var files = this.Files.Get(this.ActivityContext);
+            if (files == null || !files.Any())
             {
-                case ".cs":
-                case ".fs":
-                    return value.ToString().ToLower();
-
-                case ".vb":
-                    return value.ToString();
+                this.LogBuildWarning("No AssemblyInfo files specified.");
+                
+                return;
             }
 
-            return null;
+            if (files.Count() != 1)
+            {
+                throw new ArgumentException("Only one file can be specified when using the Get action.");
+            }
+
+            // load file
+            var path = files.ElementAt(0);
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("AssemblyInfo file not found.", path);
+            }
+
+            this.file = new AssemblyInfoFile(path);
+
+            // read all loaded attribute values
+            this.ReadStringAttribute("AssemblyCompany", this.AssemblyCompany);
+            this.ReadStringAttribute("AssemblyConfiguration", this.AssemblyConfiguration);
+            this.ReadStringAttribute("AssemblyCopyright", this.AssemblyCopyright);
+            this.ReadStringAttribute("AssemblyDescription", this.AssemblyDescription);
+            this.ReadStringAttribute("AssemblyProduct", this.AssemblyProduct);
+            this.ReadStringAttribute("AssemblyTitle", this.AssemblyTitle);
+            this.ReadStringAttribute("AssemblyTrademark", this.AssemblyTrademark);
+            this.ReadStringAttribute("AssemblyCulture", this.AssemblyCulture);
+            this.ReadBoolAttribute("AssemblyDelaySign", this.AssemblyDelaySign);
+            this.ReadGuidAttribute("Guid", this.Guid);
+            this.ReadStringAttribute("AssemblyKeyFile", this.AssemblyKeyFile);
+            this.ReadStringAttribute("AssemblyKeyName", this.AssemblyKeyName);
+            this.ReadBoolAttribute("CLSCompliant", this.CLSCompliant);
+            this.ReadBoolAttribute("ComVisible", this.ComVisible);
+            this.ReadStringAttribute("AssemblyVersion", this.AssemblyVersion);
+            this.ReadStringAttribute("AssemblyFileVersion", this.AssemblyFileVersion);
+            this.ReadStringAttribute("AssemblyInformationalVersion", this.AssemblyInformationalVersion);
         }
 
         // Updates and returns the version of the specified attribute.
@@ -660,6 +758,50 @@ namespace TfsBuildExtensions.Activities.Framework
 
                     return evaluator(m.Groups["param"].Value);
                 });
+        }
+
+        // Copies the specified attribute string value to the specified argument if present.
+        private void ReadStringAttribute(string attributeName, InOutArgument argument)
+        {
+            var value = this.file[attributeName];
+
+            if (value == null)
+            {
+                // do nothing
+                return;
+            }
+
+            argument.Set(this.ActivityContext, value);
+        }
+
+        // Copies the specified attribute boolean value to the specified argument if present.
+        private void ReadBoolAttribute(string attributeName, InOutArgument argument)
+        {
+            var value = this.file[attributeName];
+
+            if (value == null)
+            {
+                argument.Set(this.ActivityContext, null);
+
+                return;
+            }
+
+            argument.Set(this.ActivityContext, Convert.ToBoolean(value));
+        }
+
+        // Copies the specified attribute GUID value to the specified argument if present.
+        private void ReadGuidAttribute(string attributeName, InOutArgument argument)
+        {
+            var value = this.file[attributeName];
+
+            if (value == null)
+            {
+                argument.Set(this.ActivityContext, null);
+
+                return;
+            }
+
+            argument.Set(this.ActivityContext, new System.Guid(value));
         }
 
         #endregion
