@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1F0A1FCE-1C3C-4EEA-8DFD-5DF620E14F30}"
 	ProjectSection(SolutionItems) = preProject
 		Community.TeamFoundation.Build.vsmdi = Community.TeamFoundation.Build.vsmdi
@@ -58,9 +58,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.StyleCop.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.Tests", "Tests\Activities.Tests\Activities.Tests.csproj", "{AACA7634-9FDD-44E1-AAB4-7CC38739BEC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.VisualStudio", "Activities.VisualStudio\Activities.VisualStudio.csproj", "{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 18
+		SccNumberOfProjects = 19
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
@@ -123,6 +125,9 @@ Global
 		SccProjectTopLevelParentUniqueName17 = TFSBuildExtensions.sln
 		SccProjectName17 = Tests/Activities.Tests
 		SccLocalPath17 = Tests\\Activities.Tests
+		SccProjectUniqueName18 = Activities.VisualStudio\\Activities.VisualStudio.csproj
+		SccProjectName18 = Activities.VisualStudio
+		SccLocalPath18 = Activities.VisualStudio
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Community.TeamFoundation.Build.vsmdi
@@ -297,6 +302,16 @@ Global
 		{AACA7634-9FDD-44E1-AAB4-7CC38739BEC6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{AACA7634-9FDD-44E1-AAB4-7CC38739BEC6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AACA7634-9FDD-44E1-AAB4-7CC38739BEC6}.Release|x86.ActiveCfg = Release|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
