@@ -162,7 +162,10 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                     this.LogBuildError(File.ReadAllText(finalLogFile));
                 }
 
-                this.LogBuildLink("VB6 Log File", new Uri(finalLogFile));
+                if (finalLogFile.StartsWith(@"\\", StringComparison.Ordinal))
+                {
+                    this.LogBuildLink("VB6 Log File", new Uri(finalLogFile));
+                }
 
                 this.ReturnCode.Set(this.ActivityContext, proc.ExitCode);
             }
@@ -174,7 +177,16 @@ namespace TfsBuildExtensions.Activities.VisualStudio
             if (string.IsNullOrEmpty(finalDir))
             {
                 var buildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
-                finalDir = buildDetail.DropLocation;
+                if (!string.IsNullOrEmpty(buildDetail.DropLocation))
+                {
+                    finalDir = buildDetail.DropLocation;
+                }
+                else
+                {
+                    var projectFile = this.ProjectFile.Get(this.ActivityContext);
+                    finalDir = Path.GetDirectoryName(projectFile);                    
+                }
+
                 this.LogBuildMessage(string.Format("Generated out directory {0}.", finalDir));
             }
 
@@ -186,18 +198,25 @@ namespace TfsBuildExtensions.Activities.VisualStudio
             var finalLogFile = this.LogFile.Get(this.ActivityContext);
             if (string.IsNullOrEmpty(finalLogFile))
             {
-                var buildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
                 var projectFile = this.ProjectFile.Get(this.ActivityContext);
                 var fileName = Path.GetFileName(projectFile);
                 if (fileName != null)
                 {
-                    string logDirectory = Path.Combine(buildDetail.DropLocation, @"logs");
-                    if (!Directory.Exists(logDirectory))
+                    var buildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
+                    if (!string.IsNullOrEmpty(buildDetail.DropLocation))
                     {
-                        Directory.CreateDirectory(logDirectory);
-                    }
+                        string logDirectory = Path.Combine(buildDetail.DropLocation, @"logs");
+                        if (!Directory.Exists(logDirectory))
+                        {
+                            Directory.CreateDirectory(logDirectory);
+                        }
 
-                    finalLogFile = Path.Combine(logDirectory, fileName.Replace(".vbp", ".log"));
+                        finalLogFile = Path.Combine(logDirectory, fileName.Replace(".vbp", ".log"));
+                    }
+                    else
+                    {
+                        finalLogFile = Path.Combine(Path.GetDirectoryName(projectFile) + string.Empty, fileName.Replace(".vbp", ".log")); ;
+                    }
                 }
 
                 this.LogBuildMessage(string.Format("Generated log file {0}.", finalLogFile));
