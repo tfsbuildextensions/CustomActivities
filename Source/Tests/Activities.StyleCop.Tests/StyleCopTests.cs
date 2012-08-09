@@ -9,6 +9,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TfsBuildExtensions.Activities.CodeQuality;
 
+    /// <summary>
+    /// A set of test that check the passing of setting files into stylecop
+    /// These rely on the paths beinbg correct for the source and setting files,
+    /// that the StyleCop.CSharp and StyleCopCShare.Rules are in the same folder as the activity
+    /// and that the max violations are set to > 0 (defaults to 100000)
+    /// </summary>
     [TestClass]
     public class StyleCopTests
     {
@@ -22,7 +28,8 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Tests
             // create a parameter set
             Dictionary<string, object> args = new Dictionary<string, object>
             {
-                 { "SourceFiles", new string[] { @"TestFiles\FileWith6Errors.cs" } },
+
+                 { "SourceFiles", new string[] { @"TestFiles\FileWith7Errors.cs" } },
                  { "SettingsFile", @"TestFiles\AllSettingsEnabled.StyleCop" },
             };
 
@@ -34,8 +41,11 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Tests
 
             // assert
             Assert.AreEqual(false, results["Succeeded"]);
-            Assert.AreEqual(6, results["ViolationCount"]);
+            Assert.AreEqual(7, results["ViolationCount"]);
         }
+
+
+       
 
         [TestMethod]
         public void Check_a_single_file_with_default_rules_shows_no_violations_and_passes()
@@ -72,7 +82,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Tests
             // create a parameter set
             Dictionary<string, object> args = new Dictionary<string, object>
             {
-                 { "SourceFiles", new string[] { @"TestFiles\FileWith6Errors.cs" } }, 
+                 { "SourceFiles", new string[] { @"TestFiles\FileWith7Errors.cs" } }, 
                  { "SettingsFile", @"TestFiles\SettingsDisableSA1200.StyleCop" }
             };
 
@@ -84,7 +94,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Tests
 
             // assert
             Assert.AreEqual(false, results["Succeeded"]);
-            Assert.AreEqual(2, results["ViolationCount"]);
+            Assert.AreEqual(3, results["ViolationCount"]);
         }
 
         [TestMethod]
@@ -109,7 +119,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Tests
 
             // assert
             Assert.AreEqual(false, results["Succeeded"]);
-            Assert.AreEqual(8, results["ViolationCount"]);
+            Assert.AreEqual(10, results["ViolationCount"]);
         }
 
         [TestMethod]
@@ -138,7 +148,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Tests
 
             // assert
             Assert.IsTrue(System.IO.File.Exists(fileName));
-            Assert.AreEqual(8, System.IO.File.ReadAllLines(fileName).Length);
+            Assert.AreEqual(10, System.IO.File.ReadAllLines(fileName).Length);
         }
 
         [TestMethod]
@@ -163,7 +173,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality.Tests
 
             // assert
             Assert.AreEqual(false, results["Succeeded"]);
-            Assert.AreEqual(2, results["ViolationCount"]);
+            Assert.AreEqual(2, results["ViolationCount"]);  // we get 10 issues, but report only 2
         }
     }
 }

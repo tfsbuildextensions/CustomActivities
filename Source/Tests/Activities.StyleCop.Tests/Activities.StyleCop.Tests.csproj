@@ -46,6 +46,16 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
       <HintPath>..\..\AssemblyReferences\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
     </Reference>
+    <Reference Include="StyleCop, Version=4.7.1000.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\AssemblyReferences\StyleCop.dll</HintPath>
+    </Reference>
+    <Reference Include="StyleCop.CSharp">
+      <HintPath>..\..\AssemblyReferences\StyleCop.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="StyleCop.CSharp.Rules">
+      <HintPath>..\..\AssemblyReferences\StyleCop.CSharp.Rules.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Activities" />
     <Reference Include="System.Core">
@@ -77,13 +87,13 @@
     <None Include="TestFiles\FileWith0Errors.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestFiles\FileWith6Errors.cs">
+    <None Include="TestFiles\FileWith7Errors.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Activities.StyleCop\Activities.StyleCop.csproj">
-      <Project>{06044CCE-E9A8-4829-AB31-2A59E5A0198E}</Project>
+      <Project>{06044cce-e9a8-4829-ab31-2a59e5a0198e}</Project>
       <Name>Activities.StyleCop</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Activities\Activities.csproj">
