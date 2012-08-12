@@ -4,6 +4,7 @@
 namespace TfsBuildExtensions.Activities.Tests
 {
     using System.Activities;
+    using System.Collections.Generic;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TfsBuildExtensions.Activities.Web;
 
@@ -28,12 +29,16 @@ namespace TfsBuildExtensions.Activities.Tests
         public void CreateAppPool()
         {
             // Initialise Instance
-            var target = new Iis7AppPool { Action = IIS7AppPoolAction.Create, Name = "NewAppPool100", RecycleRequests = 45, RecycleInterval = 1987, Force = true, MaxProcesses = 5 };
+            var target = new Iis7AppPool { Action = IIS7AppPoolAction.Create, RecycleRequests = 45, RecycleInterval = 1987, Force = true, MaxProcesses = 5 };
+            var parameters = new Dictionary<string, object>
+            {
+                { "Name", "NewAppPool100" },
+            };
 
             // Create a WorkflowInvoker and add the IBuildDetail Extension
             WorkflowInvoker invoker = new WorkflowInvoker(target);
 
-            var actual = invoker.Invoke();
+            var actual = invoker.Invoke(parameters);
 
             ////// Test the result
             ////DateTime d = Convert.ToDateTime("1 Mar 2009");

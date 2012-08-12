@@ -173,7 +173,7 @@ namespace TfsBuildExtensions.Activities.Web
         /// Sets the name of the AppPool
         /// </summary>
         [RequiredArgument]
-        public string Name { get; set; }
+        public InArgument<string> Name { get; set; }
 
         /// <summary>
         /// Set to true to force the creation of an apppool, even if it exists.
@@ -234,7 +234,7 @@ namespace TfsBuildExtensions.Activities.Web
 
         private void CheckExists()
         {
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether Application Pool: {0} exists on: {1}", this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether Application Pool: {0} exists on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
             this.Exists.Set(this.ActivityContext, this.AppPoolExists());
         }
 
@@ -242,11 +242,11 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.AppPoolExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying Application Pool: {0} on: {1}", this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying Application Pool: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Setting ManagedPipelineMode to: {0}", this.PipelineMode), BuildMessageImportance.Low);
             this.pool.ManagedPipelineMode = this.managedPM;
             this.iisServerManager.CommitChanges();
@@ -256,7 +256,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.AppPoolExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
                 return;
             }
 
@@ -266,7 +266,7 @@ namespace TfsBuildExtensions.Activities.Web
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying Application Pool: {0} on: {1}", this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying Application Pool: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType), BuildMessageImportance.Low);
             this.pool.ProcessModel.IdentityType = this.processModelType;
 
@@ -283,11 +283,11 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.AppPoolExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Application Pool: {0} on: {1}", this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Application Pool: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
             this.iisServerManager.ApplicationPools.Remove(this.pool);
             this.iisServerManager.CommitChanges();
         }
@@ -296,11 +296,11 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.AppPoolExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.InvariantCulture, "{0} Application Pool: {1} on: {2}", this.Action, this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.InvariantCulture, "{0} Application Pool: {1} on: {2}", this.Action, this.Name.Get(this.ActivityContext), this.MachineName));
 
             switch (this.Action)
             {
@@ -327,16 +327,16 @@ namespace TfsBuildExtensions.Activities.Web
             {
                 if (!this.Force)
                 {
-                    this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} already exists on: {1}", this.Name, this.MachineName));
+                    this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} already exists on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
                     return;
                 }
 
-                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Application Pool: {0} on: {1}", this.Name, this.MachineName));
+                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting Application Pool: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
                 this.iisServerManager.ApplicationPools.Remove(this.pool);
                 this.iisServerManager.CommitChanges();
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Creating Application Pool: {0} on: {1}", this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Creating Application Pool: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
 
             if (this.IdentityType == "SpecificUser" && (string.IsNullOrEmpty(this.PoolIdentity) || string.IsNullOrEmpty(this.IdentityPassword)))
             {
@@ -344,7 +344,7 @@ namespace TfsBuildExtensions.Activities.Web
                 return;
             }
 
-            this.pool = this.iisServerManager.ApplicationPools.Add(this.Name);
+            this.pool = this.iisServerManager.ApplicationPools.Add(this.Name.Get(this.ActivityContext));
             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Setting ManagedPipelineMode to: {0}", this.PipelineMode), BuildMessageImportance.Low);
             this.pool.ManagedPipelineMode = this.managedPM;
             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Setting ProcessModelIdentityType to: {0}", this.IdentityType), BuildMessageImportance.Low);
@@ -363,11 +363,11 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.AppPoolExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying Application Pool: {0} on: {1}", this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying Application Pool: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName));
             this.SetCommonInfo();
             this.iisServerManager.CommitChanges();
         }
@@ -482,7 +482,7 @@ namespace TfsBuildExtensions.Activities.Web
 
         private bool AppPoolExists()
         {
-            this.pool = this.iisServerManager.ApplicationPools[this.Name];
+            this.pool = this.iisServerManager.ApplicationPools[this.Name.Get(this.ActivityContext)];
             return this.pool != null;
         }
     }
