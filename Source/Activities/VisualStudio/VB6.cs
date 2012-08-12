@@ -215,7 +215,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                     }
                     else
                     {
-                        finalLogFile = Path.Combine(Path.GetDirectoryName(projectFile) + string.Empty, fileName.Replace(".vbp", ".log")); ;
+                        finalLogFile = Path.Combine(Path.GetDirectoryName(projectFile) + string.Empty, fileName.Replace(".vbp", ".log"));
                     }
                 }
 
