@@ -241,7 +241,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// </summary>
         [Browsable(true)]
         [Description("Set timeout for each test case in milliseconds")]
-        public InArgument<int> TestTimeout { get; set; }
+        public InArgument<int?> TestTimeout { get; set; }
 
         /// <summary>
         /// Label each test in stdOut. Default is false.
@@ -431,6 +431,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             builder.AppendSwitchIfNotNull("/xml=", Path.Combine(outputFolder, this.OutputXmlFile.Get(context)));
             builder.AppendSwitchIfNotNull("/err=", this.ErrorOutputFile.Get(context));
             builder.AppendSwitchIfNotNull("/out=", this.OutputFile.Get(context));
+
+            if (this.TestTimeout.Get(this.ActivityContext) != null)
+            {
+                builder.AppendSwitch("/timeout=" + this.TestTimeout.Get(this.ActivityContext).ToString());
+            }
+
             return builder.ToString();
         }
 
