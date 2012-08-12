@@ -48,7 +48,12 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Elapsed
         /// </summary>
-        Elapsed
+        Elapsed,
+
+        /// <summary>
+        /// Synced
+        /// </summary>
+        Synced
     }
 
     /// <summary>
@@ -70,7 +75,8 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         private bool setAssemblyFileVersion = true;
         private TfsVersionAction action = TfsVersionAction.GetAndSetVersion;
         private InArgument<string> delimiter = ".";
-        private TfsVersionVersionFormat versionFormat = TfsVersionVersionFormat.DateTime;
+        private TfsVersionVersionFormat versionFormat = TfsVersionVersionFormat.Synced;
+        private string buildnumberRegex = @"\d+\.\d+\.\d+\.\d+";
 
         /// <summary>
         /// Set to True to set the AssemblyDescription when calling SetVersion. Default is false.
@@ -118,7 +124,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         public InArgument<string> TextEncoding { get; set; }
 
         /// <summary>
-        /// Sets the files to version
+        /// Sets the files to version. If Files is not provided, all AssemblyInfo.* files under the SourceDirectory are versioned.
         /// </summary>
         public InArgument<IEnumerable<string>> Files { get; set; }
 
@@ -158,7 +164,16 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         public string DateFormat { get; set; }
 
         /// <summary>
-        /// Sets the Version Format. Valid VersionFormats are Elapsed, DateTime. Default is DateTime
+        /// Sets the BuildNumberRegex to determine the verison number from the BuildNumber when using in Synced mode. Default is \d+\.\d+\.\d+\.\d+
+        /// </summary>
+        public string BuildNumberRegex
+        {
+            get { return this.buildnumberRegex; }
+            set { this.buildnumberRegex = value; }
+        }
+
+        /// <summary>
+        /// Sets the Version Format. Valid VersionFormats are Elapsed, DateTime, Synced. Default is Synced
         /// </summary>
         public TfsVersionVersionFormat VersionFormat
         {
@@ -187,7 +202,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         public InOutArgument<string> Revision { get; set; }
 
         /// <summary>
-        /// Sets whether to make the revision a combination of the Build and Revision.
+        /// Sets whether to make the revision a combination of the Build and Revision. Not applicable for VersionFormat.Synced.
         /// </summary>
         public bool CombineBuildAndRevision { get; set; }
 
@@ -226,95 +241,117 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                     throw new ArgumentException("Action not supported");
             }
         }
+        
+        private static System.Collections.Generic.IEnumerable<string> Getfiles(FileInfo[] files)
+        {
+            string[] foundfiles = new string[files.Length];
+            int i = 0;
+            foreach (FileInfo f in files)
+            {
+                foundfiles[i] = f.FullName;
+                i++;
+            }
+
+            return foundfiles;
+        }
 
         private void GetVersion()
         {
-            if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Major)))
-            {
-                this.LogBuildError("Major is required");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Minor)))
-            {
-                this.LogBuildError("Minor is required");
-                return;
-            }
-
             string tfsBuildNumber = this.ActivityContext.GetExtension<IBuildDetail>().BuildNumber;
             this.LogBuildMessage("Getting Version");
             IBuildDetail b = this.ActivityContext.GetExtension<IBuildDetail>();
-            string buildname = b.BuildDefinition.Name;
-            DateTime t = b.StartTime;
-            string buildstring = tfsBuildNumber.Replace(buildname + "_", string.Empty);
-            string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            DateTime baseTimeToUse = this.UseUtcDate ? DateTime.UtcNow : DateTime.Now;
-
-            if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Revision)))
+            if (this.VersionFormat == TfsVersionVersionFormat.Synced)
             {
-                if (this.CombineBuildAndRevision)
-                {
-                    switch (this.VersionFormat)
-                    {
-                        case TfsVersionVersionFormat.Elapsed:
-                            TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.ActivityContext.GetValue(this.StartDate));
-                            this.ActivityContext.SetValue(this.Revision, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[buildParts.Length - 1]);
-                            break;
-                        case TfsVersionVersionFormat.DateTime:
-                            this.ActivityContext.SetValue(this.Revision, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[buildParts.Length - 1]);
-                            break;
-                    }
-                }
-                else
-                {
-                    this.ActivityContext.SetValue(this.Revision, buildParts[buildParts.Length - 1]);
-                }
+                Regex r = new Regex(this.BuildNumberRegex, RegexOptions.Compiled);
+                var s = r.Match(b.BuildNumber).Value;
+                this.ActivityContext.SetValue(this.Version, s);
             }
-
-            switch (this.VersionFormat)
+            else
             {
-                case TfsVersionVersionFormat.Elapsed:
-                    TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.ActivityContext.GetValue(this.StartDate));
-                    if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Build)))
-                    {
-                        this.ActivityContext.SetValue(this.Build, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit));
-                    }
-
-                    this.ActivityContext.SetValue(this.Version, string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.ActivityContext.GetValue(this.Major), this.ActivityContext.GetValue(this.Minor), this.ActivityContext.GetValue(this.Build), this.ActivityContext.GetValue(this.Revision), this.ActivityContext.GetValue(this.Delimiter)));
-                    break;
-                case TfsVersionVersionFormat.DateTime:
-                    if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Build)))
-                    {
-                        this.ActivityContext.SetValue(this.Build, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit));
-                    }
-
-                    this.ActivityContext.SetValue(this.Version, string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.ActivityContext.GetValue(this.Major), this.ActivityContext.GetValue(this.Minor), this.ActivityContext.GetValue(this.Build), this.ActivityContext.GetValue(this.Revision), this.ActivityContext.GetValue(this.Delimiter)));
-                    break;
-             }
-
-            // Check if format is provided
-            if (!string.IsNullOrEmpty(this.ActivityContext.GetValue(this.VersionTemplateFormat)))
-            {
-                // get the current version number parts
-                int[] buildparts = this.ActivityContext.GetValue(this.Version).Split(char.Parse(this.ActivityContext.GetValue(this.Delimiter))).Select(s => int.Parse(s, CultureInfo.InvariantCulture)).ToArray();
-
-                // get the format parts
-                string[] formatparts = this.ActivityContext.GetValue(this.VersionTemplateFormat).Split(char.Parse(this.ActivityContext.GetValue(this.Delimiter)));
-
-                // format each part
-                string[] newparts = new string[4];
-                for (int i = 0; i <= 3; i++)
+                if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Major)))
                 {
-                    newparts[i] = buildparts[i].ToString(formatparts[i], CultureInfo.InvariantCulture);
+                    this.LogBuildError("Major is required");
+                    return;
                 }
 
-                this.ActivityContext.SetValue(this.Major, newparts[0]);
-                this.ActivityContext.SetValue(this.Minor, newparts[1]);
-                this.ActivityContext.SetValue(this.Build, newparts[2]);
-                this.ActivityContext.SetValue(this.Revision, newparts[3]);
+                if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Minor)))
+                {
+                    this.LogBuildError("Minor is required");
+                    return;
+                }
 
-                // reset the version to the required format);
-                this.ActivityContext.SetValue(this.Version, string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", newparts[0], newparts[1], newparts[2], newparts[3], this.ActivityContext.GetValue(this.Delimiter)));
+                string buildname = b.BuildDefinition.Name;
+                DateTime t = b.StartTime;
+                string buildstring = tfsBuildNumber.Replace(buildname + "_", string.Empty);
+                string[] buildParts = buildstring.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                DateTime baseTimeToUse = this.UseUtcDate ? DateTime.UtcNow : DateTime.Now;
+
+                if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Revision)))
+                {
+                    if (this.CombineBuildAndRevision)
+                    {
+                        switch (this.VersionFormat)
+                        {
+                            case TfsVersionVersionFormat.Elapsed:
+                                TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.ActivityContext.GetValue(this.StartDate));
+                                this.ActivityContext.SetValue(this.Revision, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[buildParts.Length - 1]);
+                                break;
+                            case TfsVersionVersionFormat.DateTime:
+                                this.ActivityContext.SetValue(this.Revision, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit) + buildParts[buildParts.Length - 1]);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        this.ActivityContext.SetValue(this.Revision, buildParts[buildParts.Length - 1]);
+                    }
+                }
+
+                switch (this.VersionFormat)
+                {
+                    case TfsVersionVersionFormat.Elapsed:
+                        TimeSpan elapsed = baseTimeToUse - Convert.ToDateTime(this.ActivityContext.GetValue(this.StartDate));
+                        if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Build)))
+                        {
+                            this.ActivityContext.SetValue(this.Build, elapsed.Days.ToString(CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit));
+                        }
+
+                        this.ActivityContext.SetValue(this.Version, string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.ActivityContext.GetValue(this.Major), this.ActivityContext.GetValue(this.Minor), this.ActivityContext.GetValue(this.Build), this.ActivityContext.GetValue(this.Revision), this.ActivityContext.GetValue(this.Delimiter)));
+                        break;
+                    case TfsVersionVersionFormat.DateTime:
+                        if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.Build)))
+                        {
+                            this.ActivityContext.SetValue(this.Build, t.ToString(this.DateFormat, CultureInfo.CurrentCulture).PadLeft(this.PaddingCount, this.PaddingDigit));
+                        }
+
+                        this.ActivityContext.SetValue(this.Version, string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", this.ActivityContext.GetValue(this.Major), this.ActivityContext.GetValue(this.Minor), this.ActivityContext.GetValue(this.Build), this.ActivityContext.GetValue(this.Revision), this.ActivityContext.GetValue(this.Delimiter)));
+                        break;
+                }
+
+                // Check if format is provided
+                if (!string.IsNullOrEmpty(this.ActivityContext.GetValue(this.VersionTemplateFormat)))
+                {
+                    // get the current version number parts
+                    int[] buildparts = this.ActivityContext.GetValue(this.Version).Split(char.Parse(this.ActivityContext.GetValue(this.Delimiter))).Select(s => int.Parse(s, CultureInfo.InvariantCulture)).ToArray();
+
+                    // get the format parts
+                    string[] formatparts = this.ActivityContext.GetValue(this.VersionTemplateFormat).Split(char.Parse(this.ActivityContext.GetValue(this.Delimiter)));
+
+                    // format each part
+                    string[] newparts = new string[4];
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        newparts[i] = buildparts[i].ToString(formatparts[i], CultureInfo.InvariantCulture);
+                    }
+
+                    this.ActivityContext.SetValue(this.Major, newparts[0]);
+                    this.ActivityContext.SetValue(this.Minor, newparts[1]);
+                    this.ActivityContext.SetValue(this.Build, newparts[2]);
+                    this.ActivityContext.SetValue(this.Revision, newparts[3]);
+
+                    // reset the version to the required format);
+                    this.ActivityContext.SetValue(this.Version, string.Format(CultureInfo.CurrentCulture, "{0}{4}{1}{4}{2}{4}{3}", newparts[0], newparts[1], newparts[2], newparts[3], this.ActivityContext.GetValue(this.Delimiter)));
+                }
             }
         }
 
@@ -334,8 +371,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
             if (this.ActivityContext.GetValue(this.Files) == null)
             {
-                this.LogBuildError("No Files specified. Pass an Item Collection of files to the Files property.");
-                return;
+                var var1Prop = this.ActivityContext.DataContext.GetProperties()["SourcesDirectory"];
+                var var1Text = var1Prop.GetValue(this.ActivityContext.DataContext) as string;
+                DirectoryInfo d = new DirectoryInfo(var1Text);
+                FileInfo[] tempfiles = d.GetFiles("AssemblyInfo.*", SearchOption.AllDirectories);
+                this.ActivityContext.SetValue(this.Files, Getfiles(tempfiles));
             }
 
             if (string.IsNullOrEmpty(this.ActivityContext.GetValue(this.AssemblyVersion)))
