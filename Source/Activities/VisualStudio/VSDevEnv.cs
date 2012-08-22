@@ -50,7 +50,6 @@ namespace TfsBuildExtensions.Activities.VisualStudio
         /// <summary>
         /// The Platform to Build.
         /// </summary>
-        [RequiredArgument]
         [Description("Configuration Platform to be built (eg: X86, Any CPU,etc).")]
         public InArgument<string> Platform { get; set; }
 
@@ -202,16 +201,6 @@ namespace TfsBuildExtensions.Activities.VisualStudio
 
                 default: throw new ArgumentException("Unknown action " + action);
             }
-        }
-
-        /// <summary>
-        /// Removes invalid character from a file name.
-        /// </summary>
-        /// <param name="fileName">The FileName to sanitize</param>
-        /// <returns>sanitized FileName without invalid characters</returns>
-        private static string SanitizeFileName(string fileName)
-        {
-            return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, invalidChar) => current.Replace(invalidChar.ToString(), string.Empty));
         }
 
         /// <summary>
@@ -479,8 +468,6 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                     this.LogBuildError("Can only auto detect DevEnv version for solution files. For project files you need to explicitily set the version");
 
                     this.HasErrors.Set(this.ActivityContext, true);
-
-                    return;
                 }
             }
         }
@@ -572,12 +559,22 @@ namespace TfsBuildExtensions.Activities.VisualStudio
             /// <returns>The command line arguments</returns>
             private string GenerateCommandLineCommands(ActivityContext context)
             {
+                if (!string.IsNullOrEmpty(this.Platform.Get(context)))
+                {
+                    return string.Format(
+                        "\"{0}\" {1} \"{2}|{3}\" /Out \"{4}\" ",
+                        this.FilePath.Get(context),
+                        VSDevEnv.GetActionCommandLineOption(this.Action.Get(context)),
+                        this.Configuration.Get(context),
+                        this.Platform.Get(context),
+                        this.OutputFile.Get(context));
+                }
+
                 return string.Format(
-                    "\"{0}\" {1} \"{2}|{3}\" /Out \"{4}\" ",
+                    "\"{0}\" {1} \"{2}\" /Out \"{3}\" ",
                     this.FilePath.Get(context),
                     VSDevEnv.GetActionCommandLineOption(this.Action.Get(context)),
                     this.Configuration.Get(context),
-                    this.Platform.Get(context),
                     this.OutputFile.Get(context));
             }
         }

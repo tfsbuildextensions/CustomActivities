@@ -1,7 +1,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
     <PropertyGroup>
-        <ReleaseVersion>June 2012</ReleaseVersion>
+        <ReleaseVersion>August 2012</ReleaseVersion>
         <Configuration>Release|Any CPU</Configuration>
         <VisualStudioVersion>11.0</VisualStudioVersion>
     </PropertyGroup>

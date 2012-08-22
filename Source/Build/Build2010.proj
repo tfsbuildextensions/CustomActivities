@@ -7,10 +7,10 @@
         <ReleaseVersion>June 2012</ReleaseVersion>
         <Configuration>Release|Any CPU</Configuration>
         <!-- If you only have VS11 installed, pass this VisualStudioVersion property in as 11.0 -->
-        <VisualStudioVersion>10.0</VisualStudioVersion>
+        <VisualStudioVersion>11.0</VisualStudioVersion>
     </PropertyGroup>
 
-    <Target Name="PreCheckin" DependsOnTargets="StyleCop;Compile"/>
+    <Target Name="PreCheckin" DependsOnTargets="Compile"/>
 
     <Target Name="PreCompile" BeforeTargets="Compile">
         <ItemGroup>
@@ -18,7 +18,9 @@
             <FileAtt Include="..\Common\CommonAssemblyInfo.cs">
                 <Attributes>Normal</Attributes>
             </FileAtt>
+            <CSProjFiles Include="..\**\*.csproj" Exclude="..\Tests\*.csproj"/>
         </ItemGroup>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="&lt;TargetFrameworkVersion&gt;v4.5&lt;/TargetFrameworkVersion&gt;" Replacement="&lt;TargetFrameworkVersion&gt;v4.0&lt;/TargetFrameworkVersion&gt;" Files="@(CSProjFiles)"/>
         <!-- Clean out AssemblyReferences -->
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="..\AssemblyReferences" Force="true"/>
         <!-- Add the VS2010 versions -->
@@ -35,7 +37,11 @@
             <FileAtt Include="..\Common\CommonAssemblyInfo.cs">
                 <Attributes>Normal</Attributes>
             </FileAtt>
+                    <CSProjFiles Include="..\**\*.csproj" Exclude="..\Tests\*.csproj"/>
+
         </ItemGroup>
+        <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="&lt;TargetFrameworkVersion&gt;v4.0&lt;/TargetFrameworkVersion&gt;" Replacement="&lt;TargetFrameworkVersion&gt;v4.5&lt;/TargetFrameworkVersion&gt;" Files="@(CSProjFiles)"/>
+
         <!-- Clean out AssemblyReferences -->
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="..\AssemblyReferences" Force="true"/>
         <!-- Add the VS11 versions -->
@@ -46,7 +52,7 @@
         <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Common\CommonAssemblyInfo11.cs" DestinationFiles="..\Common\CommonAssemblyInfo.cs"/>
     </Target>
 
-    <Target Name="Package" DependsOnTargets="StyleCop;Compile;CleanFiles;Touch"/>
+    <Target Name="Package" DependsOnTargets="Compile;CleanFiles;Touch"/>
 
     <Target Name="StyleCop" Condition="$(SkipStyleCop) != 'true'">
         <Message Text="$(MSBuildProjectDirectory)\..\Settings.StyleCop"/>

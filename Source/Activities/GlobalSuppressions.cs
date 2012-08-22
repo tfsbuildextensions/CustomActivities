@@ -263,3 +263,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope = "member", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.ConvertFromProperties.#Properties")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Scope = "member", Target = "TfsBuildExtensions.Activities.CodeQuality.CodeMetrics.#InternalExecute()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Checkin", Scope = "member", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.TfsSource.#BypassGatedCheckin")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope = "member", Target = "TfsBuildExtensions.Activities.CodeQuality.NUnit.#TestTimeout")]

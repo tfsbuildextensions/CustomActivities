@@ -34,10 +34,19 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\..\..\..\..\almrangers.tfspreview.com\Practical Ruck Guidance\Development\Source\Common\ALMRangersRuleSet.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Common\TFSBuildExtensions.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <DocumentationFile>..\BuildBinaries\TfsBuildExtensions.Activities.VisualStudio.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\Common\TFSBuildExtensionsPublic.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility">
@@ -72,7 +81,7 @@
       <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Publishing.Tasks">
-      <HintPath>..\AssemblyReferences11\Microsoft.Web.Publishing.Tasks.dll</HintPath>
+      <HintPath>..\AssemblyReferences\Microsoft.Web.Publishing.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -108,6 +117,7 @@
     <Compile Include="..\Common\IBaseActivityMinimumArguments.cs">
       <Link>IBaseActivityMinimumArguments.cs</Link>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransformConfig.cs" />
   </ItemGroup>
