@@ -13,6 +13,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
     using Microsoft.TeamFoundation.Build.Workflow.Activities;
     using Microsoft.TeamFoundation.Build.Workflow.Tracking;
     using TfsBuildExtensions.Activities.Internal;
+using System.Text;
 
     /// <summary>
     /// Activity for building Visual Studio solutions using devenv. This allows for building or deploying
@@ -35,6 +36,12 @@ namespace TfsBuildExtensions.Activities.VisualStudio
         public InArgument<string> FilePath { get; set; }
 
         /// <summary>
+        /// The Path to the project to build for the specified solution.
+        /// </summary>
+        [Description("The complete path of the project to be built for the specified solution.")]
+        public InArgument<string> ProjectPath { get; set; }
+
+        /// <summary>
         /// The Configuration to Build.
         /// <example>
         /// <list type="">
@@ -46,6 +53,12 @@ namespace TfsBuildExtensions.Activities.VisualStudio
         [RequiredArgument]
         [Description("Configuration to be built (eg: Debug , Release,etc).")]
         public InArgument<string> Configuration { get; set; }
+
+        /// <summary>
+        /// The project configuration to build. Can only be used is the <see cref="Project"/> property is set.
+        /// </summary>
+        [Description("The project configuration to build. Can only be used if the Project property is set.")]
+        public InArgument<string> ProjectConfiguration { get; set; }
 
         /// <summary>
         /// The Platform to Build.
@@ -233,7 +246,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
         {
             return new ValidateActivityInternal
             {
-                DisplayName = "Valida Parameters",
+                DisplayName = "Validate Parameters",
 
                 FilePath = new InArgument<string>(env => this.FilePath.Get(env)),
                 Version = new InArgument<VSVersion>(this.version),
@@ -399,7 +412,9 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                 DevEnvPath = new InArgument<string>(env => devEnvPathVariable.Get(env)),
 
                 FilePath = new InArgument<string>(env => this.FilePath.Get(env)),
+                ProjectPath = new InArgument<string>(env => this.ProjectPath.Get(env)),
                 Configuration = new InArgument<string>(env => this.Configuration.Get(env)),
+                ProjectConfiguration = new InArgument<string>(env => this.ProjectConfiguration.Get(env)),
                 Platform = new InArgument<string>(env => this.Platform.Get(env)),
                 Action = new InArgument<VSDevEnvAction>(this.Action),
                 OutputFile = new InArgument<string>(logFileLocationVariable),
@@ -469,7 +484,7 @@ namespace TfsBuildExtensions.Activities.VisualStudio
 
                     this.HasErrors.Set(this.ActivityContext, true);
                 }
-            }
+            //}
         }
 
         /// <summary>
@@ -503,6 +518,12 @@ namespace TfsBuildExtensions.Activities.VisualStudio
             public InArgument<string> FilePath { get; set; }
 
             /// <summary>
+            /// The Path to the project to build for the specified solution.
+            /// </summary>
+            [Description("The complete path of the project to be built for the specified solution.")]
+            public InArgument<string> ProjectPath { get; set; }
+
+            /// <summary>
             /// The Configuration to Build.
             /// <example>
             /// <list type="">
@@ -514,6 +535,12 @@ namespace TfsBuildExtensions.Activities.VisualStudio
             [RequiredArgument]
             [Description("Configuration to be built (eg: Debug , Release,etc).")]
             public InArgument<string> Configuration { get; set; }
+
+            /// <summary>
+            /// The project configuration to build. Can only be used is the <see cref="Project"/> property is set.
+            /// </summary>
+            [Description("The project configuration to build. Can only be used if the Project property is set.")]
+            public InArgument<string> ProjectConfiguration { get; set; }
 
             /// <summary>
             /// The Platform to Build.
@@ -559,23 +586,31 @@ namespace TfsBuildExtensions.Activities.VisualStudio
             /// <returns>The command line arguments</returns>
             private string GenerateCommandLineCommands(ActivityContext context)
             {
+                var config = this.Configuration.Get(context);
                 if (!string.IsNullOrEmpty(this.Platform.Get(context)))
                 {
-                    return string.Format(
-                        "\"{0}\" {1} \"{2}|{3}\" /Out \"{4}\" ",
-                        this.FilePath.Get(context),
-                        VSDevEnv.GetActionCommandLineOption(this.Action.Get(context)),
-                        this.Configuration.Get(context),
-                        this.Platform.Get(context),
-                        this.OutputFile.Get(context));
+                    config += "|" + this.Platform.Get(context);
                 }
 
-                return string.Format(
+                var cmd = new StringBuilder();
+                cmd.AppendFormat(
                     "\"{0}\" {1} \"{2}\" /Out \"{3}\" ",
                     this.FilePath.Get(context),
                     VSDevEnv.GetActionCommandLineOption(this.Action.Get(context)),
-                    this.Configuration.Get(context),
+                    config,
                     this.OutputFile.Get(context));
+
+                if (!string.IsNullOrEmpty(this.ProjectPath.Get(context)))
+                {
+                    cmd.AppendFormat("/Project \"{0}\" ", this.ProjectPath.Get(context));
+
+                    if (!string.IsNullOrEmpty(this.ProjectConfiguration.Get(context)))
+                    {
+                        cmd.AppendFormat("/ProjectConfig \"{0}\" ", this.ProjectConfiguration.Get(context));
+                    }
+                }
+
+                return cmd.ToString();
             }
         }
 
