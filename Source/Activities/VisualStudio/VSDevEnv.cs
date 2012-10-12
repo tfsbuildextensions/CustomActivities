@@ -9,11 +9,11 @@ namespace TfsBuildExtensions.Activities.VisualStudio
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Build.Workflow.Activities;
     using Microsoft.TeamFoundation.Build.Workflow.Tracking;
     using TfsBuildExtensions.Activities.Internal;
-using System.Text;
 
     /// <summary>
     /// Activity for building Visual Studio solutions using devenv. This allows for building or deploying
@@ -55,9 +55,9 @@ using System.Text;
         public InArgument<string> Configuration { get; set; }
 
         /// <summary>
-        /// The project configuration to build. Can only be used is the <see cref="Project"/> property is set.
+        /// The project configuration to build. Can only be used is the <see cref="ProjectPath"/> property is set.
         /// </summary>
-        [Description("The project configuration to build. Can only be used if the Project property is set.")]
+        [Description("The project configuration to build. Can only be used if the ProjectPath property is set.")]
         public InArgument<string> ProjectConfiguration { get; set; }
 
         /// <summary>
@@ -69,7 +69,7 @@ using System.Text;
         /// <summary>
         /// Specifies the File to log all output to.
         /// <para></para>
-        /// If ommited the file will be automatically placed on the logs path of DropsFolder\logs
+        /// If omitted the file will be automatically placed on the logs path of DropsFolder\logs
         /// </summary>
         [Description("The path for the log file. You should only use these if you want to control the log file for a particular reason. Otherwise the system will take care of the log file details for you")]
         public InArgument<string> OutputFile { get; set; }
@@ -380,7 +380,7 @@ using System.Text;
         }
 
         /// <summary>
-        /// Gets the code for the activty that is responsable to determine the log file file path
+        /// Gets the code for the activity that is responsible to determine the log file file path
         /// </summary>
         /// <param name="logFileLocationVariable">The variable where the complete log file path will be stored</param>
         /// <returns>The activity</returns>
@@ -397,7 +397,7 @@ using System.Text;
         }
 
         /// <summary>
-        /// Gets the code for the activity that is responsable for getting the location and executable name
+        /// Gets the code for the activity that is responsible for getting the location and executable name
         /// of the devenv version we need
         /// </summary>
         /// <param name="devEnvPathVariable">the variable that holds the dev env path</param>
@@ -484,7 +484,7 @@ using System.Text;
 
                     this.HasErrors.Set(this.ActivityContext, true);
                 }
-            //}
+            }
         }
 
         /// <summary>
@@ -537,9 +537,9 @@ using System.Text;
             public InArgument<string> Configuration { get; set; }
 
             /// <summary>
-            /// The project configuration to build. Can only be used is the <see cref="Project"/> property is set.
+            /// The project configuration to build. Can only be used is the <see cref="ProjectPath"/> property is set.
             /// </summary>
-            [Description("The project configuration to build. Can only be used if the Project property is set.")]
+            [Description("The project configuration to build. Can only be used if the ProjectPath property is set.")]
             public InArgument<string> ProjectConfiguration { get; set; }
 
             /// <summary>
@@ -552,7 +552,7 @@ using System.Text;
             /// <summary>
             /// Specifies the File to log all output to.
             /// <para></para>
-            /// If ommited the file will be automatically placed on the logs path of DropsFolder\logs
+            /// If omitted the file will be automatically placed on the logs path of DropsFolder\logs
             /// </summary>
             [Description("The path for the log file. You should only use these if you want to control the log file for a particular reason. Otherwise the system will take care of the log file details for you")]
             public InArgument<string> OutputFile { get; set; }
@@ -650,7 +650,7 @@ using System.Text;
         /// <summary>
         /// Gets the location where devenv output will be stored.
         /// <para></para>
-        /// If the caller explicitily set the output log file use it, otherwise
+        /// If the caller explicitly set the output log file use it, otherwise
         /// create a new one on the logs drops folder. The name will be base on the
         /// project to build, the configuration and the platform.
         /// <para></para>
@@ -689,7 +689,7 @@ using System.Text;
             /// <summary>
             /// Specifies the File to log all output to.
             /// <para></para>
-            /// If ommited the file will be automatically placed on the logs path of DropsFolder\logs
+            /// If omitted the file will be automatically placed on the logs path of DropsFolder\logs
             /// </summary>
             [Description("The path for the log file. You should only use these if you want to control the log file for a particular reason. Otherwise the system will take care of the log file details for you")]
             public InArgument<string> OutputFile { get; set; }
@@ -727,8 +727,8 @@ using System.Text;
             /// If the user hasn't specified one we will create one for him on
             /// the logs drops folder path.
             /// <para></para>
-            /// The file will have the same name of the solution/project being built, plus the
-            /// context for configurationa and platform with the .log file extension
+            /// The file will have the same name as the solution/project being built, plus the
+            /// context for configuration and platform with the .log file extension
             /// </summary>
             /// <param name="context">Activity Context</param>
             /// <returns>The location of the log file</returns>
@@ -745,7 +745,9 @@ using System.Text;
 
                 if (fileName != null)
                 {
-                    string logDirectory = Path.Combine(buildDetail.DropLocation, @"logs");
+                    string logDirectory = string.IsNullOrEmpty(buildDetail.DropLocation)
+                        ? Path.GetDirectoryName(filePath)
+                        : Path.Combine(buildDetail.DropLocation, @"logs");
 
                     if (!Directory.Exists(logDirectory))
                     {
