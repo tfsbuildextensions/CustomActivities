@@ -31,7 +31,7 @@ namespace TfsBuildExtensions.Activities.Azure.StorageAccounts
             }
             catch (EndpointNotFoundException ex)
             {
-                LogBuildMessage(ex.Message);
+                this.LogBuildMessage(ex.Message);
                 this.StorageServices.Set(this.ActivityContext, null);
             }
         }

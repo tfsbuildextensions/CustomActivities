@@ -453,7 +453,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 }
                 catch (Exception ex)
                 {
-                    LogBuildError(ex.Message);
+                    this.LogBuildError(ex.Message);
                     return;
                 }
 

@@ -31,7 +31,7 @@ namespace TfsBuildExtensions.Activities.Azure.Locations
             }
             catch (EndpointNotFoundException ex)
             {
-                LogBuildMessage(ex.Message);
+                this.LogBuildMessage(ex.Message);
                 this.Locations.Set(this.ActivityContext, null);
             }
         }

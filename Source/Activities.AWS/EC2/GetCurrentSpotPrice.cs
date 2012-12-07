@@ -56,7 +56,7 @@ namespace TfsBuildExtensions.Activities.AWS.EC2
             }
             catch (EndpointNotFoundException ex)
             {
-                LogBuildMessage(ex.Message);
+                this.LogBuildMessage(ex.Message);
             }
         }
     }

@@ -33,7 +33,7 @@ namespace TfsBuildExtensions.Activities.Azure.Common
             }
             catch (EndpointNotFoundException ex)
             {
-                LogBuildMessage(ex.Message);
+                this.LogBuildMessage(ex.Message);
                 return null;
             }
         }

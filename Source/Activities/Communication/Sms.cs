@@ -173,11 +173,7 @@ namespace TfsBuildExtensions.Activities.Communication
                 }
                 catch (WebException wex)
                 {
-                    LogBuildWarning(string.Format(CultureInfo.InvariantCulture, "Failed to send SMS message.  The following HTTP status code was returned: {0}.", wex.Status.ToString()));
-                }
-                catch
-                {
-                    throw;
+                    this.LogBuildWarning(string.Format(CultureInfo.InvariantCulture, "Failed to send SMS message.  The following HTTP status code was returned: {0}.", wex.Status.ToString()));
                 }
             }
         }

@@ -81,7 +81,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
                 }
                 catch (EndpointNotFoundException ex)
                 {
-                    LogBuildMessage(ex.Message);
+                    this.LogBuildMessage(ex.Message);
                     return null;
                 }
             }

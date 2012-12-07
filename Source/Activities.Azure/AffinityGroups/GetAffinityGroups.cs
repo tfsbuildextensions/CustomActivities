@@ -31,7 +31,7 @@ namespace TfsBuildExtensions.Activities.Azure.AffinityGroups
             }
             catch (EndpointNotFoundException ex)
             {
-                LogBuildMessage(ex.Message);
+                this.LogBuildMessage(ex.Message);
                 this.AffinityGroups.Set(this.ActivityContext, null);
             }
         }

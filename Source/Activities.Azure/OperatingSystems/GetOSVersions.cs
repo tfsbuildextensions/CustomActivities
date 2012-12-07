@@ -31,7 +31,7 @@ namespace TfsBuildExtensions.Activities.Azure.OperatingSystems
             }
             catch (EndpointNotFoundException ex)
             {
-                LogBuildMessage(ex.Message);
+                this.LogBuildMessage(ex.Message);
                 this.OperatingSystems.Set(this.ActivityContext, null);
             }
         }

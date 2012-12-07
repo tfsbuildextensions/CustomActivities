@@ -612,7 +612,7 @@ namespace TfsBuildExtensions.Activities.SSH
                     }
                     catch (FileNotFoundException)
                     {
-                        LogBuildWarning(string.Format("Failed to delete file {0}", auth.PrivateKeyFileLocation));
+                        this.LogBuildWarning(string.Format("Failed to delete file {0}", auth.PrivateKeyFileLocation));
                     }
                 }
             }

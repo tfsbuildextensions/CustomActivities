@@ -48,7 +48,7 @@ namespace TfsBuildExtensions.Activities.Azure.Certificates
             }
             catch (EndpointNotFoundException ex)
             {
-                LogBuildMessage(ex.Message);
+                this.LogBuildMessage(ex.Message);
                 return null;
             }
         }
