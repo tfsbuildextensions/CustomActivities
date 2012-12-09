@@ -67,24 +67,15 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 return;
             }
 
-            XmlTransformableDocument xmlTarget = OpenSourceFile(this.ActivityContext.GetValue(this.SourceFile));
-            bool fileTransformed = OpenTransformFile(this.ActivityContext.GetValue(this.TransformFile)).Apply(xmlTarget);
-            if (fileTransformed)
+            using (XmlTransformableDocument xmlTarget = new XmlTransformableDocument { PreserveWhitespace = true })
             {
-                SaveTransformedFile(xmlTarget, this.ActivityContext.GetValue(this.DestinationFile));
+                xmlTarget.Load(this.ActivityContext.GetValue(this.SourceFile));
+                bool fileTransformed = OpenTransformFile(this.ActivityContext.GetValue(this.TransformFile)).Apply(xmlTarget);
+                if (fileTransformed)
+                {
+                    xmlTarget.Save(this.ActivityContext.GetValue(this.DestinationFile));
+                }
             }
-        }
-
-        /// <summary>
-        /// Opens the original config file to which the transformations should be applied.
-        /// </summary>
-        /// <param name="sourceFile">the path to the source config file.</param>
-        /// <returns>the source file as a <see cref="XmlTransformableDocument"/>.</returns>
-        private static XmlTransformableDocument OpenSourceFile(string sourceFile)
-        {
-            XmlTransformableDocument innerDoc = new XmlTransformableDocument { PreserveWhitespace = true };
-            innerDoc.Load(sourceFile);
-            return innerDoc;
         }
 
         /// <summary>
@@ -95,16 +86,6 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         private static XmlTransformation OpenTransformFile(string transformFile)
         {
             return new XmlTransformation(transformFile);
-        }
-
-        /// <summary>
-        /// Saves the transformed config file.
-        /// </summary>
-        /// <param name="document">The source config file.</param>
-        /// <param name="destinationFile">the destination transformed config file.</param>
-        private static void SaveTransformedFile(XmlTransformableDocument document, string destinationFile)
-        {
-            document.Save(destinationFile);
         }
     }
 }
