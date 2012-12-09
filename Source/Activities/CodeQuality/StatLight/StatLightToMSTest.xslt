@@ -199,7 +199,14 @@
               </xsl:call-template>
             </xsl:attribute>
             <xsl:attribute name="outcome">
-              <xsl:value-of select="@resulttype"/>
+              <xsl:choose>
+                <xsl:when test="@resulttype='Ignored'">
+                  <xsl:text>NotExecuted</xsl:text> 
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="@resulttype"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:attribute>
             <xsl:if test="@resulttype='Failed'">
               <Output>
