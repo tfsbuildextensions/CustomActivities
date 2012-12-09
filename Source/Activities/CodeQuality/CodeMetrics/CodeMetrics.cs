@@ -400,9 +400,16 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             this.logCodeMetrics = this.LogCodeMetrics.Get(this.ActivityContext);
             this.BuildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
             string generatedFile = "Metrics.xml";
+
+            string outputLocation = this.BuildDetail.DropLocation;
+            if (string.IsNullOrEmpty(outputLocation))
+            {
+                outputLocation = this.BinariesDirectory.Get(this.ActivityContext);
+            }
+
             if (this.GeneratedFileName != null && !string.IsNullOrEmpty(this.GeneratedFileName.Get(this.ActivityContext)))
             {
-                generatedFile = Path.Combine(this.BuildDetail.DropLocation, this.GeneratedFileName.Get(this.ActivityContext));
+                generatedFile = Path.Combine(outputLocation, this.GeneratedFileName.Get(this.ActivityContext));
             }
 
             if (!this.RunCodeMetrics(generatedFile))
@@ -421,7 +428,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             IBuildInformationNode rootNode = AddTextNode("Analyzing code metrics results", currentTracking.Node);
 
             string fileName = Path.GetFileName(generatedFile);
-            string pathToFileInDropFolder = Path.Combine(this.BuildDetail.DropLocation, fileName);
+            string pathToFileInDropFolder = Path.Combine(outputLocation, fileName);
             BaseCodeActivity.AddLinkNode(fileName, new Uri(pathToFileInDropFolder), rootNode);
 
             CodeMetricsReport result = CodeMetricsReport.LoadFromFile(generatedFile);
