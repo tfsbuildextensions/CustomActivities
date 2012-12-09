@@ -154,6 +154,8 @@
     <Compile Include="CodeQuality\NUnit\SimpleCommandLineBuilder.cs" />
     <Compile Include="CodeQuality\StatLight\StatLight.cs" />
     <Compile Include="CodeQuality\FxCop.cs" />
+    <Compile Include="CodeQuality\VSTest\IProcess.cs" />
+    <Compile Include="CodeQuality\VSTest\WindowsProcess.cs" />
     <Compile Include="Communication\Email.cs" />
     <Compile Include="Communication\Sms.cs" />
     <Compile Include="Communication\Twitter.cs" />
@@ -244,6 +246,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="TeamFoundationServer\TfsVersion.cs" />
+    <Compile Include="CodeQuality\VSTest\VSTest.cs" />
     <Compile Include="Virtualization\Utilities\OtherResourceType.cs" />
     <Compile Include="Virtualization\Utilities\ResourceSubType.cs" />
     <Compile Include="Virtualization\Utilities\ResourceType.cs" />
@@ -292,6 +295,9 @@
     <EmbeddedResource Include="CodeQuality\StatLight\StatLightToMSTest.xslt" />
     <EmbeddedResource Include="CodeQuality\NUnit\NUnitToMSTest.xslt" />
     <EmbeddedResource Include="TeamFoundationServer\BuildReport\DefaultTransform.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UnitTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Workflow.Targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />

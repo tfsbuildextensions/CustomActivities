@@ -101,6 +101,7 @@
     <Compile Include="ClickOnce\ClickOnceTests.cs" />
     <Compile Include="CodeQuality\CodeMetrics\Running_Code_Metrics.cs" />
     <Compile Include="CodeQuality\FxCop\FxCopTests.cs" />
+    <Compile Include="CodeQuality\VSTest\VSTestTests.cs" />
     <Compile Include="Communication\EmailTests.cs" />
     <Compile Include="Communication\SmsTests.cs" />
     <Compile Include="FileSystem\FileTests.cs">

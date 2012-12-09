@@ -12,4 +12,5 @@ using System.Runtime.CompilerServices;
 // NOTE: When updating the namespaces in the project please add new or update existing the XmlnsDefinitionAttribute
 // You can add additional attributes in order to map any additional namespaces you have in the project
 // [assembly: System.Workflow.ComponentModel.Serialization.XmlnsDefinition("http://schemas.com/Workflow", "Workflow")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("TfsBuildExtensions.Activities.Tests")]
