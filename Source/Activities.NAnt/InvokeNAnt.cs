@@ -9,12 +9,6 @@ namespace TfsBuildExtensions.Activities.NAnt
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Runtime.Serialization;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Build.Workflow.Activities;
     using Microsoft.TeamFoundation.Build.Workflow.Tracking;
@@ -53,48 +47,48 @@ namespace TfsBuildExtensions.Activities.NAnt
             var parameters = new Variable<ExecutionParameters>();
             var exitCode = new Variable<int>();
             var configError = new Variable<bool>();
-            var result = new Sequence()
+            var result = new Sequence
             {
                 Variables = { commandLine, parameters, nantPath, exitCode, configError }
             };
-            result.Append(new List<Activity>()
+            result.Append(new List<Activity>
             {
-                new Assign<bool>()
+                new Assign<bool>
                 {
                     To = configError,
                     Value = new InArgument<bool>(context => false)
                 },
-                new Assign<ExecutionParameters>()
+                new Assign<ExecutionParameters>
                 {
                      To = parameters,
-                     Value = new InArgument<ExecutionParameters>(context => context.GetValue<ExecutionParameters>(this.Parameters))
+                     Value = new InArgument<ExecutionParameters>(context => context.GetValue(this.Parameters))
                 },
                 new If(context => parameters.Get(context) == null)                   
                 {
-                    Then = new Sequence().Append(new List<Activity>()
+                    Then = new Sequence().Append(new List<Activity>
                     {
-                        new Assign<bool>()
+                        new Assign<bool>
                         {
                             To = configError,
                             Value = new InArgument<bool>(context => true)
                         },
-                        new WriteBuildError()
+                        new WriteBuildError
                         {
                             Message = "parameters argument is null"
                         }
                     }),        
-                    Else = new Sequence().Append(new List<Activity>()
+                    Else = new Sequence().Append(new List<Activity>
                     {
                         new If(context => !parameters.Get(context).BuildFilePathExists)
                         {
-                            Then = new Sequence().Append(new List<Activity>()
+                            Then = new Sequence().Append(new List<Activity>
                             {
-                                 new Assign<bool>()
+                                 new Assign<bool>
                                 {
                                     To = configError,
                                     Value = new InArgument<bool>(context => true)
                                 },
-                                new WriteBuildError()
+                                new WriteBuildError
                                 {
                                     Message = "Build file does not exist"
                                 }
@@ -102,44 +96,44 @@ namespace TfsBuildExtensions.Activities.NAnt
                         }
                     })                
                 },
-                new Assign<string>()
+                new Assign<string>
                 {
                     To = nantPath,
-                    Value = new InArgument<string>(context => Path.Combine(ProcessNantPath(context.GetValue<string>(this.NAntDirectory)), "Nant.exe"))
+                    Value = new InArgument<string>(context => Path.Combine(ProcessNantPath(context.GetValue(this.NAntDirectory)), "Nant.exe"))
                 },
                 new If(context => !File.Exists(nantPath.Get(context)))
                 {
-                    Then = new Sequence().Append(new List<Activity>()
+                    Then = new Sequence().Append(new List<Activity>
                     {
-                        new Assign<bool>()
+                        new Assign<bool>
                         {
                             To = configError,
                             Value = new InArgument<bool>(context => true)
                         },
-                        new WriteBuildError()
+                        new WriteBuildError
                         {
                             Message = new InArgument<string>(context => string.Format("Nant not found: '{0}'", nantPath.Get(context))),
                         }
                     })
                 },
-                new Assign<string>()
+                new Assign<string>
                 {
                     To = commandLine,
                     Value = new InArgument<string>(context => 
                             context
-                                .GetValue<ExecutionParameters>(this.Parameters)
-                                .CreateCommandLine(context.GetValue<string>(this.LogFilePath)))
+                                .GetValue(this.Parameters)
+                                .CreateCommandLine(context.GetValue(this.LogFilePath)))
                 },      
                 new If(context => !configError.Get(context))
                 {                         
-                    Then = new Sequence().Append(new List<Activity>()
+                    Then = new Sequence().Append(new List<Activity>
                     {
-                         new WriteBuildMessage()
+                         new WriteBuildMessage
                         { 
                             Message = new InArgument<string>(context => string.Format("Command line: '{0}'", commandLine.Get(context))),
                             Importance = new InArgument<BuildMessageImportance>(context => BuildMessageImportance.Normal)
                         },
-                        new InvokeProcess()
+                        new InvokeProcess
                         {
                              Arguments = commandLine,
                              FileName = nantPath,
@@ -148,20 +142,20 @@ namespace TfsBuildExtensions.Activities.NAnt
                         },                                   
                         new If(context => !this.IgnoreExitCode.Get(context) && exitCode.Get(context) != 0)
                         {
-                            Then = new Sequence().Append(new List<Activity>()
+                            Then = new Sequence().Append(new List<Activity>
                             {
-                                new WriteBuildError()
+                                new WriteBuildError
                                 {
                                     Message = new InArgument<string>(context => string.Format("Nant execution failed with exitcode '{0}'", exitCode.Get(context))),
                                 },
-                                new Throw()
+                                new Throw
                                 {
                                     Exception = new InArgument<Exception>(context => new NAntException())
                                 }
                             })
                         }
                     }),
-                    Else = new Throw()
+                    Else = new Throw
                     {
                         Exception = new InArgument<Exception>(context => new NAntException())
                     }                    

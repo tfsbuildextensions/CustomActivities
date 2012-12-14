@@ -4,16 +4,6 @@
 namespace TfsBuildExtensions.Activities.NAnt
 {
     using System;
-    using System.Activities;
-    using System.Activities.Statements;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Runtime.Serialization;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Microsoft.TeamFoundation.Build.Client;
-    using Microsoft.TeamFoundation.Build.Workflow.Activities;
-    using Microsoft.TeamFoundation.Build.Workflow.Tracking;
     using TfsBuildExtensions.Activities;
 
     [Serializable]

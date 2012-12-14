@@ -2,15 +2,9 @@
 // <copyright file="ExecutionParameters.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //---------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.NAnt
-{    
-    using System;
+{
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Microsoft.TeamFoundation.Build.Client;
-    using TfsBuildExtensions.Activities;
 
     public sealed class ExecutionParameters
     {
