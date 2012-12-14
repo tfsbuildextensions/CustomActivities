@@ -171,12 +171,17 @@
     <Compile Include="InternalActivities\LogBuildError.cs" />
     <Compile Include="InternalActivities\LogBuildMessage.cs" />
     <Compile Include="Management\Wmi.cs" />
+    <Compile Include="NAnt\AddNAntProperty.cs" />
+    <Compile Include="NAnt\ExecutionParameters.cs" />
+    <Compile Include="NAnt\InvokeNAnt.cs" />
+    <Compile Include="NAnt\NAntException.cs" />
     <Compile Include="Scripting\PowerShell\InvokePowershellCommand.cs" />
     <Compile Include="Scripting\PowerShell\IUtilitiesForPowerShellActivity.cs" />
     <Compile Include="Scripting\PowerShell\UtilitiesForPowerShellActivity.cs" />
     <Compile Include="Scripting\PowerShell\WorkflowPsHost.cs" />
     <Compile Include="Scripting\PowerShell\WorkflowPsHostUi.cs" />
     <Compile Include="Scripting\PowerShell\WorkflowRawPsHostUi.cs" />
+    <Compile Include="SequenceHelper.cs" />
     <Compile Include="SharePoint\CodeQuality\CatNetScan.cs" />
     <Compile Include="SharePoint\CodeQuality\SPDisposeCheck.cs" />
     <Compile Include="SharePoint\SharePointDeployment.cs" />

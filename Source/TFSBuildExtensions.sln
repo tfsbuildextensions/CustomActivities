@@ -60,11 +60,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.Tests", "Tests\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.VisualStudio", "Activities.VisualStudio\Activities.VisualStudio.csproj", "{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.NAnt", "Activities.NAnt\Activities.NAnt.csproj", "{8E245596-514D-46B0-B3A5-954AEA1874A9}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 20
+		SccNumberOfProjects = 19
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
@@ -130,9 +128,6 @@ Global
 		SccProjectUniqueName18 = Activities.VisualStudio\\Activities.VisualStudio.csproj
 		SccProjectName18 = Activities.VisualStudio
 		SccLocalPath18 = Activities.VisualStudio
-		SccProjectUniqueName19 = Activities.NAnt\\Activities.NAnt.csproj
-		SccProjectName19 = Activities.NAnt
-		SccLocalPath19 = Activities.NAnt
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Community.TeamFoundation.Build.vsmdi
@@ -317,16 +312,6 @@ Global
 		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C51514F3-9DF5-4AB1-B99E-BB945CFD3782}.Release|x86.ActiveCfg = Release|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{8E245596-514D-46B0-B3A5-954AEA1874A9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,6 +9,9 @@ namespace TfsBuildExtensions.Activities.NAnt
     using Microsoft.TeamFoundation.Build.Workflow.Tracking;
     using TfsBuildExtensions.Activities;
 
+    /// <summary>
+    /// Activity used to add a parameter to NAnt
+    /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
     [ActivityTracking(ActivityTrackingOption.ActivityOnly)]
     public class AddNAntProperty : BaseCodeActivity
