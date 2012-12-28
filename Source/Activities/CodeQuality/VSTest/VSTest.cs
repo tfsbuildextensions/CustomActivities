@@ -98,6 +98,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         public InArgument<bool> PublishTestResults { get; set; }
 
         /// <summary>
+        /// Set to true to publish unit tests code coverage to TFS
+        /// </summary>
+        [Browsable(true)]
+        [Description("Set to true to publish unit tests code coverage to TFS.")]
+        public InArgument<bool> EnableCodeCoverage { get; set; }
+
+        /// <summary>
         /// Which platform to publish test results for (ex. Any CPU). Default to Any CPU
         /// </summary>
         [Browsable(true)]
@@ -187,7 +194,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             {
                 commandLine = string.Format("{0} /TestCaseFilter:\"{1}\"", commandLine, this.TestCaseFilter.Get(this.ActivityContext));
             }
-            
+
+            if (this.EnableCodeCoverage.Get(this.ActivityContext))
+            {
+                commandLine = string.Format("{0} /EnableCodeCoverage", commandLine);
+            }
+
             if (this.PublishTestResults.Get(this.ActivityContext))
             {
                 IBuildDetail buildDetail = this.Build.Get(this.ActivityContext);

@@ -1,12 +1,10 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="EmailTests.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-
 namespace TfsBuildExtensions.Activities.Tests.CodeQuality.Test
 {
+    using System;
+    using System.Collections.Generic;
     using System.Activities;
     using Activities.CodeQuality;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
