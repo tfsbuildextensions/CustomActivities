@@ -162,7 +162,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 this.SetBuildError("One or more unit tests did not succeed.");
             }
 
-            this.ExitCode.Set(this.ActivityContext, true);
+            this.ExitCode.Set(this.ActivityContext, executedSuccessfully);
         }
 
         /// <summary>
