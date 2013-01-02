@@ -184,6 +184,7 @@
     <Compile Include="SequenceHelper.cs" />
     <Compile Include="SharePoint\CodeQuality\CatNetScan.cs" />
     <Compile Include="SharePoint\CodeQuality\SPDisposeCheck.cs" />
+    <Compile Include="SharePoint\SharePointAppDeployment.cs" />
     <Compile Include="SharePoint\SharePointDeployment.cs" />
     <Compile Include="SharePoint\SharePointDeploymentStatus.cs" />
     <Compile Include="Signing\SignVSIX.cs" />
