@@ -60,49 +60,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
         /// Gets the list of solutions
         /// </summary>
         GetSolution,
-    }
-
-    /// <summary>
-    ///  Possible action for the activity
-    /// </summary>
-    public enum SharePointVersion
-    {
-        /// <summary>
-        /// SharePoint 2010
-        /// </summary>
-        SP2010,
-
-        /// <summary>
-        /// SharePoint 2013
-        /// </summary>
-        SP2013,
-
-        /// <summary>
-        /// SharePoint Online
-        /// </summary>
-        SPOnline,
-    }
-
-    /// <summary>
-    ///  Possible action for the activity
-    /// </summary>
-    public enum SharePointCompatabilityLevel
-    {
-        /// <summary>
-        /// Installs solution to both 14 and 15 directories
-        /// </summary>
-        AllVersions,
-
-        /// <summary>
-        /// Installs solution to 14 hive directory
-        /// </summary>
-        OldVersions,
-
-        /// <summary>
-        /// Installs solution to 15 hive directory
-        /// </summary>
-        NewVersions,
-    }
+    }  
 
     /// <summary>
     /// An activity that builds and executes PowerShell commands to deploy SharePoint Solutions to different versions of SharePoint
@@ -125,8 +83,8 @@ namespace TfsBuildExtensions.Activities.SharePoint
         /// The values for the CompatabilityLevel parameter.
         /// </summary>
         [RequiredArgument]
-        [Description("The values for the Version parameter.")]
-        public SharePointVersion Version
+        [Browsable(true), Description("The values for the Version parameter.")]
+        public InArgument<string> Version
         {
             get;
             set;
@@ -135,9 +93,8 @@ namespace TfsBuildExtensions.Activities.SharePoint
         /// <summary>
         /// The values for the CompatabilityLevel parameter.
         /// </summary>
-        [RequiredArgument]
-        [Description("The values for the CompatabilityLevel parameter.")]
-        public SharePointCompatabilityLevel CompatabilityLevel
+        [Browsable(true), Description("The values for the CompatabilityLevel parameter.")]
+        public InArgument<string> CompatabilityLevel
         {
             get;
             set;
@@ -226,8 +183,8 @@ namespace TfsBuildExtensions.Activities.SharePoint
         internal static string GeneratePowerShellScript(
             string serverName,
             SharePointAction action,
-            SharePointVersion version,
-            SharePointCompatabilityLevel compatabilityLevel,
+            string version,
+            string compatabilityLevel,
             string wspName,
             string siteUrl,
             string wspLiteralPath,
@@ -240,7 +197,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
 
             switch (version)
             {
-                case SharePointVersion.SP2010:
+                case "2010":
                     command = "Add-PsSnapin Microsoft.SharePoint.PowerShell; ";
 
                     switch (action)
@@ -366,7 +323,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                     }
 
                     break;
-                case SharePointVersion.SP2013:
+                case "2013":
                     command = "Add-PsSnapin Microsoft.SharePoint.PowerShell; ";
 
                     switch (action)
@@ -492,7 +449,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                     }
 
                     break;
-                case SharePointVersion.SPOnline:
+                case "Online":
                     command = "Add-PsSnapin Microsoft.Online.SharePoint.PowerShell; ";
                     break;
                 default:
@@ -571,7 +528,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                 throw new ArgumentNullException("context");
             }
 
-            var script = GeneratePowerShellScript(this.ServerName.Get(this.ActivityContext), this.Action, this.Version, this.CompatabilityLevel, this.WspName.Get(this.ActivityContext), this.SiteUrl.Get(this.ActivityContext), this.WspLiteralPath.Get(this.ActivityContext), this.FeatureName.Get(this.ActivityContext), this.GacDeploy.Get(this.ActivityContext), this.Force.Get(this.ActivityContext), this.OtherParameters.Get(this.ActivityContext));
+            var script = GeneratePowerShellScript(this.ServerName.Get(this.ActivityContext), this.Action, this.Version.Get(this.ActivityContext), this.CompatabilityLevel.Get(this.ActivityContext), this.WspName.Get(this.ActivityContext), this.SiteUrl.Get(this.ActivityContext), this.WspLiteralPath.Get(this.ActivityContext), this.FeatureName.Get(this.ActivityContext), this.GacDeploy.Get(this.ActivityContext), this.Force.Get(this.ActivityContext), this.OtherParameters.Get(this.ActivityContext));
 
             this.LogBuildMessage(string.Format(CultureInfo.InvariantCulture, "Running command '{0}'", script), BuildMessageImportance.High);
 

@@ -40,68 +40,6 @@ namespace TfsBuildExtensions.Activities.SharePoint
         /// Gets the list of SPAppInstances
         /// </summary>
         Get_SPAppInstance,
-    }
-
-    /// <summary>
-    ///  Possible action for the activity
-    /// </summary>
-    public enum SharePointAppVersion
-    {      
-        /// <summary>
-        /// SharePoint 2013
-        /// </summary>
-        SP2013,
-
-        /// <summary>
-        /// SharePoint Online
-        /// </summary>
-        SPOnline,
-    }
-
-    /// <summary>
-    ///  Possible action for the activity
-    /// </summary>
-    public enum SharePointAppSource
-    {
-        /// <summary>
-        /// Import to SharePoint Store
-        /// </summary>
-        SharePointStore,
-
-        /// <summary>
-        /// Import to SharePoint Store
-        /// </summary>
-        AppCatalog,
-
-        /// <summary>
-        /// Import to SharePoint Store
-        /// </summary>
-        SharePointService,
-
-        /// <summary>
-        /// Import to SharePoint Store
-        /// </summary>
-        Marketplace,
-
-        /// <summary>
-        /// Import to SharePoint Store
-        /// </summary>
-        CorporateCatalog,
-
-        /// <summary>
-        /// Import to SharePoint Store
-        /// </summary>
-        DeveloperSite,
-
-        /// <summary>
-        /// Import to SharePoint Store
-        /// </summary>
-        ObjectModel,
-
-        /// <summary>
-        /// Import to SharePoint Store
-        /// </summary>
-        RemoteObjectModel,
     }    
 
     /// <summary>
@@ -126,7 +64,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
         /// </summary>
         [RequiredArgument]
         [Description("The values for the Version parameter.")]
-        public SharePointAppVersion Version
+        public string Version
         {
             get;
             set;
@@ -137,7 +75,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
         /// </summary>
         [RequiredArgument]
         [Description("Defines the source of the app.")]
-        public SharePointAppSource AppSource
+        public string AppSource
         {
             get;
             set;
@@ -205,8 +143,8 @@ namespace TfsBuildExtensions.Activities.SharePoint
         internal static string GeneratePowerShellScript(
             string serverName,
             SharePointAppAction action,
-            SharePointAppVersion version,
-            SharePointAppSource appSource,
+            string version,
+            string appSource,
             string appName,
             string siteUrl,
             string appLiteralPath,                   
@@ -216,7 +154,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
 
             switch (version)
             {
-                case SharePointAppVersion.SP2013:
+                case "2013":
                     command = "Add-PsSnapin Microsoft.SharePoint.PowerShell; ";
                     switch (action)
                     {
@@ -257,7 +195,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                     }
 
                     break;
-                case SharePointAppVersion.SPOnline:
+                case "Online":
                     command = "Add-PsSnapin Microsoft.Online.SharePoint.PowerShell; ";
                     break;
             }
