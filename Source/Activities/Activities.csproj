@@ -168,6 +168,7 @@
     <Compile Include="Framework\DateAndTime.cs" />
     <Compile Include="Framework\ExpandVariables.cs" />
     <Compile Include="Framework\Guid.cs" />
+    <Compile Include="Framework\Sleep.cs" />
     <Compile Include="InternalActivities\LogBuildError.cs" />
     <Compile Include="InternalActivities\LogBuildMessage.cs" />
     <Compile Include="Management\Wmi.cs" />
