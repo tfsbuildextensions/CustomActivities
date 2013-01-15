@@ -233,7 +233,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                         if (!string.IsNullOrEmpty(line))
                         {
                             var sections = line.Split(':');
-                            if ((sections.Length == 2))
+                            if (sections.Length == 2)
                             {
                                 switch (sections[0].Trim())
                                 {
