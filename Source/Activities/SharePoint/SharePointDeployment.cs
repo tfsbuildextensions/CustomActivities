@@ -60,10 +60,10 @@ namespace TfsBuildExtensions.Activities.SharePoint
         /// Gets the list of solutions
         /// </summary>
         GetSolution,
-    }  
+    }
 
     /// <summary>
-    /// An activity that builds and executes PowerShell commands to deploy SharePoint Solutions to different versions of SharePoint
+    /// An activity that builds and executes PowerShell commands to deploy SharePoint features
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
     public sealed class SharePointDeployment : BaseCodeActivity
@@ -74,27 +74,6 @@ namespace TfsBuildExtensions.Activities.SharePoint
         [RequiredArgument]
         [Description("The task to perform.")]
         public SharePointAction Action
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The values for the CompatabilityLevel parameter.
-        /// </summary>
-        [RequiredArgument]
-        [Browsable(true), Description("The values for the Version parameter.")]
-        public InArgument<string> Version
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The values for the CompatabilityLevel parameter.
-        /// </summary>
-        [Browsable(true), Description("The values for the CompatabilityLevel parameter.")]
-        public InArgument<string> CompatabilityLevel
         {
             get;
             set;
@@ -169,8 +148,6 @@ namespace TfsBuildExtensions.Activities.SharePoint
         /// </summary>
         /// <param name="serverName">The name of the server to run the command on</param>
         /// <param name="action">The action to perform</param>
-        /// <param name="version">The version to target</param>
-        /// <param name="compatabilityLevel">The compatabilityLevel to target</param>
         /// <param name="wspName">The name of the WSP file</param>
         /// <param name="siteUrl">The web application url</param>
         /// <param name="wspLiteralPath">The path to the WSP file</param>
@@ -183,8 +160,6 @@ namespace TfsBuildExtensions.Activities.SharePoint
         internal static string GeneratePowerShellScript(
             string serverName,
             SharePointAction action,
-            string version,
-            string compatabilityLevel,
             string wspName,
             string siteUrl,
             string wspLiteralPath,
@@ -193,264 +168,125 @@ namespace TfsBuildExtensions.Activities.SharePoint
             bool force,
             string otherParameters)
         {
-            string command;
+            var command = "Add-PsSnapin Microsoft.SharePoint.PowerShell; ";
 
-            switch (version)
+            switch (action)
             {
-                case "2010":
-                    command = "Add-PsSnapin Microsoft.SharePoint.PowerShell; ";
+                case SharePointAction.AddSolution:
+                    command = command.AppendFormat(CultureInfo.InvariantCulture, "Add-SPSolution -LiteralPath '{0}'", wspLiteralPath);
+                    break;
+                case SharePointAction.InstallSolution:
 
-                    switch (action)
+                    command = command.AppendFormat(CultureInfo.InvariantCulture, "Install-SPSolution –Identity {0}", wspName);
+                    if (string.IsNullOrEmpty(siteUrl) == false)
                     {
-                        case SharePointAction.AddSolution:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Add-SPSolution -LiteralPath '{0}'", wspLiteralPath);
-                            break;
-                        case SharePointAction.InstallSolution:
+                        command = command.AppendFormat(" –WebApplication {0}", siteUrl);
+                    }
 
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Install-SPSolution –Identity {0}", wspName);
-                            if (string.IsNullOrEmpty(siteUrl) == false)
-                            {
-                                command = command.AppendFormat(" –WebApplication {0}", siteUrl);
-                            }
+                    if (gacDeployment)
+                    {
+                        command += " -GACDeployment";
+                    }
 
-                            if (gacDeployment)
-                            {
-                                command += " -GACDeployment";
-                            }
-
-                            if (force)
-                            {
-                                command += " -Force";
-                            }
-
-                            break;
-                        case SharePointAction.UpdateSolution:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Update-SPSolution –Identity {0} –LiteralPath '{1}'", wspName, wspLiteralPath);
-                            if (gacDeployment)
-                            {
-                                command += " -GACDeployment";
-                            }
-
-                            if (force)
-                            {
-                                command += " -Force";
-                            }
-
-                            break;
-                        case SharePointAction.UninstallSolution:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Uninstall-SPSolution –Identity {0} -Confirm:$false", wspName);
-                            if (string.IsNullOrEmpty(siteUrl) == false)
-                            {
-                                command = command.AppendFormat(" –WebApplication {0}", siteUrl);
-                            }
-
-                            break;
-                        case SharePointAction.RemoveSolution:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Remove-SPSolution –Identity {0} -Confirm:$false", wspName);
-                            break;
-                        case SharePointAction.EnableFeature:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "enable-spfeature –Identity {0}", featureName);
-                            if (string.IsNullOrEmpty(siteUrl) == false)
-                            {
-                                command = command.AppendFormat(" -Url {0}", siteUrl);
-                            }
-
-                            if (force)
-                            {
-                                command += " -Force";
-                            }
-
-                            break;
-                        case SharePointAction.DisableFeature:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "disable-spfeature –Identity {0} -Confirm:$false", featureName.Replace(" ", "_"));
-                            if (string.IsNullOrEmpty(siteUrl) == false)
-                            {
-                                command = command.AppendFormat(" -Url {0}", siteUrl);
-                            }
-
-                            if (force)
-                            {
-                                command += " -Force";
-                            }
-
-                            break;
-                        case SharePointAction.GetSolution:
-                            if (string.IsNullOrEmpty(wspName))
-                            {
-                                command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    var guid = Guid.Parse(wspName);
-                                    command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution | where {{$_.id -eq '{0}'}}", wspName);
-                                }
-                                catch (FormatException)
-                                {
-                                    command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution | where {{$_.name -eq '{0}'}}", wspName);
-                                }
-                            }
-
-                            command += " | fl -property Displayname, Deployed, Id ;";
-                            break;
-                        case SharePointAction.GetFeature:
-                            if (string.IsNullOrEmpty(featureName))
-                            {
-                                command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    var guid = Guid.Parse(featureName);
-                                    command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature | where {{$_.id -eq '{0}'}}", featureName);
-                                }
-                                catch (FormatException)
-                                {
-                                    // we need to replace spaces with underscore
-                                    command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature | where {{$_.displayname -eq '{0}'}}", featureName.Replace(' ', '_'));
-                                }
-                            }
-
-                            // we now need to add the handling to make sure the format is consistant both locally and remotely
-                            // using the plus operator to make sure no {0} confusion
-                            command += " | fl -property Displayname, Id ;";
-
-                            break;
-                        default:
-                            throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unknown SharePointAction [{0}] specified", action));
+                    if (force)
+                    {
+                        command += " -Force";
                     }
 
                     break;
-                case "2013":
-                    command = "Add-PsSnapin Microsoft.SharePoint.PowerShell; ";
-
-                    switch (action)
+                case SharePointAction.UpdateSolution:
+                    command = command.AppendFormat(CultureInfo.InvariantCulture, "Update-SPSolution –Identity {0} –LiteralPath '{1}'", wspName, wspLiteralPath);
+                    if (gacDeployment)
                     {
-                        case SharePointAction.AddSolution:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Add-SPSolution -LiteralPath '{0}'", wspLiteralPath);
-                            break;
-                        case SharePointAction.InstallSolution:
+                        command += " -GACDeployment";
+                    }
 
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Install-SPSolution –Identity {0} -CompatibilityLevel {1}", wspName, compatabilityLevel);
-                            if (string.IsNullOrEmpty(siteUrl) == false)
-                            {
-                                command = command.AppendFormat(" –WebApplication {0}", siteUrl);
-                            }
-
-                            if (gacDeployment)
-                            {
-                                command += " -GACDeployment";
-                            }
-
-                            if (force)
-                            {
-                                command += " -Force";
-                            }
-
-                            break;
-                        case SharePointAction.UpdateSolution:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Update-SPSolution –Identity {0} –LiteralPath '{1}'", wspName, wspLiteralPath);
-                            if (gacDeployment)
-                            {
-                                command += " -GACDeployment";
-                            }
-
-                            if (force)
-                            {
-                                command += " -Force";
-                            }
-
-                            break;
-                        case SharePointAction.UninstallSolution:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Uninstall-SPSolution –Identity {0} -CompatibilityLevel {1} -Confirm:$false", wspName, compatabilityLevel);
-                            if (string.IsNullOrEmpty(siteUrl) == false)
-                            {
-                                command = command.AppendFormat(" –WebApplication {0}", siteUrl);
-                            }
-
-                            break;
-                        case SharePointAction.RemoveSolution:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "Remove-SPSolution –Identity {0} -Confirm:$false", wspName);
-                            break;
-                        case SharePointAction.EnableFeature:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "enable-spfeature –Identity {0} -CompatibilityLevel {1}", featureName, compatabilityLevel);
-                            if (string.IsNullOrEmpty(siteUrl) == false)
-                            {
-                                command = command.AppendFormat(" -Url {0}", siteUrl);
-                            }
-
-                            if (force)
-                            {
-                                command += " -Force";
-                            }
-
-                            break;
-                        case SharePointAction.DisableFeature:
-                            command = command.AppendFormat(CultureInfo.InvariantCulture, "disable-spfeature –Identity {0} -Confirm:$false", featureName.Replace(" ", "_"));
-                            if (string.IsNullOrEmpty(siteUrl) == false)
-                            {
-                                command = command.AppendFormat(" -Url {0}", siteUrl);
-                            }
-
-                            if (force)
-                            {
-                                command += " -Force";
-                            }
-
-                            break;
-                        case SharePointAction.GetSolution:
-                            if (string.IsNullOrEmpty(wspName))
-                            {
-                                command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    var guid = Guid.Parse(wspName);
-                                    command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution | where {{$_.id -eq '{0}'}}", wspName);
-                                }
-                                catch (FormatException)
-                                {
-                                    command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution | where {{$_.name -eq '{0}'}}", wspName);
-                                }
-                            }
-
-                            command += " | fl -property Displayname, Deployed, Id ;";
-                            break;
-                        case SharePointAction.GetFeature:
-                            if (string.IsNullOrEmpty(featureName))
-                            {
-                                command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    var guid = Guid.Parse(featureName);
-                                    command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature | where {{$_.id -eq '{0}'}}", featureName);
-                                }
-                                catch (FormatException)
-                                {
-                                    // we need to replace spaces with underscore
-                                    command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature | where {{$_.displayname -eq '{0}'}}", featureName.Replace(' ', '_'));
-                                }
-                            }
-
-                            // we now need to add the handling to make sure the format is consistant both locally and remotely
-                            // using the plus operator to make sure no {0} confusion
-                            command += " | fl -property Displayname, Id ;";
-
-                            break;
-                        default:
-                            throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unknown SharePointAction [{0}] specified", action));
+                    if (force)
+                    {
+                        command += " -Force";
                     }
 
                     break;
-                case "Online":
-                    command = "Add-PsSnapin Microsoft.Online.SharePoint.PowerShell; ";
+                case SharePointAction.UninstallSolution:
+                    command = command.AppendFormat(CultureInfo.InvariantCulture, "Uninstall-SPSolution –Identity {0} -Confirm:$false", wspName);
+                    if (string.IsNullOrEmpty(siteUrl) == false)
+                    {
+                        command = command.AppendFormat(" –WebApplication {0}", siteUrl);
+                    }
+
+                    break;
+                case SharePointAction.RemoveSolution:
+                    command = command.AppendFormat(CultureInfo.InvariantCulture, "Remove-SPSolution –Identity {0} -Confirm:$false", wspName);
+                    break;
+                case SharePointAction.EnableFeature:
+                    command = command.AppendFormat(CultureInfo.InvariantCulture, "enable-spfeature –Identity {0}", featureName);
+                    if (string.IsNullOrEmpty(siteUrl) == false)
+                    {
+                        command = command.AppendFormat(" -Url {0}", siteUrl);
+                    }
+
+                    if (force)
+                    {
+                        command += " -Force";
+                    }
+
+                    break;
+                case SharePointAction.DisableFeature:
+                    command = command.AppendFormat(CultureInfo.InvariantCulture, "disable-spfeature –Identity {0} -Confirm:$false", featureName.Replace(" ", "_"));
+                    if (string.IsNullOrEmpty(siteUrl) == false)
+                    {
+                        command = command.AppendFormat(" -Url {0}", siteUrl);
+                    }
+
+                    if (force)
+                    {
+                        command += " -Force";
+                    }
+
+                    break;
+                case SharePointAction.GetSolution:
+                    if (string.IsNullOrEmpty(wspName))
+                    {
+                        command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var guid = Guid.Parse(wspName);
+                            command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution | where {{$_.id -eq '{0}'}}", wspName);
+                        }
+                        catch (FormatException)
+                        {
+                            command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spsolution | where {{$_.name -eq '{0}'}}", wspName);
+                        }
+                    }
+
+                    command += " | fl -property Displayname, Deployed, Id ;";
+                    break;
+                case SharePointAction.GetFeature:
+                    if (string.IsNullOrEmpty(featureName))
+                    {
+                        command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var guid = Guid.Parse(featureName);
+                            command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature | where {{$_.id -eq '{0}'}}", featureName);
+                        }
+                        catch (FormatException)
+                        {
+                            // we need to replace spaces with underscore
+                            command = command.AppendFormat(CultureInfo.InvariantCulture, "get-spfeature | where {{$_.displayname -eq '{0}'}}", featureName.Replace(' ', '_'));
+                        }
+                    }
+
+                    // we now need to add the handling to make sure the format is consistant both locally and remotely
+                    // using the plus operator to make sure no {0} confusion
+                    command += " | fl -property Displayname, Id ;";
+
                     break;
                 default:
                     throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unknown SharePointAction [{0}] specified", action));
@@ -490,7 +326,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                         if (!string.IsNullOrEmpty(line))
                         {
                             var sections = line.Split(':');
-                            if (sections.Length == 2)
+                            if ((sections != null) && (sections.Length == 2))
                             {
                                 switch (sections[0].Trim())
                                 {
@@ -528,7 +364,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                 throw new ArgumentNullException("context");
             }
 
-            var script = GeneratePowerShellScript(this.ServerName.Get(this.ActivityContext), this.Action, this.Version.Get(this.ActivityContext), this.CompatabilityLevel.Get(this.ActivityContext), this.WspName.Get(this.ActivityContext), this.SiteUrl.Get(this.ActivityContext), this.WspLiteralPath.Get(this.ActivityContext), this.FeatureName.Get(this.ActivityContext), this.GacDeploy.Get(this.ActivityContext), this.Force.Get(this.ActivityContext), this.OtherParameters.Get(this.ActivityContext));
+            var script = GeneratePowerShellScript(this.ServerName.Get(this.ActivityContext), this.Action, this.WspName.Get(this.ActivityContext), this.SiteUrl.Get(this.ActivityContext), this.WspLiteralPath.Get(this.ActivityContext), this.FeatureName.Get(this.ActivityContext), this.GacDeploy.Get(this.ActivityContext), this.Force.Get(this.ActivityContext), this.OtherParameters.Get(this.ActivityContext));
 
             this.LogBuildMessage(string.Format(CultureInfo.InvariantCulture, "Running command '{0}'", script), BuildMessageImportance.High);
 
