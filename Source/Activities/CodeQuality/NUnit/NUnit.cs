@@ -389,7 +389,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         private void PublishMSTestResults(string resultTrxFile, string collectionUrl, string buildNumber, string teamProject, string platform, string flavor)
         {
-            int visualStudioVersion = (int) this.VisualStudioVersion.Get(this.ActivityContext);
+            int visualStudioVersion = (int)this.VisualStudioVersion.Get(this.ActivityContext);
             string argument = string.Format("/publish:\"{0}\" /publishresultsfile:\"{1}\" /publishbuild:\"{2}\" /teamproject:\"{3}\" /platform:\"{4}\" /flavor:\"{5}\"", collectionUrl, resultTrxFile, buildNumber, teamProject, platform, flavor);
             this.RunProcess(Environment.ExpandEnvironmentVariables(string.Format(@"%VS{0}COMNTOOLS%\..\IDE\MSTest.exe", visualStudioVersion)), null, argument);
         }

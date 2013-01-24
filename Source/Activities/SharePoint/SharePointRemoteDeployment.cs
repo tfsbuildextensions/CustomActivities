@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SharePointDeployment.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="SharePointRemoteDeployment.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.SharePoint
 {
@@ -10,8 +10,6 @@ namespace TfsBuildExtensions.Activities.SharePoint
     using System.Diagnostics;
     using System.Globalization;
     using Microsoft.TeamFoundation.Build.Client;
-    using System.Management.Automation.Runspaces;
-    using TfsBuildExtensions.Activities.Scripting;
 
     /// <summary>
     ///  Possible action for the activity
@@ -82,10 +80,10 @@ namespace TfsBuildExtensions.Activities.SharePoint
         }        
 
         /// <summary>
-        /// The values for the CompatabilityLevel parameter.
+        /// The values for the CompatibilityLevel parameter.
         /// </summary>
-        [Browsable(true), Description("The values for the CompatabilityLevel parameter.")]
-        public InArgument<string> CompatabilityLevel
+        [Browsable(true), Description("The values for the CompatibilityLevel parameter.")]
+        public InArgument<string> CompatibilityLevel
         {
             get;
             set;
@@ -353,7 +351,6 @@ namespace TfsBuildExtensions.Activities.SharePoint
                     throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unknown SharePointAction [{0}] specified", action));
             }
 
-
             if (string.IsNullOrEmpty(otherParameters) == false)
             {
                 command = command.AppendFormat(" {0}", otherParameters);
@@ -394,7 +391,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                         if (!string.IsNullOrEmpty(line))
                         {
                             var sections = line.Split(':');
-                            if ((sections.Length == 2))
+                            if (sections.Length == 2)
                             {
                                 switch (sections[0].Trim())
                                 {
@@ -440,9 +437,7 @@ namespace TfsBuildExtensions.Activities.SharePoint
                 creds = creds.AppendFormat(@"$pw= convertto-securestring '{0}' -asplaintext –force; $pp = new-object -typename System.Management.Automation.PSCredential -argumentlist '{1}\{2}',$pw; ", this.Password.Get(this.ActivityContext), this.Domain.Get(this.ActivityContext), this.UserName.Get(this.ActivityContext));
             }
 
-            var script = GeneratePowerShellScript(this.ServerName.Get(this.ActivityContext), this.Action, this.CompatabilityLevel.Get(this.ActivityContext), this.WspName.Get(this.ActivityContext), this.SiteUrl.Get(this.ActivityContext), this.WspLiteralPath.Get(this.ActivityContext), this.FeatureName.Get(this.ActivityContext), this.GacDeploy.Get(this.ActivityContext), this.Force.Get(this.ActivityContext), this.OtherParameters.Get(this.ActivityContext), this.UseCredSSP.Get(this.ActivityContext), this.Domain.Get(this.ActivityContext), this.UserName.Get(this.ActivityContext), this.Password.Get(this.ActivityContext));
-
-
+            var script = GeneratePowerShellScript(this.ServerName.Get(this.ActivityContext), this.Action, this.CompatibilityLevel.Get(this.ActivityContext), this.WspName.Get(this.ActivityContext), this.SiteUrl.Get(this.ActivityContext), this.WspLiteralPath.Get(this.ActivityContext), this.FeatureName.Get(this.ActivityContext), this.GacDeploy.Get(this.ActivityContext), this.Force.Get(this.ActivityContext), this.OtherParameters.Get(this.ActivityContext), this.UseCredSSP.Get(this.ActivityContext), this.Domain.Get(this.ActivityContext), this.UserName.Get(this.ActivityContext), this.Password.Get(this.ActivityContext));
             this.LogBuildMessage(string.Format(CultureInfo.InvariantCulture, "Running command '{0}'", script), BuildMessageImportance.High);
 
             using (Process proc = new Process())
