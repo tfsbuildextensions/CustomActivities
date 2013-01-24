@@ -16,6 +16,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     using Microsoft.TeamFoundation.Build.Client;
 
     using TfsBuildExtensions.Activities.CodeQuality.Extended;
+    using TfsBuildExtensions.Activities.VisualStudio;
 
     /// <summary>
     /// Executes Test Cases using NUnit (Tested using v2.5.7)
@@ -44,6 +45,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         public NUnit()
         {
             this.Version = "2.5.7";
+            this.VisualStudioVersion = VSVersion.VS2012;
         }
 
         /// <summary>
@@ -258,6 +260,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         public InArgument<string> Run { get; set; }
 
         /// <summary>
+        /// The version of Visual Studio used to run unit tests. Default is VS2012
+        /// </summary>
+        [Browsable(true)]
+        [Description("The version of Visual Studio used to run unit tests. Default is VS2012")]
+        public InArgument<VSVersion> VisualStudioVersion { get; set; }
+
+        /// <summary>
         /// Name of the test case(s), fixture(s) or namespace(s) to run
         /// </summary>
         [Browsable(true)]
@@ -380,8 +389,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         private void PublishMSTestResults(string resultTrxFile, string collectionUrl, string buildNumber, string teamProject, string platform, string flavor)
         {
+            int visualStudioVersion = (int) this.VisualStudioVersion.Get(this.ActivityContext);
             string argument = string.Format("/publish:\"{0}\" /publishresultsfile:\"{1}\" /publishbuild:\"{2}\" /teamproject:\"{3}\" /platform:\"{4}\" /flavor:\"{5}\"", collectionUrl, resultTrxFile, buildNumber, teamProject, platform, flavor);
-            this.RunProcess(Environment.ExpandEnvironmentVariables(@"%VS100COMNTOOLS%\..\IDE\MSTest.exe"), null, argument);
+            this.RunProcess(Environment.ExpandEnvironmentVariables(string.Format(@"%VS{0}COMNTOOLS%\..\IDE\MSTest.exe", visualStudioVersion)), null, argument);
         }
 
         private void TransformNUnitToMSTest(string nunitResultFile, string mstestResultFile)
