@@ -81,7 +81,7 @@
       <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Publishing.Tasks">
-      <HintPath>C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v11.0\Web\Microsoft.Web.Publishing.Tasks.dll</HintPath>
+      <HintPath>..\AssemblyReferences\Microsoft.Web.Publishing.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
