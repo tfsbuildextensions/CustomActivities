@@ -98,6 +98,13 @@ namespace TfsBuildExtensions.Activities.VisualStudio
         public InArgument<string> ChangeProperty { get; set; }
 
         /// <summary>
+        /// Specifies the amount of time, in milliseconds, to wait for the project to compile. Default is 0 which no timeout
+        /// </summary>
+        [Browsable(true)]
+        [Description("Specifies the amount of time, in milliseconds, to wait for the project to compile. Default is 0 which no timeout")]
+        public InArgument<int> CompileTimeout { get; set; }
+
+        /// <summary>
         /// Gets the Return Code from the VB6 compile activity
         /// </summary>
         [Description("Gets the Return Code from the VB6 compile activity")]
@@ -155,7 +162,20 @@ namespace TfsBuildExtensions.Activities.VisualStudio
                     this.LogBuildError(errorStream);
                 }
 
-                proc.WaitForExit();
+                int timeout = this.CompileTimeout.Get(this.ActivityContext);
+                if (timeout == 0)
+                {
+                    proc.WaitForExit();
+                }
+                else
+                {
+                    if (!proc.WaitForExit(timeout))
+                    {
+                        this.LogBuildError("CompileTimeout exceeded");
+                        this.ReturnCode.Set(this.ActivityContext, -1);
+                        return;
+                    }
+                }
 
                 if (proc.ExitCode != 0)
                 {
