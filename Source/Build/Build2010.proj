@@ -72,7 +72,7 @@
     </Target>
 
     <Target Name="Compile">
-        <MSBuild.ExtensionPack.VisualStudio.VSDevEnv FilePath="..\TFSBuildExtensions.sln" Version="$(VisualStudioVersion)" Configuration="$(Configuration)" Rebuild="true">
+        <MSBuild.ExtensionPack.VisualStudio.VSDevEnv FilePath="..\TFSBuildExtensions2010.sln" Version="$(VisualStudioVersion)" Configuration="$(Configuration)" Rebuild="true">
             <Output TaskParameter="ExitCode" PropertyName="Exit" />
         </MSBuild.ExtensionPack.VisualStudio.VSDevEnv>
         <Message Text="ExitCode: $(Exit)"/>
