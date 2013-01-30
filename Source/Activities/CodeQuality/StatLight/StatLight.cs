@@ -13,6 +13,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     using System.Xml.Xsl;
     using Microsoft.TeamFoundation.Build.Client;
     using TfsBuildExtensions.Activities.CodeQuality.Extended;
+    using TfsBuildExtensions.Activities.VisualStudio;
 
     /// <summary>
     /// TODO: Update summary.
@@ -20,6 +21,14 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     [BuildActivity(HostEnvironmentOption.All)]
     public class StatLight : BaseCodeActivity
     {
+        /// <summary>
+        /// Initializes a new instance of the StatLight class.
+        /// </summary>
+        public StatLight()
+        {
+            this.VisualStudioVersion = VSVersion.VS2010;
+        }
+
         /// <summary>
         /// The assemblies to process.
         /// </summary>
@@ -62,6 +71,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         [Browsable(true)]
         [Description("Sets the OutputXmlFile name")]
         public InArgument<string> OutputXmlFile { get; set; }
+
+        /// <summary>
+        /// The version of Visual Studio used to run unit tests. Default is VS2012
+        /// </summary>
+        [Browsable(true)]
+        [Description("The version of Visual Studio. Default is VS2012")]
+        public InArgument<VSVersion> VisualStudioVersion { get; set; }
 
         /// <summary>
         /// Executes the logic for this custom activity
@@ -188,8 +204,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         private void PublishMsTestResults(string resultTrxFile, string collectionUrl, string buildNumber, string teamProject, string platform, string flavor)
         {
+            int visualStudioVersion = (int)this.VisualStudioVersion.Get(this.ActivityContext);
             string argument = string.Format("/publish:\"{0}\" /publishresultsfile:\"{1}\" /publishbuild:\"{2}\" /teamproject:\"{3}\" /platform:\"{4}\" /flavor:\"{5}\"", collectionUrl, resultTrxFile, buildNumber, teamProject, platform, flavor);
-            this.RunProcess(Environment.ExpandEnvironmentVariables(@"%VS100COMNTOOLS%\..\IDE\MSTest.exe"), null, argument);
+            this.RunProcess(Environment.ExpandEnvironmentVariables(string.Format(@"%VS{0}COMNTOOLS%\..\IDE\MSTest.exe", visualStudioVersion)), null, argument);
         }
 
         private void TransformStatLightTestToMsTest(string userName, string machineName, string statLightResultFile, string mstestResultFile)
