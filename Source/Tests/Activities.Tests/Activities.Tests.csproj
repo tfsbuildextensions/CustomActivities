@@ -151,7 +151,6 @@
     <Compile Include="Scripting\InvokePowerShellCommandTests.cs" />
     <Compile Include="Scripting\ResolvePowerShellScriptTests.cs" />
     <Compile Include="SharePoint\ProcessSharePointPowerShellScriptsOutputTests.cs" />
-    <Compile Include="SharePoint\GenerateSharePointPowerShellScriptsTests.cs" />
     <Compile Include="SqlServer\SqlExecuteTests.cs" />
     <Compile Include="TeamFoundationServer\TfsVersionTests.cs" />
     <Compile Include="Compression\ZipTests.cs" />
