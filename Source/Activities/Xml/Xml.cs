@@ -76,11 +76,11 @@ namespace TfsBuildExtensions.Activities.Xml
         }
 
         /// <summary>
-        /// Set the Encoding option for TransForm. Default is UTF8
+        /// Set the Encoding option for TransForm. Default is utf-8. This maps to the Encoding.WebName property
         /// </summary>
         public string TextEncoding
         {
-            get { return this.fileEncoding.ToString(); }
+            get { return this.fileEncoding.WebName; }
             set { this.fileEncoding = System.Text.Encoding.GetEncoding(value); }
         }
 
@@ -283,15 +283,7 @@ namespace TfsBuildExtensions.Activities.Xml
                             };
                             using (XmlWriter xw = XmlWriter.Create(this.OutputFile.Get(this.ActivityContext), writerSettings))
                             {
-                                if (xw != null)
-                                {
-                                    newxmlDoc.WriteTo(xw);
-                                }
-                                else
-                                {
-                                    this.LogBuildError("There was an error creating the XmlWriter for the OutputFile");
-                                    return;
-                                }
+                                newxmlDoc.WriteTo(xw);
                             }
                         }
                     }
@@ -305,7 +297,7 @@ namespace TfsBuildExtensions.Activities.Xml
             this.IsValid.Set(this.ActivityContext, false);
 
             var schemaFiles = this.SchemaFiles.Get(this.ActivityContext);
-            if (schemaFiles == null || schemaFiles.Count() == 0)
+            if (schemaFiles == null || !schemaFiles.Any())
             {
                 this.LogBuildError("No schema were provided for validation");
                 return;
@@ -330,7 +322,7 @@ namespace TfsBuildExtensions.Activities.Xml
                 });
             this.Output.Set(this.ActivityContext, builder.ToString());
 
-            this.IsValid.Set(this.ActivityContext, errorEncountered ? false : true);
+            this.IsValid.Set(this.ActivityContext, !errorEncountered);
         }
     }
 }
