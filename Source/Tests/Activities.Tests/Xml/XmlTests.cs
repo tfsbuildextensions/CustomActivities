@@ -22,7 +22,7 @@ namespace TfsBuildExtensions.Activities.Tests.Xml
             // Define activity arguments
             var arguments = new Dictionary<string, object>
             {
-                { "Xml", @"<?xml version=""1.0""?>
+                { "XmlText", @"<?xml version=""1.0""?>
                     <catalog>
                        <book id=""bk101"">
                           <author>Gambardella, Matthew</author>
@@ -35,8 +35,7 @@ namespace TfsBuildExtensions.Activities.Tests.Xml
                        </book>
                     </catalog>
                     " },
-                { "XslTransform", @"<xsl:transform version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform""> 
-                    " },
+                { "XslTransform", @"<xsl:transform version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform""/>" },
             };
 
             // Act
@@ -44,7 +43,7 @@ namespace TfsBuildExtensions.Activities.Tests.Xml
             var result = invoker.Invoke(arguments);
 
             // Assert
-            Assert.IsTrue((bool)result["IsValid"]);
+            Assert.IsFalse((bool)result["IsValid"]);
         }
     }
 }

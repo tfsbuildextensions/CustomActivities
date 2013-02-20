@@ -37,10 +37,9 @@ namespace TfsBuildExtensions.Activities.Xml
     /// <summary>
     /// Process an XML file.
     /// <b>Valid TaskActions are:</b>
-    /// <para><i>Transform</i> (<b>Required: </b>Xml or XmlFile, XslTransform or XslTransformFile <b>Optional:</b> Conformance, Indent, OmitXmlDeclaration, OutputFile, TextEncoding <b>Output: </b>Output)</para>
-    /// <para><i>Validate</i> (<b>Required: </b>Xml or XmlFile, SchemaFiles <b>Optional: </b> TargetNamespace <b>Output: </b>IsValid, Output)</para>
+    /// <para><i>Transform</i> (<b>Required: </b>XmlText or XmlFile, XslTransform or XslTransformFile <b>Optional:</b> Conformance, Indent, OmitXmlDeclaration, OutputFile, TextEncoding, EnableDocumentFunction <b>Output: </b>Output)</para>
+    /// <para><i>Validate</i> (<b>Required: </b>XmlText or XmlFile, SchemaFiles <b>Optional: </b> TargetNamespace <b>Output: </b>IsValid, Output)</para>
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Justification = "TODO")]
     [BuildActivity(HostEnvironmentOption.All)]
     [System.ComponentModel.Description("Activity to interact with XML files.")]
     public class Xml : BaseCodeActivity
@@ -121,7 +120,6 @@ namespace TfsBuildExtensions.Activities.Xml
         /// <summary>
         /// Sets the Schema Files collection
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Requisite workflow pattern.")]
         public InArgument<IEnumerable<string>> SchemaFiles { get; set; }
 
         /// <summary>
@@ -133,6 +131,11 @@ namespace TfsBuildExtensions.Activities.Xml
         /// Set the Indent option for TransForm. Default is False
         /// </summary>
         public InArgument<bool> Indent { get; set; }
+
+        /// <summary>
+        /// Set the EnableDocumentFunction option for TransForm. Default is False
+        /// </summary>
+        public InArgument<bool> EnableDocumentFunction { get; set; }
 
         /// <summary>
         /// Gets whether an XmlFile is valid xml
@@ -190,7 +193,6 @@ namespace TfsBuildExtensions.Activities.Xml
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "External code.")]
         private void Transform()
         {
             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Transforming: {0}", this.XmlFilePath.Get(this.ActivityContext)), BuildMessageImportance.Low);
@@ -224,7 +226,8 @@ namespace TfsBuildExtensions.Activities.Xml
 
             // Load the style sheet.
             XslCompiledTransform xslt = new XslCompiledTransform();
-            XsltSettings settings = new XsltSettings { EnableScript = true };
+            XsltSettings settings = new XsltSettings { EnableScript = true, EnableDocumentFunction = this.EnableDocumentFunction.Get(this.ActivityContext) };
+            
             using (StringReader sr = new StringReader(xslDoc.ToString()))
             {
                 xslt.Load(XmlReader.Create(sr), settings, null);
