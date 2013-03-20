@@ -279,3 +279,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Scope = "member", Target = "TfsBuildExtensions.Activities.Xml.Xml.#Transform()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope = "member", Target = "TfsBuildExtensions.Activities.Xml.Xml.#SchemaFiles")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Scope = "type", Target = "TfsBuildExtensions.Activities.Xml.Xml")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Itemspec", Scope = "member", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.TfsSource.#ItemspecList")]

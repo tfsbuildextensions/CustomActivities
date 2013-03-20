@@ -8,6 +8,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using Microsoft.TeamFoundation.Build.Client;
 
     /// <summary>
@@ -135,6 +136,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// </summary>
         [Browsable(true)]
         public InArgument<string> Itemspec { get; set; }
+
+        /// <summary>
+        /// List of items to operate on
+        /// </summary>        
+        public InArgument<string[]> ItemspecList { get; set; }
 
         /// <summary>
         /// Path to TF.exe. Defaults to %VS100COMNTOOLS%\..\IDE\tf.exe
@@ -314,8 +320,21 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 }
 
                 proc.StartInfo.FileName = fileName;
+                string arguments = string.Empty;
 
-                string arguments = string.Format("{0} \"{1}\" {2}", action, this.Itemspec.Get(this.ActivityContext), options);
+                if (!string.IsNullOrEmpty(this.Itemspec.Get(this.ActivityContext)))
+                {
+                    arguments = string.Format("{0} \"{1}\" {2}", action, this.Itemspec.Get(this.ActivityContext), options);
+                }
+                else
+                {
+                    var itemList = this.ItemspecList.Get(this.ActivityContext);
+                    if (itemList != null && itemList.Any())
+                    {
+                        string items = string.Join("\" \"", itemList);
+                        arguments = string.Format("{0} \"{1}\" {2}", action, items, options);
+                    }
+                }
 
                 if (string.IsNullOrEmpty(this.Collection.Get(this.ActivityContext)) == false)
                 {
