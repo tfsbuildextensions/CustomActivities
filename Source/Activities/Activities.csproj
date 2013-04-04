@@ -200,6 +200,8 @@
     <Compile Include="SSH\SSHAuthentication.cs" />
     <Compile Include="SSH\SSHAuthenticationType.cs" />
     <Compile Include="SSH\SSHCopyProtocol.cs" />
+    <Compile Include="TeamFoundationServer\AgentSettingsTags.cs" />
+    <Compile Include="TeamFoundationServer\BuildAgentTags.cs" />
     <Compile Include="TeamFoundationServer\BuildReport\BuildReport.cs" />
     <Compile Include="TeamFoundationServer\BuildWorkspace.cs" />
     <Compile Include="TeamFoundationServer\CompareLabels.cs" />
@@ -207,6 +209,7 @@
     <Compile Include="TeamFoundationServer\ConvertFromProperties.cs" />
     <Compile Include="TeamFoundationServer\ExecuteWorkflow.cs" />
     <Compile Include="TeamFoundationServer\GetBuild.cs" />
+    <Compile Include="TeamFoundationServer\GetBuildAgentMachineName.cs" />
     <Compile Include="TeamFoundationServer\GetBuildController.cs">
       <SubType>Code</SubType>
     </Compile>
