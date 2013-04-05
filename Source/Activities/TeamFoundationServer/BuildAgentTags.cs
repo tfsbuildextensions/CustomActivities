@@ -1,11 +1,28 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="BuildAgentTags.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+//-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.TeamFoundationServer
 {
     using System;
     using System.Activities;
     using System.ComponentModel;
     using Microsoft.TeamFoundation.Build.Client;
-    using Microsoft.TeamFoundation.Client;
+
+    /// <summary>
+    /// TagAction
+    /// </summary>
+    public enum TagAction
+    {
+        /// <summary>
+        /// Add
+        /// </summary>
+        Add,
+        
+        /// <summary>
+        /// Remove
+        /// </summary>
+        Remove
+    }
 
     [BuildActivity(HostEnvironmentOption.All)]
     public sealed class BuildAgentTags : CodeActivity
@@ -13,7 +30,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         private TagAction action = TagAction.Add;
 
         [RequiredArgument]
-        public TagAction Action { get { return this.action; } set { this.action = value; } }
+        public TagAction Action
+        {
+            get { return this.action; } 
+            set { this.action = value; }
+        }
 
         [RequiredArgument]
         [Browsable(true)]
@@ -21,7 +42,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
         [RequiredArgument]
         [Browsable(true)]
-        public InArgument<String> Tag { get; set; }
+        public InArgument<string> Tag { get; set; }
 
         protected override void Execute(CodeActivityContext context)
         {
@@ -31,8 +52,8 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
             }
 
             IBuildAgent buildAgent = context.GetValue(this.BuildAgent);
-            String tag = context.GetValue(this.Tag);
-            switch (action)
+            string tag = context.GetValue(this.Tag);
+            switch (this.action)
             {
                 case TagAction.Add:
                     buildAgent.Tags.Add(tag);
@@ -42,14 +63,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                     buildAgent.Tags.Remove(tag);
                     buildAgent.Save();
                     break;
-                default:
-                    break;
             }
         }
-    }
-
-    public enum TagAction
-    {
-        Add, Remove
     }
 }

@@ -28,6 +28,7 @@
     <CodeAnalysisRuleSet>..\Common\TFSBuildExtensions.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>..\BuildBinaries\TfsBuildExtensions.Activities.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>true</DebugSymbols>

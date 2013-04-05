@@ -1,10 +1,12 @@
-﻿namespace TfsBuildExtensions.Activities.TeamFoundationServer
+﻿//-----------------------------------------------------------------------
+// <copyright file="AgentSettingsTags.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+//-----------------------------------------------------------------------
+namespace TfsBuildExtensions.Activities.TeamFoundationServer
 {
     using System;
     using System.Activities;
     using System.ComponentModel;
     using Microsoft.TeamFoundation.Build.Client;
-    using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.Build.Workflow.Activities;
 
     [BuildActivity(HostEnvironmentOption.All)]
@@ -13,7 +15,11 @@
         private TagAction action = TagAction.Add;
 
         [RequiredArgument]
-        public TagAction Action { get { return this.action; } set { this.action = value; } }
+        public TagAction Action
+        {
+            get { return this.action; } 
+            set { this.action = value; }
+        }
 
         [RequiredArgument]
         [Browsable(true)]
@@ -21,7 +27,7 @@
 
         [RequiredArgument]
         [Browsable(true)]
-        public InArgument<String> Tag { get; set; }
+        public InArgument<string> Tag { get; set; }
 
         protected override void Execute(CodeActivityContext context)
         {
@@ -29,17 +35,16 @@
             {
                 throw new ArgumentNullException("context");
             }
+
             AgentSettings agentSettings = context.GetValue(this.AgentSettings);
-            String tag = context.GetValue(this.Tag);
-            switch (action)
+            string tag = context.GetValue(this.Tag);
+            switch (this.action)
             {
                 case TagAction.Add:
                     agentSettings.Tags.Add(tag);
                     break;
                 case TagAction.Remove:
                     agentSettings.Tags.Remove(tag);
-                    break;
-                default:
                     break;
             }
         }

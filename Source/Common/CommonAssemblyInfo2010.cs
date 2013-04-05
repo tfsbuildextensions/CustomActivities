@@ -6,8 +6,8 @@ using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("1.10.0.0")]
-[assembly: AssemblyFileVersion("1.10.6.0")]
-[assembly: AssemblyInformationalVersion("1.10.6.0")]
+[assembly: AssemblyFileVersion("1.10.7.0")]
+[assembly: AssemblyInformationalVersion("1.10.7.0")]
 [assembly: AssemblyCompany("Community TFS Build Extensions http://TfsBuildExtensions.codeplex.com/")]
 [assembly: AssemblyCopyright("Copyright ©s Community TFS Build Extensions http://TfsBuildExtensions.codeplex.com/")]
 [assembly: AssemblyTrademark("Community TFS Build Extensions http://TfsBuildExtensions.codeplex.com/")]
