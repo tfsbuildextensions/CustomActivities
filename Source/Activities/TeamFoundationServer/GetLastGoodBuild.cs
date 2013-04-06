@@ -21,6 +21,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         private string buildDefinition;
         private string teamProject;
         private string teamFoundationServer;
+        private string buildQuality;
 
         /// <summary>
         /// The BuildDefinition to check
@@ -33,7 +34,8 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         public InArgument<string> TeamProject { get; set; }
 
         /// <summary>
-        /// The TeamFoundationServer to connect to
+        /// The TeamFoundationServer to connect to.
+        /// If parameter is empty then the server to which the build server is connected is used
         /// </summary>
         public InArgument<string> TeamFoundationServer { get; set; }
 
@@ -43,16 +45,28 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         public InArgument<IBuildDetail> ParentBuild { get; set; }
 
         /// <summary>
+        /// The build quality. If set only the last build with this
+        /// build quality value will be returned (the comparison
+        /// is case insensitive)
+        /// </summary>
+        public InArgument<string> BuildQuality { get; set; }
+
+        private CodeActivityContext ActivityContext { get; set; }
+
+        /// <summary>
         /// Executes the workflow
         /// </summary>
         /// <param name="context">The CodeActivityContext</param>
         /// <returns>IBuildDetail</returns>
         protected override IBuildDetail Execute(CodeActivityContext context)
         {
+            this.ActivityContext = context;
+
             this.buildDefinition = context.GetValue(this.BuildDefinition);
             this.teamProject = context.GetValue(this.TeamProject);
             this.teamFoundationServer = context.GetValue(this.TeamFoundationServer);
             this.build = context.GetValue(this.ParentBuild);
+            this.buildQuality = context.GetValue(this.BuildQuality);
 
             this.ConnectToTFS();
             this.build = this.GetGoodBuild() ?? this.build;
@@ -62,7 +76,13 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
         private void ConnectToTFS()
         {
-            this.mtfs = new TfsTeamProjectCollection(new Uri(this.teamFoundationServer));
+            if(String.IsNullOrEmpty(this.teamFoundationServer))
+            {
+                this.mtfs = this.ActivityContext.GetExtension<TfsTeamProjectCollection>();
+            } else 
+            {
+                this.mtfs = new TfsTeamProjectCollection(new Uri(this.teamFoundationServer));
+            }
             this.bs = (IBuildServer)this.mtfs.GetService(typeof(IBuildServer));
         }
 
@@ -78,7 +98,10 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 {
                     if (latestBuild == null || b.StartTime > latestBuild.StartTime)
                     {
-                        latestBuild = b;
+                        if(String.IsNullOrEmpty(buildQuality) || String.Compare(b.Quality, buildQuality, StringComparison.OrdinalIgnoreCase) == 0) 
+                        {
+                            latestBuild = b;
+                        }
                     }
                 }
             }
