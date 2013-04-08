@@ -76,13 +76,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
         private void ConnectToTFS()
         {
-            if(String.IsNullOrEmpty(this.teamFoundationServer))
-            {
-                this.mtfs = this.ActivityContext.GetExtension<TfsTeamProjectCollection>();
-            } else 
-            {
-                this.mtfs = new TfsTeamProjectCollection(new Uri(this.teamFoundationServer));
-            }
+            this.mtfs = string.IsNullOrEmpty(this.teamFoundationServer) ? this.ActivityContext.GetExtension<TfsTeamProjectCollection>() : new TfsTeamProjectCollection(new Uri(this.teamFoundationServer));
             this.bs = (IBuildServer)this.mtfs.GetService(typeof(IBuildServer));
         }
 
@@ -98,7 +92,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 {
                     if (latestBuild == null || b.StartTime > latestBuild.StartTime)
                     {
-                        if(String.IsNullOrEmpty(buildQuality) || String.Compare(b.Quality, buildQuality, StringComparison.OrdinalIgnoreCase) == 0) 
+                        if (string.IsNullOrEmpty(this.buildQuality) || string.Compare(b.Quality, this.buildQuality, StringComparison.OrdinalIgnoreCase) == 0) 
                         {
                             latestBuild = b;
                         }
