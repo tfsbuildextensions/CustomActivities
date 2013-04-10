@@ -92,7 +92,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 {
                     if (latestBuild == null || b.StartTime > latestBuild.StartTime)
                     {
-                        if (string.IsNullOrEmpty(this.buildQuality) || string.Compare(b.Quality, this.buildQuality, StringComparison.Ordinal) == 0) 
+                        if (string.IsNullOrEmpty(this.buildQuality) || string.Compare(b.Quality, this.buildQuality, StringComparison.OrdinalIgnoreCase) == 0) 
                         {
                             latestBuild = b;
                         }
