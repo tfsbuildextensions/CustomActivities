@@ -70,9 +70,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         private const string VBAppendAssemblyDescriptionFormat = "\n<assembly: System.Reflection.AssemblyDescription(\"{0}\")>";
         private Regex regexExpression;
         private Regex regexAssemblyVersion;
+        private Regex regexNugetVersion;
         private Regex regexAssemblyDescription;
         private Encoding fileEncoding = Encoding.UTF8;
         private bool setAssemblyFileVersion = true;
+        private bool setNuSpecVersion = true;
         private TfsVersionAction action = TfsVersionAction.GetAndSetVersion;
         private InArgument<string> delimiter = ".";
         private TfsVersionVersionFormat versionFormat = TfsVersionVersionFormat.Synced;
@@ -109,6 +111,15 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         {
             get { return this.setAssemblyFileVersion; }
             set { this.setAssemblyFileVersion = value; }
+        }
+
+        /// <summary>
+        /// Set to True to set the SetNuSpecVersion when calling SetVersion. Default is true.
+        /// </summary>
+        public bool SetNuSpecVersion
+        {
+            get { return this.setNuSpecVersion; }
+            set { this.setNuSpecVersion = value; }
         }
 
         /// <summary>
@@ -394,6 +405,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
             {
                 this.regexAssemblyDescription = new Regex(@"AssemblyDescription.*\(.*\)", RegexOptions.Compiled);
             }
+
+            if (this.SetNuSpecVersion)
+            {
+                this.regexNugetVersion = new Regex(@"<version>.*</version>", RegexOptions.Compiled);
+            }
             
             foreach (string fullfilename in this.ActivityContext.GetValue(this.Files))
             {
@@ -435,6 +451,17 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                                 newFile = newFile.AppendFormat(VBAppendAssemblyFileVersionFormat, this.ActivityContext.GetValue(this.Version));
                                 break;
                         }
+                    }
+                }
+
+                // Replace the version number in the NuSpec File
+                if (this.SetNuSpecVersion)
+                {
+                    switch (file.Extension)
+                    {
+                        case ".nuspec":
+                            newFile = this.regexNugetVersion.Replace(entireFile, string.Format(@"<version>{0}</version>", this.ActivityContext.GetValue(this.Version)));
+                            break;
                     }
                 }
 
