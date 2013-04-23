@@ -3,7 +3,7 @@
     <PropertyGroup>
         <ReleaseVersion>TfsBuildExtensions January 2013</ReleaseVersion>
         <PackageDrive>D:</PackageDrive>
-        <PackageRoot>$(PackageDrive)\Releases\TFSBE\$(ReleaseVersion)</PackageRoot>
+        <PackageRoot Condition="$(PackageRoot) == ''">$(PackageDrive)\Releases\TFSBE\$(ReleaseVersion)</PackageRoot>
         <Configuration>Release|Any CPU</Configuration>
         <VisualStudioVersion>11.0</VisualStudioVersion>
     </PropertyGroup>
@@ -70,11 +70,12 @@
 
     <Target Name="PackageCodePlex">
         <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="$(PackageRoot)" Condition="Exists('$(PackageRoot)')"/>
+		<Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\Code Activities"/>
         <Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\Code Activities\VS2012"/>
         <Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\Code Activities\VS2010"/>
         <Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\TFS Build Manager\VS2012"/>
         <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Common\License.rtf" DestinationFiles="$(PackageRoot)\License.rtf"/>
-        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Build\Documentation\Help\TFS Build Extensions Help.chm" DestinationFiles="$(PackageRoot)\TFS Build Extensions Help.chm"/>
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Build\Documentation\Help\TFS Build Extensions Help.chm" DestinationFiles="$(PackageRoot)\TFS Build Extensions Help.chm" Condition="$(BuildChm) != 'false'"/>
         <ItemGroup>
             <FilestoCopy2012 Include="$(MSBuildProjectDirectory)\..\Buildbinaries\TfsBuildExtensions.*;
                                       $(MSBuildProjectDirectory)\..\Buildbinaries\Ionic.Zip.dll"/>
