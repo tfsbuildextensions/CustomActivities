@@ -101,7 +101,7 @@ namespace TfsBuildExtensions.Activities.Scripting
 
         public override void WriteWarningLine(string message)
         {
-            this.activityContext.TrackBuildMessage(message, BuildMessageImportance.Normal);
+            this.activityContext.TrackBuildWarning(message);
         }
     }
 }
