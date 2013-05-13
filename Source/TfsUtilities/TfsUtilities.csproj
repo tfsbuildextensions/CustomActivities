@@ -77,6 +77,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -91,7 +92,10 @@
     <Compile Include="Build.cs" />
     <Compile Include="AutoFileTrackerFromSourceControl.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="HttpClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TfsHttpMessageHandler.cs" />
+    <Compile Include="TfsHttpRequestSettings.cs" />
     <Compile Include="WebAccess.cs" />
     <Compile Include="WorkItems.cs" />
   </ItemGroup>
