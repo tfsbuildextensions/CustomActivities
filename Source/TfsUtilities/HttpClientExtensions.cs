@@ -1,4 +1,5 @@
-﻿// -----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
+// <copyright file="HttpClientExtensions.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //
 // Licensed under the Microsoft Limited Public License (the "License");
@@ -12,24 +13,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // -----------------------------------------------------------------------
-
-using System;
-using System.IO;
-using System.IO.Compression;
-using System.Net;
-using System.Net.Http;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.TeamFoundation.Common;
-using Microsoft.TeamFoundation.Common.Internal;
-
 namespace TfsBuildExtensions.TfsUtilities
 {
+    using System;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Net;
+    using System.Net.Http;
+    using System.Security.Cryptography;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.TeamFoundation.Common;
+    using Microsoft.TeamFoundation.Common.Internal;
+
+    /// <summary>
+    /// HttpClientExtensions
+    /// </summary>
     public static class HttpClientExtensions
     {
-        private const int DefaultChunkSize = 16 * 1024 * 1024;
-       
         /// <summary>
         /// Downloads the content of a file and copies it to the specified stream if the request succeeds. 
         /// </summary>
@@ -47,7 +48,7 @@ namespace TfsBuildExtensions.TfsUtilities
 
             if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent)
             {
-                Boolean decompress;
+                bool decompress;
                 if (StringComparer.OrdinalIgnoreCase.Equals(response.Content.Headers.ContentType.MediaType, "application/octet-stream"))
                 {
                     decompress = false;
@@ -58,7 +59,7 @@ namespace TfsBuildExtensions.TfsUtilities
                 }
                 else
                 {
-                    throw new Exception(String.Format("Unsupported Content Type {0}", response.Content.Headers.ContentType.MediaType));
+                    throw new Exception(string.Format("Unsupported Content Type {0}", response.Content.Headers.ContentType.MediaType));
                 }
 
                 using (DownloadStream downloadStream = new DownloadStream(stream, decompress, response.Content.Headers.ContentMD5))
@@ -76,174 +77,168 @@ namespace TfsBuildExtensions.TfsUtilities
         /// </summary>
         private class DownloadStream : Stream
         {
-            private Stream _stream;
-            private Boolean _decompress;
-            private MD5 _hashProvider;
-            private Byte[] _expectedHashValue;
+            private readonly Stream stream;
+            private readonly bool decompress;
+            private readonly byte[] expectedHashValue;
+            private MD5 hashProvider;
 
-            public DownloadStream(Stream stream, Boolean decompress, Byte[] hashValue)
+            public DownloadStream(Stream streamVal, bool decompressVal, byte[] hashValue)
             {
-                _stream = stream;
-                _decompress = decompress;
-                _expectedHashValue = hashValue;
+                this.stream = streamVal;
+                this.decompress = decompressVal;
+                this.expectedHashValue = hashValue;
 
                 if (hashValue != null && hashValue.Length == 16)
                 {
-                    _expectedHashValue = hashValue;
-                    _hashProvider = MD5Util.TryCreateMD5Provider();
+                    this.expectedHashValue = hashValue;
+                    this.hashProvider = MD5Util.TryCreateMD5Provider();
                 }
             }
 
-            public override Boolean CanRead
+            public override bool CanRead
             {
                 get
                 {
-                    return _stream.CanRead;
+                    return this.stream.CanRead;
                 }
             }
 
-            public override Boolean CanSeek
+            public override bool CanSeek
             {
                 get
                 {
-                    return _stream.CanSeek;
+                    return this.stream.CanSeek;
                 }
             }
 
-            public override Boolean CanWrite
+            public override bool CanWrite
             {
                 get
                 {
-                    return _stream.CanWrite;
+                    return this.stream.CanWrite;
                 }
             }
 
-            public override Int64 Length
+            public override long Length
             {
                 get
                 {
-                    return _stream.Length;
+                    return this.stream.Length;
                 }
             }
 
-            public override Int64 Position
+            public override long Position
             {
                 get
                 {
-                    return _stream.Position;
+                    return this.stream.Position;
                 }
+
                 set
                 {
-                    _stream.Position = value;
+                    this.stream.Position = value;
                 }
             }
 
             public override void Flush()
             {
-                _stream.Flush();
+                this.stream.Flush();
             }
 
-            public override Int32 Read(Byte[] buffer, Int32 offset, Int32 count)
+            public override int Read(byte[] buffer, int offset, int count)
             {
-                return _stream.Read(buffer, offset, count);
+                return this.stream.Read(buffer, offset, count);
             }
 
-            public override Int64 Seek(Int64 offset, SeekOrigin origin)
+            public override long Seek(long offset, SeekOrigin origin)
             {
-                return _stream.Seek(offset, origin);
+                return this.stream.Seek(offset, origin);
             }
 
-            public override void SetLength(Int64 value)
+            public override void SetLength(long value)
             {
-                _stream.SetLength(value);
+                this.stream.SetLength(value);
             }
 
-            public override void Write(Byte[] buffer, Int32 offset, Int32 count)
+            public override void Write(byte[] buffer, int offset, int count)
             {
-                Byte[] outputBuffer;
-                Int32 outputOffset;
-                Int32 outputCount;
+                byte[] outputBuffer;
+                int outputOffset;
+                int outputCount;
 
-                Transform(buffer, offset, count, out outputBuffer, out outputOffset, out outputCount);
-                _stream.Write(outputBuffer, outputOffset, outputCount);
+                this.Transform(buffer, offset, count, out outputBuffer, out outputOffset, out outputCount);
+                this.stream.Write(outputBuffer, outputOffset, outputCount);
             }
 
-            public override IAsyncResult BeginWrite(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
+            public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
             {
-                Byte[] outputBuffer;
-                Int32 outputOffset;
-                Int32 outputCount;
+                byte[] outputBuffer;
+                int outputOffset;
+                int outputCount;
 
-                Transform(buffer, offset, count, out outputBuffer, out outputOffset, out outputCount);
-                return _stream.BeginWrite(outputBuffer, outputOffset, outputCount, callback, state);
+                this.Transform(buffer, offset, count, out outputBuffer, out outputOffset, out outputCount);
+                return this.stream.BeginWrite(outputBuffer, outputOffset, outputCount, callback, state);
             }
 
             public override void EndWrite(IAsyncResult asyncResult)
             {
-                _stream.EndWrite(asyncResult);
+                this.stream.EndWrite(asyncResult);
             }
 
-            public override Task WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+            public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
             {
-                Byte[] outputBuffer;
-                Int32 outputOffset;
-                Int32 outputCount;
+                byte[] outputBuffer;
+                int outputOffset;
+                int outputCount;
 
-                Transform(buffer, offset, count, out outputBuffer, out outputOffset, out outputCount);
-                return _stream.WriteAsync(outputBuffer, outputOffset, outputCount, cancellationToken);
+                this.Transform(buffer, offset, count, out outputBuffer, out outputOffset, out outputCount);
+                return this.stream.WriteAsync(outputBuffer, outputOffset, outputCount, cancellationToken);
             }
 
-            public override void WriteByte(Byte value)
+            public override void WriteByte(byte value)
             {
-                Write(new Byte[] { value }, 0, 1);
+                this.Write(new[] { value }, 0, 1);
             }
 
             public void ValidateHash()
             {
-                if (_hashProvider != null)
+                if (this.hashProvider != null)
                 {
-                    _hashProvider.TransformFinalBlock(new Byte[0], 0, 0);
+                    this.hashProvider.TransformFinalBlock(new byte[0], 0, 0);
 
-                    if (!ArrayUtil.Equals(_hashProvider.Hash, _expectedHashValue))
+                    if (!ArrayUtil.Equals(this.hashProvider.Hash, this.expectedHashValue))
                     {
                         throw new Exception("Download Corrupted");
                     }
                 }
             }
 
-            protected override void Dispose(Boolean disposing)
+            protected override void Dispose(bool disposing)
             {
-                if (_hashProvider != null)
+                if (this.hashProvider != null)
                 {
-                    _hashProvider.Dispose();
-                    _hashProvider = null;
+                    this.hashProvider.Dispose();
+                    this.hashProvider = null;
                 }
 
                 base.Dispose(disposing);
             }
 
-            private void Transform(
-                Byte[] buffer,
-                Int32 offset,
-                Int32 count,
-                out Byte[] outputBuffer,
-                out Int32 outputOffset,
-                out Int32 outputCount)
+            private void Transform(byte[] buffer, int offset, int count, out byte[] outputBuffer, out int outputOffset, out int outputCount)
             {
-                if (_decompress)
+                if (this.decompress)
                 {
                     using (GZipStream gs = new GZipStream(new MemoryStream(buffer, offset, count), CompressionMode.Decompress))
                     {
-                        int decompressedBufferSize = 4096;
-                        Byte[] decompressedBuffer = new Byte[decompressedBufferSize];
-
-                        Int32 bytesRead = 0;
+                        const int DecompressedBufferSize = 4096;
+                        byte[] decompressedBuffer = new byte[DecompressedBufferSize];
 
                         using (MemoryStream decompressedOutput = new MemoryStream())
                         {
+                            int bytesRead;
                             do
                             {
-                                bytesRead = gs.Read(decompressedBuffer, 0, decompressedBufferSize);
+                                bytesRead = gs.Read(decompressedBuffer, 0, DecompressedBufferSize);
                                 if (bytesRead > 0)
                                 {
                                     decompressedOutput.Write(decompressedBuffer, 0, bytesRead);
@@ -264,9 +259,9 @@ namespace TfsBuildExtensions.TfsUtilities
                     outputCount = count;
                 }
 
-                if (_hashProvider != null && outputCount > 0)
+                if (this.hashProvider != null && outputCount > 0)
                 {
-                    _hashProvider.TransformBlock(outputBuffer, outputOffset, outputCount, null, 0);
+                    this.hashProvider.TransformBlock(outputBuffer, outputOffset, outputCount, null, 0);
                 }
             }
         }

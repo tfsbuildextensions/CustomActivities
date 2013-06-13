@@ -14,32 +14,57 @@ namespace TfsBuildExtensions.Activities.NAnt
     using Microsoft.TeamFoundation.Build.Workflow.Tracking;
     using TfsBuildExtensions.Activities;
 
+    /// <summary>
+    /// InvokeNAnt
+    /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
     [ActivityTracking(ActivityTrackingOption.ActivityOnly)]
     public class InvokeNAnt : BaseActivity
     {
+        /// <summary>
+        /// Parameters
+        /// </summary>
         [Category("Parameters")]
         [RequiredArgument]
         public InArgument<ExecutionParameters> Parameters { get; set; }
 
+        /// <summary>
+        /// Verbose
+        /// </summary>
         [Category("Configuration")]
         [DefaultValue(false)]
         public InArgument<bool> Verbose { get; set; }
 
+        /// <summary>
+        /// IgnoreExitCode
+        /// </summary>
         [Category("Configuration")]
         [DefaultValue(false)]
         public InArgument<bool> IgnoreExitCode { get; set; }
 
+        /// <summary>
+        /// NAntDirectory
+        /// </summary>
         [Category("Configuration")]
         [RequiredArgument]
         public InArgument<string> NAntDirectory { get; set; }
 
+        /// <summary>
+        /// WorkingDirectory
+        /// </summary>
         [Category("Configuration")]
         public InArgument<string> WorkingDirectory { get; set; }
 
+        /// <summary>
+        /// LogFilePath
+        /// </summary>
         [Category("Result")]
         public InArgument<string> LogFilePath { get; set; }
-      
+
+        /// <summary>
+        /// Returns the implementation for the derived activity
+        /// </summary>
+        /// <returns>the code to execute the activity</returns>
         protected override System.Activities.Activity CreateInternalBody()
         {
             var commandLine = new Variable<string>();

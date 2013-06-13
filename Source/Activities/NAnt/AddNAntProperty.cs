@@ -16,18 +16,30 @@ namespace TfsBuildExtensions.Activities.NAnt
     [ActivityTracking(ActivityTrackingOption.ActivityOnly)]
     public class AddNAntProperty : BaseCodeActivity
     {
+        /// <summary>
+        /// Parameters
+        /// </summary>
         [Category("Parameters")]
         [RequiredArgument]
         public InArgument<ExecutionParameters> Parameters { get; set; }
 
+        /// <summary>
+        /// PropertyName
+        /// </summary>
         [Category("Parameters")]
         [RequiredArgument]
         public InArgument<string> PropertyName { get; set; }
 
+        /// <summary>
+        /// PropertyValue
+        /// </summary>
         [Category("Parameters")]
         [RequiredArgument]
         public InArgument<string> PropertyValue { get; set; }
 
+        /// <summary>
+        /// InternalExecute method which activities should implement
+        /// </summary>
         protected override void InternalExecute()
         {
             var parameters = this.Parameters.Get(this.ActivityContext);

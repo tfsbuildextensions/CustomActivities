@@ -1,19 +1,16 @@
-﻿namespace TfsBuildExtensions.Activities.TeamFoundationServer
+﻿//-----------------------------------------------------------------------
+// <copyright file="GetDropDownloadLocation.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+//-----------------------------------------------------------------------
+namespace TfsBuildExtensions.Activities.TeamFoundationServer
 {
     using System.Activities;
+    using System.Globalization;
+    using Microsoft.TeamFoundation;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Build.Common;
     using Microsoft.TeamFoundation.Client;
-    using System.Globalization;
     using Microsoft.TeamFoundation.Framework.Client;
-    using Microsoft.TeamFoundation;
-    using System.Net;
-    using TfsBuildExtensions.TfsUtilities;
-    using System.Net.Http;
-    using System.IO;
-    using System;
-    using System.Threading.Tasks;
-
+    
     /// <summary>
     /// Get the most recent build for a build definition.
     /// </summary>
@@ -37,13 +34,13 @@
         protected override void InternalExecute()
         {
             var buildDetail = this.BuildDetail.Get(this.ActivityContext);
+
             // Calculate the full path to the Drop file.
             var dropDownloadPath = GetDropDownloadPath(buildDetail.BuildServer.TeamProjectCollection, buildDetail);
             this.DropDownloadPath.Set(this.ActivityContext, dropDownloadPath);
-
         }
 
-        private string GetDropDownloadPath(TfsTeamProjectCollection collection, IBuildDetail buildDetail)
+        private static string GetDropDownloadPath(TfsTeamProjectCollection collection, IBuildDetail buildDetail)
         {
             string droplocation = buildDetail.DropLocation;
             if (string.IsNullOrEmpty(droplocation))
@@ -52,8 +49,7 @@
             }
 
             ILocationService locationService = collection.GetService<ILocationService>();
-            string containersBaseAddress = locationService.LocationForAccessMapping( ServiceInterfaces.FileContainersResource,
-                FrameworkServiceIdentifiers.FileContainers, locationService.DefaultAccessMapping);
+            string containersBaseAddress = locationService.LocationForAccessMapping(ServiceInterfaces.FileContainersResource, FrameworkServiceIdentifiers.FileContainers, locationService.DefaultAccessMapping);
             droplocation = BuildContainerPath.Combine(droplocation, string.Format(CultureInfo.InvariantCulture, "{0}.zip", buildDetail.BuildNumber));
 
             try
@@ -70,6 +66,5 @@
                 throw new FailingBuildException(string.Format(CultureInfo.CurrentCulture, "No drop is available for {0}.", buildDetail.BuildNumber));
             }
         }
-
     }
 }

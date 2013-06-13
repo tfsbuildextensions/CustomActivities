@@ -5,7 +5,11 @@ namespace TfsBuildExtensions.Activities.NAnt
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
+    /// <summary>
+    /// ExecutionParameters
+    /// </summary>
     public sealed class ExecutionParameters
     {
         /// <summary>
@@ -16,16 +20,34 @@ namespace TfsBuildExtensions.Activities.NAnt
             this.Properties = new Dictionary<string, string>();
         }
 
+        /// <summary>
+        /// Properties
+        /// </summary>
         public Dictionary<string, string> Properties { get; private set; }
 
+        /// <summary>
+        /// TargetFramework
+        /// </summary>
         public string TargetFramework { get; set; }
 
+        /// <summary>
+        /// BuildFilePath
+        /// </summary>
         public string BuildFilePath { get; set; }
 
+        /// <summary>
+        /// Verbose
+        /// </summary>
         public bool Verbose { get; set; }
 
+        /// <summary>
+        /// Debug
+        /// </summary>
         public bool Debug { get; set; }
 
+        /// <summary>
+        /// BuildFilePathExists
+        /// </summary>
         public bool BuildFilePathExists
         {
             get
@@ -43,10 +65,7 @@ namespace TfsBuildExtensions.Activities.NAnt
                 paramList.Add(string.Format("-t:{0}", this.TargetFramework.Trim()));
             }
 
-            foreach (var kv in this.Properties)
-            {
-                paramList.Add(string.Format("-D:{0}=\"{1}\"", kv.Key, kv.Value));
-            }
+            paramList.AddRange(this.Properties.Select(kv => string.Format("-D:{0}=\"{1}\"", kv.Key, kv.Value)));
 
             paramList.Add(string.Format("-verbose{0}", this.Verbose ? "+" : "-"));
             paramList.Add(string.Format("-debug{0}", this.Debug ? "+" : "-"));

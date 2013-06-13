@@ -280,3 +280,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Scope = "member", Target = "TfsBuildExtensions.Activities.Xml.Xml.#SchemaFiles")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Scope = "type", Target = "TfsBuildExtensions.Activities.Xml.Xml")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Itemspec", Scope = "member", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.TfsSource.#ItemspecList")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Nu", Scope = "member", Target = "TfsBuildExtensions.Activities.TeamFoundationServer.TfsVersion.#SetNuSpecVersion")]

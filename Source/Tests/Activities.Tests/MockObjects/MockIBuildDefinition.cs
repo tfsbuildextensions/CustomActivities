@@ -8,7 +8,6 @@ namespace TfsBuildExtensions.Activities.Tests
     using System.Collections.Generic;
     using Microsoft.TeamFoundation.Build.Client;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
 
     class MockIBuildDefinition : IBuildDefinition
     {
@@ -233,6 +232,8 @@ namespace TfsBuildExtensions.Activities.Tests
         {
             get { throw new NotImplementedException(); }
         }
+
+        public List<IBuildDefinitionSourceProvider> SourceProviders { get; private set; }
 
         public IWorkspaceTemplate Workspace
         {

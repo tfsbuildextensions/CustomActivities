@@ -9,11 +9,17 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Build.Workflow.Activities;
 
+    /// <summary>
+    /// AgentSettingsTags
+    /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
     public sealed class AgentSettingsTags : CodeActivity
     {
         private TagAction action = TagAction.Add;
 
+        /// <summary>
+        /// Action
+        /// </summary>
         [RequiredArgument]
         public TagAction Action
         {
@@ -21,14 +27,24 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
             set { this.action = value; }
         }
 
+        /// <summary>
+        /// AgentSettings
+        /// </summary>
         [RequiredArgument]
         [Browsable(true)]
         public InArgument<AgentSettings> AgentSettings { get; set; }
 
+        /// <summary>
+        /// Tag
+        /// </summary>
         [RequiredArgument]
         [Browsable(true)]
         public InArgument<string> Tag { get; set; }
 
+        /// <summary>
+        /// When implemented in a derived class, performs the execution of the activity.
+        /// </summary>
+        /// <param name="context">The execution context under which the activity executes.</param>
         protected override void Execute(CodeActivityContext context)
         {
             if (context == null)

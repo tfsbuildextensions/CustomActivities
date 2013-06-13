@@ -19,6 +19,9 @@ namespace TfsBuildExtensions.Activities.Framework
         [RequiredArgument]
         public InArgument<int> NumberOfMilliseconds { get; set; }
 
+        /// <summary>
+        /// InternalExecute method which activities should implement
+        /// </summary>
         protected override void InternalExecute()
         {
             int numberOfMillisecs = this.NumberOfMilliseconds.Get(this.ActivityContext);

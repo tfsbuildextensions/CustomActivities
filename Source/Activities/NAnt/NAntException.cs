@@ -6,6 +6,9 @@ namespace TfsBuildExtensions.Activities.NAnt
     using System;
     using TfsBuildExtensions.Activities;
 
+    /// <summary>
+    /// NAntException
+    /// </summary>
     [Serializable]
     public sealed class NAntException : FailingBuildException
     {
@@ -16,11 +19,20 @@ namespace TfsBuildExtensions.Activities.NAnt
         {
         }
 
+        /// <summary>
+        /// NAntException
+        /// </summary>
+        /// <param name="message">message</param>
         public NAntException(string message)
             : base(message)
         {
         }
 
+        /// <summary>
+        /// NAntException
+        /// </summary>
+        /// <param name="message">message</param>
+        /// <param name="innerException">innerException</param>
         public NAntException(string message, Exception innerException)
             : base(message, innerException)
         {
