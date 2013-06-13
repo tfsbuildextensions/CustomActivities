@@ -71,18 +71,6 @@ namespace TfsBuildExtensions.Activities.ClickOnce
         public InArgument<string> InstallLocation { get; set; }
 
         /// <summary>
-        /// Publisher
-        /// </summary>
-        [RequiredArgument]
-        public InArgument<string> Publisher { get; set; }
-
-        /// <summary>
-        /// Online Only
-        /// </summary>
-        [RequiredArgument]
-        public InArgument<bool> OnlineOnly { get; set; }
-
-        /// <summary>
         /// TargetFrameworkVersion
         /// </summary>
         [RequiredArgument]
@@ -91,13 +79,9 @@ namespace TfsBuildExtensions.Activities.ClickOnce
         /// <summary>
         /// Internal Execute method to excute the process within the Activity
         /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
         protected override void InternalExecute()
         {
-            if (this.ActivityContext == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-
             string mageFilePath = this.MageFilePath.Get(this.ActivityContext);
             string version = this.Version.Get(this.ActivityContext);
             string binLocation = this.BinLocation.Get(this.ActivityContext);
@@ -106,8 +90,6 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             string certPassword = this.CertPassword.Get(this.ActivityContext);
             string publishLocation = this.PublishLocation.Get(this.ActivityContext);
             string installLocation = this.InstallLocation.Get(this.ActivityContext);
-            string publisher = this.Publisher.Get(this.ActivityContext);
-            bool onlineOnly = this.OnlineOnly.Get(this.ActivityContext);
             string targetFrameworkVersion = this.TargetFrameworkVersion.Get(this.ActivityContext);
             string manifestCertificateThumbprint = this.ManifestCertificateThumbprint.Get(this.ActivityContext);
 
@@ -199,8 +181,6 @@ namespace TfsBuildExtensions.Activities.ClickOnce
         {
             using (Process process = new Process())
             {
-                string output;
-
                 process.StartInfo.FileName = mageFilePath;
 
                 // process.StartInfo.WorkingDirectory = SearchPathRoot.Get(context);                    
@@ -212,7 +192,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 process.StartInfo.Arguments = args;
 
                 process.Start();
-                output = process.StandardOutput.ReadToEnd();
+                string output = process.StandardOutput.ReadToEnd();
                 process.WaitForExit();
 
                 if (process.ExitCode != 0)
@@ -227,7 +207,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             Dictionary<string, string> metadata = new Dictionary<string, string>();
             metadata.Add("TargetPath", "Application Files\\" + applicationName + "_" + version + "\\" + applicationName + ".exe.manifest");
 
-            GenerateDeploymentManifest generateDeploymentManifest = new GenerateDeploymentManifest()
+            GenerateDeploymentManifest generateDeploymentManifest = new GenerateDeploymentManifest
             {
                 AssemblyName = applicationName + ".application",
                 AssemblyVersion = version,
@@ -263,7 +243,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
 
         private static void RenameFiles(string sourcePath)
         {
-            foreach (string file in Directory.GetFiles(sourcePath))
+            foreach (string file in Directory.EnumerateFiles(sourcePath, "*.*", SearchOption.AllDirectories))
             {
                 if (file.EndsWith(".manifest", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".application", StringComparison.OrdinalIgnoreCase))
                 {
