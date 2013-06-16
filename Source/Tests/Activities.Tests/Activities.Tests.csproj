@@ -123,6 +123,7 @@
     <None Include="Framework\TestFiles\EmptyAssemblyInfo.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Include="Framework\ReadAssemblyInfoTests.cs" />
     <Compile Include="SharePoint\GenerateSharePointAppPowerShellScriptsTests.cs" />
     <Compile Include="TeamFoundationServer\ConvertToPropertiesTests.cs" />
     <Compile Include="TeamFoundationServer\ConvertFromPropertiesTests.cs" />

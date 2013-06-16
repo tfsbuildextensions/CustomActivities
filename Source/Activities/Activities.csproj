@@ -173,6 +173,7 @@
     <Compile Include="FileSystem\File.cs" />
     <Compile Include="FileSystem\RoboCopy.cs" />
     <Compile Include="Framework\AssemblyInfo\AssemblyInfo.cs" />
+    <Compile Include="Framework\AssemblyInfo\ReadAssemblyInfo.cs" />
     <Compile Include="Framework\AssemblyInfo\AssemblyInfoFile.cs" />
     <Compile Include="Framework\DateAndTime.cs" />
     <Compile Include="Framework\ExpandVariables.cs" />
