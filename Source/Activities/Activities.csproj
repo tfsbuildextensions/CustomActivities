@@ -166,6 +166,13 @@
     <Compile Include="CodeQuality\VSTest\IProcess.cs" />
     <Compile Include="CodeQuality\VSTest\WindowsProcess.cs" />
     <Compile Include="Communication\Email.cs" />
+    <Compile Include="Communication\Ftp.cs" />
+    <Compile Include="Communication\FTP\Extensions.cs" />
+    <Compile Include="Communication\FTP\FtpConnection.cs" />
+    <Compile Include="Communication\FTP\FtpDirectoryInfo.cs" />
+    <Compile Include="Communication\FTP\FtpException.cs" />
+    <Compile Include="Communication\FTP\FtpFileInfo.cs" />
+    <Compile Include="Communication\FTP\NativeMethods.cs" />
     <Compile Include="Communication\Sms.cs" />
     <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Compression\Zip.cs" />
