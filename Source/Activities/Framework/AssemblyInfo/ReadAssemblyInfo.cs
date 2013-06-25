@@ -3,37 +3,20 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.Framework
 {
+    using Microsoft.TeamFoundation.Build.Client;
     using System;
     using System.Activities;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using Microsoft.TeamFoundation.Build.Client;
 
+    /// <summary>
+    /// Activity to read Assembly information
+    /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
     public sealed class ReadAssemblyInfo : BaseCodeActivity
     {
-        #region Fields
-
         // AssemblyInfo file access helper.
         private AssemblyInfoFile file;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AssemblyInfo"/> class.
-        /// </summary>
-        public ReadAssemblyInfo()
-        {
-        }
-
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// Sets the AssemblyInfo file to read.
@@ -147,10 +130,6 @@ namespace TfsBuildExtensions.Activities.Framework
         [Description("Gets whether the assembly is COM visible.")]
         public OutArgument<bool?> ComVisible { get; set; }
 
-        #endregion
-
-        #region Methods
-
         /// <summary>
         /// Executes the logic for this workflow activity.
         /// </summary>
@@ -192,10 +171,6 @@ namespace TfsBuildExtensions.Activities.Framework
             this.ReadStringAttribute("AssemblyFileVersion", this.AssemblyFileVersion);
             this.ReadStringAttribute("AssemblyInformationalVersion", this.AssemblyInformationalVersion);
         }
-
-        #endregion
-
-        #region Private Helpers
 
         // Copies the specified attribute string value to the specified argument if present.
         private void ReadStringAttribute(string attributeName, OutArgument argument)
@@ -240,7 +215,5 @@ namespace TfsBuildExtensions.Activities.Framework
 
             argument.Set(this.ActivityContext, new System.Guid(value));
         }
-
-        #endregion
     }
 }

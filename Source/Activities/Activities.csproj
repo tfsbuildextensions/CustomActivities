@@ -107,9 +107,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TfsDropDownloader">
-      <HintPath>..\AssemblyReferences\TfsDropDownloader.exe</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>

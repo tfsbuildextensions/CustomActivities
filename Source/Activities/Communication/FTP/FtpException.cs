@@ -14,28 +14,53 @@ namespace TfsBuildExtensions.Activities.Communication
     {
         private readonly int ftpError;
 
+        /// <summary>
+        /// FtpException
+        /// </summary>
         public FtpException()
         {
             this.ftpError = 0;            
         }
 
+        /// <summary>
+        /// FtpException
+        /// </summary>
+        /// <param name="message">string</param>
         public FtpException(string message) : this(-1, message)
         {
         }
         
+        /// <summary>
+        /// FtpException
+        /// </summary>
+        /// <param name="error">int</param>
+        /// <param name="message">string</param>
         public FtpException(int error, string message) : base(message)
         {
             this.ftpError = error;
         }
 
+        /// <summary>
+        /// FtpException
+        /// </summary>
+        /// <param name="message">string</param>
+        /// <param name="innerException">Exception</param>
         public FtpException(string message, Exception innerException) : base(message, innerException)
         {         
         }
 
+        /// <summary>
+        /// FtpException
+        /// </summary>
+        /// <param name="info">SerializationInfo</param>
+        /// <param name="context">StreamingContext</param>
         protected FtpException(SerializationInfo info, StreamingContext context) : base(info, context)
         {         
         }
 
+        /// <summary>
+        /// ErrorCode
+        /// </summary>
         public int ErrorCode
         {
             get { return this.ftpError; }
