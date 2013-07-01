@@ -204,6 +204,7 @@
     <Compile Include="SharePoint\SharePointDeployment.cs" />
     <Compile Include="SharePoint\SharePointDeploymentStatus.cs" />
     <Compile Include="Signing\SignVSIX.cs" />
+    <Compile Include="SqlServer\DacVersion.cs" />
     <Compile Include="SqlServer\ExecuteEventArgs.cs" />
     <Compile Include="SqlServer\SqlScriptLoader.cs" />
     <Compile Include="SqlServer\SqlExecute.cs" />

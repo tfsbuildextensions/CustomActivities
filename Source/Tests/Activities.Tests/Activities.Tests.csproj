@@ -125,8 +125,10 @@
     </None>
     <Compile Include="Framework\ReadAssemblyInfoTests.cs" />
     <Compile Include="SharePoint\GenerateSharePointAppPowerShellScriptsTests.cs" />
+    <Compile Include="SqlServer\DacVersionTests.cs" />
     <Compile Include="TeamFoundationServer\ConvertToPropertiesTests.cs" />
     <Compile Include="TeamFoundationServer\ConvertFromPropertiesTests.cs" />
+    <Compile Include="TeamFoundationServer\TfsVersionTests.cs" />
     <Compile Include="VisualStudio\VSDevEnv.cs" />
     <Compile Include="Xml\XmlTests.cs" />
     <Compile Include="Xml\XmlFileTests.cs" />
@@ -153,7 +155,6 @@
     <Compile Include="Scripting\ResolvePowerShellScriptTests.cs" />
     <Compile Include="SharePoint\ProcessSharePointPowerShellScriptsOutputTests.cs" />
     <Compile Include="SqlServer\SqlExecuteTests.cs" />
-    <Compile Include="TeamFoundationServer\TfsVersionTests.cs" />
     <Compile Include="Compression\ZipTests.cs" />
     <Shadow Include="Test References\TfsBuildExtensions.Activities.accessor" />
     <None Include="Framework\TestFiles\AssemblyInfo %281%29.fs">
