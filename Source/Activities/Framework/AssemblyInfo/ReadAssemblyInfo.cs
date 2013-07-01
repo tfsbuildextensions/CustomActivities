@@ -3,11 +3,11 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.Framework
 {
-    using Microsoft.TeamFoundation.Build.Client;
     using System;
     using System.Activities;
     using System.ComponentModel;
     using System.IO;
+    using Microsoft.TeamFoundation.Build.Client;
 
     /// <summary>
     /// Activity to read Assembly information
