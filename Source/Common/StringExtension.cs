@@ -25,5 +25,17 @@ namespace TfsBuildExtensions.Activities
         {
             return AppendFormat(originalValue, CultureInfo.CurrentCulture, format, args);
         }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified System.String object occurs within this string.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="valueLookingFor">The value looking for.</param>
+        /// <param name="stringComparison">The string comparison.</param>
+        /// <returns> Returns <c>true</c> if match exists, otherwise <c>false</c>.</returns>
+        public static bool Contains(this string source, string valueLookingFor, StringComparison stringComparison)
+        {
+            return source.IndexOf(valueLookingFor, stringComparison) >= 0;
+        }
     }
 }

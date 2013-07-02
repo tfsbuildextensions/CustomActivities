@@ -222,6 +222,9 @@
     <Compile Include="TeamFoundationServer\CompareLabels.cs" />
     <Compile Include="TeamFoundationServer\ConvertToProperties.cs" />
     <Compile Include="TeamFoundationServer\ConvertFromProperties.cs" />
+    <Compile Include="TeamFoundationServer\FilesTextSearch\DirectoryInfoExtensions.cs" />
+    <Compile Include="TeamFoundationServer\FilesTextSearch\FilesTextSearch.cs" />
+    <Compile Include="TeamFoundationServer\FilesTextSearch\SearchMatch.cs" />
     <Compile Include="TeamFoundationServer\GetDropDownloadLocation.cs" />
     <Compile Include="TeamFoundationServer\ExecuteWorkflow.cs" />
     <Compile Include="TeamFoundationServer\GetBuild.cs" />
