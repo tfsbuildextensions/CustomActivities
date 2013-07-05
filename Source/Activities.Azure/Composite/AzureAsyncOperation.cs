@@ -30,9 +30,9 @@ namespace TfsBuildExtensions.Activities.Azure
         /// </summary>
         public AzureAsyncOperation()
         {
-            this.PollingEndTime = new Variable<DateTime>() { Default = null, Name = "EndTime" };
-            this.OperationId = new Variable<string>() { Default = null, Name = "LocalOperationId" };
-            this.AzureActivityExceptionCaught = new Variable<bool>() { Default = false, Name = "AzureExceptionCaught" };
+            this.PollingEndTime = new Variable<DateTime> { Default = null, Name = "EndTime" };
+            this.OperationId = new Variable<string> { Default = null, Name = "LocalOperationId" };
+            this.AzureActivityExceptionCaught = new Variable<bool> { Default = false, Name = "AzureExceptionCaught" };
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace TfsBuildExtensions.Activities.Azure
         /// </summary>
         private ActivityFunc<string, string, string, string> PollingBody
         {
-            get { return this.pollingBody ?? (this.pollingBody = this.CreatePollingBody()); }
+            get { return this.pollingBody ?? (this.pollingBody = CreatePollingBody()); }
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace TfsBuildExtensions.Activities.Azure
         /// </summary>
         private ActivityAction<int> DelayBody
         {
-            get { return this.delayBody ?? (this.delayBody = this.CreateDelayBody()); }
+            get { return this.delayBody ?? (this.delayBody = CreateDelayBody()); }
         }
 
         /// <summary>
@@ -187,18 +187,18 @@ namespace TfsBuildExtensions.Activities.Azure
             this.AzureActivityExceptionCaught.Set(context, false);
 
             // Schedule the Operation for evaluation
-            context.ScheduleActivity(this.Operation, new CompletionCallback<string>(this.OnOperationCompleted), new FaultCallback(this.OnOperationFault));
+            context.ScheduleActivity(this.Operation, this.OnOperationCompleted, this.OnOperationFault);
         }
 
         /// <summary>
         /// Create the structure of the activity for polling Azure for operation status.
         /// </summary>
         /// <returns>An activity delegate.</returns>
-        private ActivityFunc<string, string, string, string> CreatePollingBody()
+        private static ActivityFunc<string, string, string, string> CreatePollingBody()
         {
-            var operationId = new DelegateInArgument<string>() { Name = "FuncOperationId" };
-            var subscriptionId = new DelegateInArgument<string>() { Name = "FuncSubscriptionId" };
-            var certificateThumbprintId = new DelegateInArgument<string>() { Name = "FuncThumbprintId" };
+            var operationId = new DelegateInArgument<string> { Name = "FuncOperationId" };
+            var subscriptionId = new DelegateInArgument<string> { Name = "FuncSubscriptionId" };
+            var certificateThumbprintId = new DelegateInArgument<string> { Name = "FuncThumbprintId" };
 
             return new ActivityFunc<string, string, string, string>
             {
@@ -222,9 +222,9 @@ namespace TfsBuildExtensions.Activities.Azure
         /// Create the structure of the activity for pausing between successive polling activities.
         /// </summary>
         /// <returns>An activity delegate.</returns>
-        private ActivityAction<int> CreateDelayBody()
+        private static ActivityAction<int> CreateDelayBody()
         {
-            var timeout = new DelegateInArgument<int>() { Name = "FuncTimeout" };
+            var timeout = new DelegateInArgument<int> { Name = "FuncTimeout" };
 
             return new ActivityAction<int>
             {
@@ -237,6 +237,44 @@ namespace TfsBuildExtensions.Activities.Azure
         }
 
         /// <summary>
+        /// Log an error message to the build tracking participant.
+        /// </summary>
+        /// <param name="context">The current activity context.</param>
+        /// <param name="message">The message to log.</param>
+        private static void LogBuildError(NativeActivityContext context, string message)
+        {
+            var record = new BuildInformationRecord<BuildError>
+            {
+                ParentToBuildDetail = false,
+                Value = new BuildError
+                {
+                    Message = message
+                }
+            };
+            context.Track(record);
+        }
+
+        /// <summary>
+        /// Log a message to the build tracking participant.
+        /// </summary>
+        /// <param name="context">The current activity context.</param>
+        /// <param name="message">The message to log.</param>
+        /// <param name="importance">The importance level of the message.</param>
+        private static void LogBuildMessage(NativeActivityContext context, string message, BuildMessageImportance importance)
+        {
+            var record = new BuildInformationRecord<BuildMessage>
+            {
+                ParentToBuildDetail = false,
+                Value = new BuildMessage
+                {
+                    Importance = importance,
+                    Message = message
+                }
+            };
+            context.Track(record);
+        }
+
+        /// <summary>
         /// Respond to the completion callback for the Operation activity.
         /// </summary>
         /// <param name="context">The activity context.</param>
@@ -245,7 +283,7 @@ namespace TfsBuildExtensions.Activities.Azure
         private void OnOperationCompleted(NativeActivityContext context, ActivityInstance instance, string result)
         {
             // Check to see if the operation faulted
-            if (this.AzureActivityExceptionCaught.Get(context) == true)
+            if (this.AzureActivityExceptionCaught.Get(context))
             {
                 context.ScheduleActivity(this.Failure);
                 return;
@@ -256,13 +294,13 @@ namespace TfsBuildExtensions.Activities.Azure
             context.SetValue(this.OperationId, result);
 
             // Start the process of polling for status - kind of like a do/while
-            context.ScheduleFunc<string, string, string, string>(
+            context.ScheduleFunc(
                 this.PollingBody,
                 this.OperationId.Get(context),
                 this.SubscriptionId.Get(context),
                 this.CertificateThumbprintId.Get(context),
-                new CompletionCallback<string>(this.OnGetStatusCompleted),
-                new FaultCallback(this.OnOperationFault));
+                this.OnGetStatusCompleted,
+                this.OnOperationFault);
         }
 
         /// <summary>
@@ -274,7 +312,7 @@ namespace TfsBuildExtensions.Activities.Azure
         private void OnGetStatusCompleted(NativeActivityContext context, ActivityInstance instance, string result)
         {
             // Check to see if the operation faulted
-            if (this.AzureActivityExceptionCaught.Get(context) == true)
+            if (this.AzureActivityExceptionCaught.Get(context))
             {
                 context.ScheduleActivity(this.Failure);
                 return;
@@ -299,10 +337,10 @@ namespace TfsBuildExtensions.Activities.Azure
                     }
 
                     // Otherwise delay for the requested interval
-                    context.ScheduleAction<int>(
+                    context.ScheduleAction(
                         this.DelayBody, 
                         this.PollingInterval,
-                        new CompletionCallback(this.OnDelayCompleted));
+                        this.OnDelayCompleted);
                     break;
             }            
         }
@@ -315,13 +353,13 @@ namespace TfsBuildExtensions.Activities.Azure
         private void OnDelayCompleted(NativeActivityContext context, ActivityInstance instance)
         {
             // Poll again
-            context.ScheduleFunc<string, string, string, string>(
+            context.ScheduleFunc(
                 this.PollingBody,
                 this.OperationId.Get(context),
                 this.SubscriptionId.Get(context),
                 this.CertificateThumbprintId.Get(context),
-                new CompletionCallback<string>(this.OnGetStatusCompleted),
-                new FaultCallback(this.OnOperationFault));
+                this.OnGetStatusCompleted,
+                this.OnOperationFault);
         }
 
         /// <summary>
@@ -336,8 +374,8 @@ namespace TfsBuildExtensions.Activities.Azure
             context.HandleFault();
 
             // TODO: Make this logging dependent on the operation configuration
-            this.LogBuildError(context, string.Format("AzureAsyncOperation Fault {0} during execution of {1}\r\n{2}", exception.GetType().Name, instance.Activity.GetType().Name, exception.Message));
-            this.LogBuildMessage(context, exception.StackTrace, BuildMessageImportance.High);
+            LogBuildError(context, string.Format("AzureAsyncOperation Fault {0} during execution of {1}\r\n{2}", exception.GetType().Name, instance.Activity.GetType().Name, exception.Message));
+            LogBuildMessage(context, exception.StackTrace, BuildMessageImportance.High);
 
             // Cancel the running activity
             context.CancelChild(instance);
@@ -346,44 +384,6 @@ namespace TfsBuildExtensions.Activities.Azure
             // The CompletionCallback will be called because we handled the exception.
             // This makes a better design choice to do any scheduling or further logic there.
             this.AzureActivityExceptionCaught.Set(context, true);
-        }
-
-        /// <summary>
-        /// Log an error message to the build tracking participant.
-        /// </summary>
-        /// <param name="context">The current activity context.</param>
-        /// <param name="message">The message to log.</param>
-        private void LogBuildError(NativeActivityContext context, string message)
-        {            
-            var record = new BuildInformationRecord<BuildError>
-            {
-                ParentToBuildDetail = false,
-                Value = new BuildError
-                {
-                    Message = message
-                }
-            };
-            context.Track(record);
-        }
-
-        /// <summary>
-        /// Log a message to the build tracking participant.
-        /// </summary>
-        /// <param name="context">The current activity context.</param>
-        /// <param name="message">The message to log.</param>
-        /// <param name="importance">The importance level of the message.</param>
-        private void LogBuildMessage(NativeActivityContext context, string message, BuildMessageImportance importance)
-        {
-            var record = new BuildInformationRecord<BuildMessage>
-            {
-                ParentToBuildDetail = false,
-                Value = new BuildMessage
-                {
-                    Importance = importance,
-                    Message = message
-                }
-            };
-            context.Track(record);
         }
     }
 }

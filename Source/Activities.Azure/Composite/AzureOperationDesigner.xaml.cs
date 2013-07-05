@@ -16,10 +16,10 @@ namespace TfsBuildExtensions.Activities.Azure
         public AzureOperationDesigner()
         {
             this.InitializeComponent();
-            this.RegisterMetadata();
+            RegisterMetadata();
         }
 
-        private void RegisterMetadata()
+        private static void RegisterMetadata()
         {
             Type type = typeof(AzureAsyncOperation);
             AttributeTableBuilder builder = new AttributeTableBuilder();

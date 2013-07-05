@@ -38,7 +38,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// <returns>The asynchronous operation identifier.</returns>
         protected override string AzureExecute()
         {
-            var swapDeploymentInput = new SwapDeploymentInput()
+            var swapDeploymentInput = new SwapDeploymentInput
             {
                 SourceDeployment = this.StagingDeploymentName.Get(this.ActivityContext),
                 Production = this.ProductionDeploymentName.Get(this.ActivityContext)

@@ -60,7 +60,7 @@ namespace TfsBuildExtensions.Activities.Azure.Certificates
         private CertificateFile CreateFileFromCertificate()
         {
             var cert = this.Certificate.Get(this.ActivityContext);
-            byte[] certData = null;
+            byte[] certData;
 
             try
             {

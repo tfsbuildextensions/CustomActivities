@@ -20,7 +20,7 @@ namespace TfsBuildExtensions.Activities.Azure.Extended
 {
     public class RoleInstance
     {
-        private Microsoft.Samples.WindowsAzure.ServiceManagement.RoleInstance innerInstance;
+        private readonly Microsoft.Samples.WindowsAzure.ServiceManagement.RoleInstance innerInstance;
 
         public RoleInstance(Microsoft.Samples.WindowsAzure.ServiceManagement.RoleInstance innerInstance)
         {

@@ -4,14 +4,12 @@
 namespace TfsBuildExtensions.Activities.Azure
 {
     using System;
-    using System.Activities;
     using System.Globalization;
     using System.Net;
     using System.Security.Cryptography.X509Certificates;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Security;
-    using System.ServiceModel.Web;
     using Microsoft.Samples.WindowsAzure.ServiceManagement;
 
     /// <summary>
@@ -168,15 +166,11 @@ namespace TfsBuildExtensions.Activities.Azure
                         {
                             return call(subscriptionId.ToLower(CultureInfo.InvariantCulture));
                         }
-                        else
-                        {
-                            return call(subscriptionId.ToUpper(CultureInfo.InvariantCulture));
-                        }
+                        
+                        return call(subscriptionId.ToUpper(CultureInfo.InvariantCulture));
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
             }
             catch (MessageSecurityException ex)
@@ -196,15 +190,11 @@ namespace TfsBuildExtensions.Activities.Azure
                     {
                         return call(subscriptionId.ToLower(CultureInfo.InvariantCulture));
                     }
-                    else
-                    {
-                        return call(subscriptionId.ToUpper(CultureInfo.InvariantCulture));
-                    }
+
+                    return call(subscriptionId.ToUpper(CultureInfo.InvariantCulture));
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
         }
 

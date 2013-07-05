@@ -28,8 +28,7 @@ namespace TfsBuildExtensions.Activities.Azure.Extended
     public class DeploymentInfoContext : ManagementOperationContext
     {
         private readonly XNamespace ns = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration";
-
-        private Microsoft.Samples.WindowsAzure.ServiceManagement.Deployment innerDeployment = new Microsoft.Samples.WindowsAzure.ServiceManagement.Deployment();
+        private readonly Microsoft.Samples.WindowsAzure.ServiceManagement.Deployment innerDeployment = new Microsoft.Samples.WindowsAzure.ServiceManagement.Deployment();
 
         public DeploymentInfoContext(Microsoft.Samples.WindowsAzure.ServiceManagement.Deployment innerDeployment)
         {

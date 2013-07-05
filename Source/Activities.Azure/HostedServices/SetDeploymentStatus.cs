@@ -38,7 +38,7 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
         /// <returns>The asynchronous operation identifier.</returns>
         protected override string AzureExecute()
         {
-            var updateDeploymentStatus = new UpdateDeploymentStatusInput()
+            var updateDeploymentStatus = new UpdateDeploymentStatusInput
             {
                 Status = this.ServiceStatus.Get(this.ActivityContext)
             };

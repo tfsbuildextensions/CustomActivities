@@ -5,7 +5,6 @@ namespace TfsBuildExtensions.Activities.AWS.Extended
 {
     using System;
     using System.Globalization;
-    using System.Xml;
 
     /// <summary>
     /// Extension methods for interacting with the Amazon AWS SDK.

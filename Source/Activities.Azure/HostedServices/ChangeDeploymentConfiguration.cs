@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.Azure.HostedServices
 {
-    using System;
     using System.Activities;
     using System.ComponentModel;
     using System.ServiceModel;

@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.AWS
 {
-    using System;
     using System.Activities;
     using Amazon;
     using Amazon.EC2;

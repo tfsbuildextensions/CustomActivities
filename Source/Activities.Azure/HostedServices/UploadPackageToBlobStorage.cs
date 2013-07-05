@@ -55,20 +55,20 @@ namespace TfsBuildExtensions.Activities.Azure.HostedServices
             var credentials = new StorageCredentialsAccountAndKey(storageName, storageKey);
             var client = new CloudBlobClient(baseAddress, credentials);
 
-            string containerName = "mydeployments";
+            const string ContainerName = "mydeployments";
             string blobName = string.Format(
                 CultureInfo.InvariantCulture,
                 "{0}_{1}",
                 DateTime.UtcNow.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture),
                 Path.GetFileName(filePath));
 
-            CloudBlobContainer container = client.GetContainerReference(containerName);
+            CloudBlobContainer container = client.GetContainerReference(ContainerName);
             container.CreateIfNotExist();
             CloudBlob blob = container.GetBlobReference(blobName);
 
             UploadBlobStream(blob, filePath);
 
-            this.PackageUrl.Set(this.ActivityContext, string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}", client.BaseUri, containerName, client.DefaultDelimiter, blobName));
+            this.PackageUrl.Set(this.ActivityContext, string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}{3}", client.BaseUri, ContainerName, client.DefaultDelimiter, blobName));
         }
 
         private static void UploadBlobStream(CloudBlob blob, string sourceFile)
