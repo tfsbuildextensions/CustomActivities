@@ -99,7 +99,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 return;
             }
 
-            string workingDirectory = buildDetail.DropLocation;
+            string workingDirectory = Path.GetDirectoryName(this.TestAssembly.Get(this.ActivityContext));
 
             this.RunProcess(fullPath, workingDirectory, this.GenerateCommandLineCommands(this.ActivityContext, workingDirectory));
             this.PublishTestResultsToTFS(this.ActivityContext, workingDirectory);
