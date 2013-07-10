@@ -80,6 +80,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         public InArgument<VSVersion> VisualStudioVersion { get; set; }
 
         /// <summary>
+        /// Provide additional arguments to Statlight
+        /// </summary>
+        [Browsable(true)]
+        [Description("Provide additional arguments to Statlight")]
+        public InArgument<string> AdditionalArguments { get; set; }
+
+        /// <summary>
         /// Executes the logic for this custom activity
         /// </summary>
         protected override void InternalExecute()
@@ -100,8 +107,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             }
 
             string workingDirectory = Path.GetDirectoryName(this.TestAssembly.Get(this.ActivityContext));
+            string additionalArguments = this.AdditionalArguments.Get(this.ActivityContext);
 
-            this.RunProcess(fullPath, workingDirectory, this.GenerateCommandLineCommands(this.ActivityContext, workingDirectory));
+            this.RunProcess(fullPath, workingDirectory, this.GenerateCommandLineCommands(this.ActivityContext, workingDirectory, additionalArguments));
             this.PublishTestResultsToTFS(this.ActivityContext, workingDirectory);
         }
 
@@ -192,13 +200,14 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             this.PublishMsTestResults(resultTrxFile, collectionUrl, buildNumber, teamProject, platform, flavor);
         }
 
-        private string GenerateCommandLineCommands(ActivityContext context, string outputFolder)
+        private string GenerateCommandLineCommands(ActivityContext context, string outputFolder, string additionalArguments)
         {
             SimpleCommandLineBuilder builder = new SimpleCommandLineBuilder();
 
             builder.AppendSwitchIfNotNull("-x=", this.TestAssembly.Get(context));
             builder.AppendSwitchIfNotNull("-r=", Path.Combine(outputFolder, this.OutputXmlFile.Get(context)));
-            
+            builder.AppendSwitch(additionalArguments);
+
             return builder.ToString();
         }
 
