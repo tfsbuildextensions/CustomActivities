@@ -171,7 +171,6 @@
     <Compile Include="Communication\FTP\FtpFileInfo.cs" />
     <Compile Include="Communication\FTP\NativeMethods.cs" />
     <Compile Include="Communication\Sms.cs" />
-    <Compile Include="Communication\Twitter.cs" />
     <Compile Include="Compression\Zip.cs" />
     <Compile Include="FileSystem\WriteToFile.cs" />
     <Compile Include="FileSystem\File.cs" />
