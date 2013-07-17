@@ -1,11 +1,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
     <PropertyGroup>
-        <ReleaseVersion>TfsBuildExtensions January 2013</ReleaseVersion>
+        <ReleaseVersion>TfsBuildExtensions July 2013</ReleaseVersion>
         <PackageDrive>D:</PackageDrive>
         <PackageRoot Condition="$(PackageRoot) == ''">$(PackageDrive)\Releases\TFSBE\$(ReleaseVersion)</PackageRoot>
         <Configuration>Release|Any CPU</Configuration>
         <VisualStudioVersion>11.0</VisualStudioVersion>
+        <VisualStudioVersionFriendly>VS2012</VisualStudioVersionFriendly>
     </PropertyGroup>
 
     <Target Name="PreCheckin" DependsOnTargets="StyleCop;Compile"/>
@@ -28,23 +29,6 @@
         <Message Text="...StyleCop complete. $(Violations) violations"/>
         <Error Condition="'$(Violations)' != '0'" Text="Stylecop Failed: $(Violations) violations" />
     </Target>
-
-    <Target Name="PreCompile" BeforeTargets="Compile">
-        <ItemGroup>
-            <VS11Files Include="..\AssemblyReferences11\*.*"/>
-            <FileAtt Include="..\Common\CommonAssemblyInfo.cs">
-                <Attributes>Normal</Attributes>
-            </FileAtt>
-        </ItemGroup>
-        <!-- Clean out AssemblyReferences -->
-        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="..\AssemblyReferences" Force="true"/>
-        <!-- Add the VS11 versions -->
-        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="@(VS11Files)" DestinationFolder="..\AssemblyReferences"/>
-
-        <MSBuild.ExtensionPack.FileSystem.File TaskAction="SetAttributes" Files="@(FileAtt)"/>
-        <Delete Files="..\Common\CommonAssemblyInfo.cs" />
-        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Common\CommonAssemblyInfo11.cs" DestinationFiles="..\Common\CommonAssemblyInfo.cs"/>
-    </Target>
     
     <Target Name="Compile">
         <MSBuild.ExtensionPack.VisualStudio.VSDevEnv FilePath="..\TFSBuildExtensions.sln" Version="$(VisualStudioVersion)" Configuration="$(Configuration)" Rebuild="true">
@@ -63,24 +47,22 @@
             <FilesToDelete Include="..\BuildBinaries\*.*"
                            Exclude="..\BuildBinaries\TfsBuildExtensions*.dll;
                                     ..\BuildBinaries\TfsBuildExtensions*.pdb;
-                                    ..\BuildBinaries\Ionic*.dll;"/>
+                                    ..\BuildBinaries\Ionic*.dll"/>
         </ItemGroup>
         <Microsoft.Build.Tasks.Delete Files="@(FilesToDelete)"/>
     </Target>
 
     <Target Name="PackageCodePlex">
-        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="$(PackageRoot)" Condition="Exists('$(PackageRoot)')"/>
-		<Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\Code Activities"/>
-        <Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\Code Activities\VS2012"/>
-        <Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\Code Activities\VS2010"/>
-        <Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\TFS Build Manager\VS2012"/>
-        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Common\License.rtf" DestinationFiles="$(PackageRoot)\License.rtf"/>
-        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Build\Documentation\Help\TFS Build Extensions Help.chm" DestinationFiles="$(PackageRoot)\TFS Build Extensions Help.chm" Condition="$(BuildChm) != 'false'"/>
+        <MSBuild.ExtensionPack.FileSystem.Folder TaskAction="RemoveContent" Path="$(PackageRoot)\Code Activities\$(VisualStudioVersionFriendly)" Condition="Exists('$(PackageRoot)\Code Activities\$(VisualStudioVersionFriendly)')"/>
+
+        <Microsoft.Build.Tasks.MakeDir Directories="$(PackageRoot)\Code Activities\$(VisualStudioVersionFriendly)"/>
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Common\License.rtf" DestinationFiles="$(PackageRoot)\Code Activities\$(VisualStudioVersionFriendly)\License.rtf"/>
+        <Microsoft.Build.Tasks.Copy OverwriteReadOnlyFiles="true" SourceFiles="..\Build\Documentation\Help\TFS Build Extensions Help.chm" DestinationFiles="$(PackageRoot)\Code Activities\$(VisualStudioVersionFriendly)\TFS Build Extensions Help.chm" Condition="$(BuildChm) != 'false'"/>
         <ItemGroup>
-            <FilestoCopy2012 Include="$(MSBuildProjectDirectory)\..\Buildbinaries\TfsBuildExtensions.*;
+            <FilestoCopy Include="$(MSBuildProjectDirectory)\..\Buildbinaries\TfsBuildExtensions.*;
                                       $(MSBuildProjectDirectory)\..\Buildbinaries\Ionic.Zip.dll"/>
         </ItemGroup>
-        <Microsoft.Build.Tasks.Copy SourceFiles="@(FilestoCopy2012)" DestinationFolder="$(PackageRoot)\Code Activities\VS2012"/>
+        <Microsoft.Build.Tasks.Copy SourceFiles="@(FilestoCopy)" DestinationFolder="$(PackageRoot)\Code Activities\$(VisualStudioVersionFriendly)"/>
     </Target>
 
     <Target Name="Touch">
@@ -89,20 +71,4 @@
         </ItemGroup>
         <Touch Files="@(TouchFiles)" ForceTouch="true"/>
     </Target>
-
-    <!--<Target Name="UpdateSourceControl">
-        <ItemGroup>
-            <FilesToCheckout Include="$(CustomActivitiesFolder)\TFSBuildExtensions.*"/>
-        </ItemGroup>
-        <PropertyGroup>
-            <WorkspaceFolder Condition="'$(WorkspaceFolder)' == ''">D:\Projects\FreeToDev</WorkspaceFolder>
-            <CustomActivitiesFolder Condition="'$(CustomActivitiesFolder)' == ''">$(WorkspaceFolder)\BuildProcessTemplates\CustomActivities</CustomActivitiesFolder>
-        </PropertyGroup>
-        <ItemGroup>
-            <NewAssemblies Include="..\BuildBinaries\TFSBuildExtensions*.dll;..\BuildBinaries\TFSBuildExtensions*.pdb" Exclude="..\BuildBinaries\*Test*;..\BuildBinaries\*_Accessor*;;..\BuildBinaries\*.instr.*"/>
-        </ItemGroup>
-        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkout" ItemCol="@(FilesToCheckout)" WorkingDirectory="$(WorkspaceFolder)" Version="2012"/>
-        <Microsoft.Build.Tasks.Copy SourceFiles="@(NewAssemblies)" DestinationFolder="$(CustomActivitiesFolder)"/>
-        <MSBuild.ExtensionPack.VisualStudio.TfsSource TaskAction="Checkin" ItemCol="@(FilesToCheckout)" WorkingDirectory="$(WorkspaceFolder)" Version="2012"/>
-    </Target>-->
 </Project>
