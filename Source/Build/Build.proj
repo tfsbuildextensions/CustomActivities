@@ -2,7 +2,7 @@
     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
     <PropertyGroup>
         <ReleaseVersion>TfsBuildExtensions July 2013</ReleaseVersion>
-        <PackageDrive>D:</PackageDrive>
+        <PackageDrive>C:</PackageDrive>
         <PackageRoot Condition="$(PackageRoot) == ''">$(PackageDrive)\Releases\TFSBE\$(ReleaseVersion)</PackageRoot>
         <Configuration>Release|Any CPU</Configuration>
         <VisualStudioVersion>11.0</VisualStudioVersion>
