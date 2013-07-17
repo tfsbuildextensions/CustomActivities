@@ -3,7 +3,7 @@
     <PropertyGroup>
         <ReleaseVersion>TfsBuildExtensions July 2013</ReleaseVersion>
         <PackageDrive>C:</PackageDrive>
-        <PackageRoot Condition="$(PackageRoot) == ''">$(PackageDrive)\Releases\TFSBE\$(ReleaseVersion)</PackageRoot>
+        <PackageRoot>$(PackageDrive)\Releases\TFSBE\$(ReleaseVersion)</PackageRoot>
         <Configuration>Release|Any CPU</Configuration>
         <VisualStudioVersion>11.0</VisualStudioVersion>
         <VisualStudioVersionFriendly>VS2012</VisualStudioVersionFriendly>
