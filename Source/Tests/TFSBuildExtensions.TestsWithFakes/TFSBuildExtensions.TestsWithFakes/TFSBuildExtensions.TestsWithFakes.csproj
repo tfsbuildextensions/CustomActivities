@@ -98,12 +98,6 @@
     <Fakes Include="Fakes\Microsoft.TeamFoundation.VersionControl.Client.fakes" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Activities\Activities.csproj">
-      <Project>{cdf9ff31-b9da-411e-b50e-38f9c4fa33e3}</Project>
-      <Name>Activities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Fakes Include="Fakes\Microsoft.TeamFoundation.WorkItemTracking.Client.fakes" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +108,12 @@
   </ItemGroup>
   <ItemGroup>
     <Fakes Include="Fakes\Microsoft.TeamFoundation.Client.fakes" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Activities\Activities.csproj">
+      <Project>{cdf9ff31-b9da-411e-b50e-38f9c4fa33e3}</Project>
+      <Name>Activities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

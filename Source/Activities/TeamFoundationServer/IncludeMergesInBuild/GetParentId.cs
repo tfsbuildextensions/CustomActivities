@@ -26,7 +26,10 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuil
             if (workItem != null && source != null)
             {
                 var parentLink = source.FirstOrDefault(w => w.TargetId == workItem.Id);
-                sourceId = parentLink.SourceId;
+                if (parentLink != null)
+                {
+                    sourceId = parentLink.SourceId;
+                }
             }
 
             return sourceId;

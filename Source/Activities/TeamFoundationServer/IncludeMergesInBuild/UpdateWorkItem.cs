@@ -78,7 +78,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuil
         private static string CombineInvalidFields(WorkItem workItem)
         {
             var list = workItem.Validate().Cast<Field>().ToList();
-            if (list.Count <= 0)
+            if (!list.Any())
             {
                 return string.Empty;
             }
