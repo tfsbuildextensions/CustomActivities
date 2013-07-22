@@ -78,6 +78,7 @@
     <Reference Include="Microsoft.TeamFoundation.Common">
       <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.TeamFoundation.VersionControl.Client">
       <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
     </Reference>
@@ -224,6 +225,7 @@
     <Compile Include="TeamFoundationServer\FilesTextSearch\DirectoryInfoExtensions.cs" />
     <Compile Include="TeamFoundationServer\FilesTextSearch\FilesTextSearch.cs" />
     <Compile Include="TeamFoundationServer\FilesTextSearch\SearchMatch.cs" />
+    <Compile Include="TeamFoundationServer\GetCodeCoverageTotal.cs" />
     <Compile Include="TeamFoundationServer\GetDropDownloadLocation.cs" />
     <Compile Include="TeamFoundationServer\ExecuteWorkflow.cs" />
     <Compile Include="TeamFoundationServer\GetBuild.cs" />
@@ -249,6 +251,16 @@
     <Compile Include="TeamFoundationServer\GetValueFromRegistry.cs" />
     <Compile Include="TeamFoundationServer\GetVersionControlLabel.cs" />
     <Compile Include="TeamFoundationServer\GetWebAccessUrl.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\GetMergedChangesets.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\GetParentId.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\RefreshWorkItem.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\ScheduleActionExtension.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\UpdateWorkItem.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\VersionControlScope.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\WitBatchSaveWorkItems.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\WitGetWorkItemsForArtifacts.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\WitGetWorkItemsForArtifactsAsyncState.cs" />
+    <Compile Include="TeamFoundationServer\IncludeMergesInBuild\WitQueryWorkItems.cs" />
     <Compile Include="TeamFoundationServer\IsBuildRunning.cs" />
     <Compile Include="TeamFoundationServer\IsSourceChanged.cs" />
     <Compile Include="TeamFoundationServer\QueryBuildAgentStatus.cs" />
@@ -327,6 +339,20 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UnitTests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamlAppDef Include="TeamFoundationServer\AssociateMergedChangesetsAndWorkItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </XamlAppDef>
+    <XamlAppDef Include="TeamFoundationServer\IncludeMergesInBuild\AssociateChangesets.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppDef>
+    <XamlAppDef Include="TeamFoundationServer\IncludeMergesInBuild\AssociateWorkItems.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppDef>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Workflow.Targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />

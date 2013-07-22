@@ -1,0 +1,527 @@
+﻿<Activity mc:Ignorable="sads sap sap2010" x:Class="TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild.AssociateWorkItems"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
+ xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client"
+ xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow"
+ xmlns:mtbwt="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Tracking;assembly=Microsoft.TeamFoundation.Build.Workflow"
+ xmlns:mtwc="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
+ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:sc="clr-namespace:System.Collections;assembly=mscorlib"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="BuildNumber" Type="InArgument(x:String)" />
+    <x:Property Name="ParentChildLinks" Type="InArgument(scg:IEnumerable(mtwc:WorkItemLinkInfo))" />
+    <x:Property Name="WorkItems" Type="InArgument(sc:IEnumerable)" />
+  </x:Members>
+  <sap2010:ExpressionActivityEditor.ExpressionActivityEditor>C#</sap2010:ExpressionActivityEditor.ExpressionActivityEditor>
+  <sap2010:WorkflowViewState.IdRef>ColinsALMCorner.CustomBuildTasks.AssociateWorkItems_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>Microsoft.TeamFoundation.WorkItemTracking.Client</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>Microsoft.TeamFoundation.Build.Client</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Build.Workflow</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Client</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Common</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.VersionControl.Client</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.VersionControl.Common</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.WorkItemTracking.Client</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ServiceModel.Activities</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>Microsoft.CSharp</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>ColinsALMCorner.CustomBuildTasks</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:IList(mtwc:BatchSaveError)" Name="batchSaveErrors" />
+      <Variable x:TypeArguments="scg:IDictionary(x:Int32, mtwc:BatchSaveError)" Name="saveErrors" />
+      <Variable x:TypeArguments="x:Boolean" Name="updated" />
+      <Variable x:TypeArguments="scg:List(mtwc:WorkItem)" Name="workItemsToUpdate" />
+      <Variable x:TypeArguments="scg:List(mtwc:WorkItem)" Name="workItemsToUpdateTemp" />
+      <Variable x:TypeArguments="scg:List(mtwc:WorkItem)" Name="updatedWorkItems" />
+      <Variable x:TypeArguments="x:Int32" Name="retries" />
+      <Variable x:TypeArguments="scg:Dictionary(x:String, x:Boolean)" Name="workItemTypeDictionary" />
+      <Variable x:TypeArguments="x:String" Name="warningMessage" />
+    </Sequence.Variables>
+    <Assign DisplayName="Convert IEnum to List" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
+          <mca:CSharpReference x:TypeArguments="scg:List(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpReference>
+        </OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
+          <mca:CSharpValue x:TypeArguments="scg:List(mtwc:WorkItem)">WorkItems.Cast&lt;Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem&gt;().ToList()</mca:CSharpValue>
+        </InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Instantiate new list" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
+          <mca:CSharpReference x:TypeArguments="scg:List(mtwc:WorkItem)">updatedWorkItems</mca:CSharpReference>
+        </OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
+          <mca:CSharpValue x:TypeArguments="scg:List(mtwc:WorkItem)">new List&lt;Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem&gt;()</mca:CSharpValue>
+        </InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Instantiate the &quot;WIT Type -&gt; has IntegratedIn&quot; Dictionary" sap2010:WorkflowViewState.IdRef="Assign_3">
+      <Assign.To>
+        <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:Boolean)">
+          <mca:CSharpReference x:TypeArguments="scg:Dictionary(x:String, x:Boolean)">workItemTypeDictionary</mca:CSharpReference>
+        </OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Boolean)">
+          <mca:CSharpValue x:TypeArguments="scg:Dictionary(x:String, x:Boolean)">new Dictionary&lt;string,bool&gt;()</mca:CSharpValue>
+        </InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Instantiate retries to 3" sap2010:WorkflowViewState.IdRef="Assign_4">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">
+          <mca:CSharpReference x:TypeArguments="x:Int32">retries</mca:CSharpReference>
+        </OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">3</InArgument>
+      </Assign.Value>
+    </Assign>
+    <While DisplayName="While there are items to update and retries left" sap2010:WorkflowViewState.IdRef="While_1">
+      <While.Condition>
+        <mca:CSharpValue x:TypeArguments="x:Boolean">retries &gt; 0 &amp;&amp; workItemsToUpdate.Count() &gt; 0</mca:CSharpValue>
+      </While.Condition>
+      <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each WorkItem" sap2010:WorkflowViewState.IdRef="ForEach`1_1">
+        <ForEach.Values>
+          <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
+            <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpValue>
+          </InArgument>
+        </ForEach.Values>
+        <ActivityAction x:TypeArguments="mtwc:WorkItem">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="mtwc:WorkItem" Name="workItem" />
+          </ActivityAction.Argument>
+          <Sequence sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <local:UpdateWorkItem DisplayName="Update Work Item" sap2010:WorkflowViewState.IdRef="UpdateWorkItem_2" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild">
+              <local:UpdateWorkItem.BuildNumber>
+                <InArgument x:TypeArguments="x:String">
+                  <mca:CSharpValue x:TypeArguments="x:String">BuildNumber</mca:CSharpValue>
+                </InArgument>
+              </local:UpdateWorkItem.BuildNumber>
+              <local:UpdateWorkItem.Result>
+                <OutArgument x:TypeArguments="x:Boolean">
+                  <mca:CSharpReference x:TypeArguments="x:Boolean">updated</mca:CSharpReference>
+                </OutArgument>
+              </local:UpdateWorkItem.Result>
+              <local:UpdateWorkItem.WarningMessage>
+                <OutArgument x:TypeArguments="x:String">
+                  <mca:CSharpReference x:TypeArguments="x:String">warningMessage</mca:CSharpReference>
+                </OutArgument>
+              </local:UpdateWorkItem.WarningMessage>
+              <local:UpdateWorkItem.WorkItem>
+                <InArgument x:TypeArguments="mtwc:WorkItem">
+                  <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
+                </InArgument>
+              </local:UpdateWorkItem.WorkItem>
+              <local:UpdateWorkItem.WorkItemTypeFieldCache>
+                <InArgument x:TypeArguments="scg:IDictionary(x:String, x:Boolean)">
+                  <mca:CSharpValue x:TypeArguments="scg:IDictionary(x:String, x:Boolean)">workItemTypeDictionary</mca:CSharpValue>
+                </InArgument>
+              </local:UpdateWorkItem.WorkItemTypeFieldCache>
+            </local:UpdateWorkItem>
+            <If DisplayName="If we updated the work item" sap2010:WorkflowViewState.IdRef="If_1">
+              <If.Condition>
+                <InArgument x:TypeArguments="x:Boolean">
+                  <mca:CSharpValue x:TypeArguments="x:Boolean">updated</mca:CSharpValue>
+                </InArgument>
+              </If.Condition>
+              <If.Then>
+                <AddToCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Add To Updated WorkItems" sap2010:WorkflowViewState.IdRef="AddToCollection`1_1">
+                  <AddToCollection.Item>
+                    <InArgument x:TypeArguments="mtwc:WorkItem">
+                      <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
+                    </InArgument>
+                  </AddToCollection.Item>
+                  <InArgument x:TypeArguments="scg:ICollection(mtwc:WorkItem)">
+                    <mca:CSharpValue x:TypeArguments="scg:ICollection(mtwc:WorkItem)">updatedWorkItems</mca:CSharpValue>
+                  </InArgument>
+                </AddToCollection>
+              </If.Then>
+              <If.Else>
+                <mtbwa:WriteBuildWarning DisplayName="Write Build Warning" sap2010:WorkflowViewState.IdRef="WriteBuildWarning_1" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+                  <mtbwa:WriteBuildWarning.Message>
+                    <InArgument x:TypeArguments="x:String">
+                      <mca:CSharpValue x:TypeArguments="x:String">warningMessage</mca:CSharpValue>
+                    </InArgument>
+                  </mtbwa:WriteBuildWarning.Message>
+                </mtbwa:WriteBuildWarning>
+              </If.Else>
+            </If>
+            <local:WitBatchSaveWorkItems DisplayName="Batch Save the WorkItems" sap2010:WorkflowViewState.IdRef="WitBatchSaveWorkItems_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild">
+              <local:WitBatchSaveWorkItems.Result>
+                <OutArgument x:TypeArguments="scg:IList(mtwc:BatchSaveError)">
+                  <mca:CSharpReference x:TypeArguments="scg:IList(mtwc:BatchSaveError)">batchSaveErrors</mca:CSharpReference>
+                </OutArgument>
+              </local:WitBatchSaveWorkItems.Result>
+              <local:WitBatchSaveWorkItems.WorkItems>
+                <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
+                  <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">updatedWorkItems</mca:CSharpValue>
+                </InArgument>
+              </local:WitBatchSaveWorkItems.WorkItems>
+            </local:WitBatchSaveWorkItems>
+            <Assign DisplayName="Save the errors for later" sap2010:WorkflowViewState.IdRef="Assign_5">
+              <Assign.To>
+                <OutArgument x:TypeArguments="scg:IDictionary(x:Int32, mtwc:BatchSaveError)">
+                  <mca:CSharpReference x:TypeArguments="scg:IDictionary(x:Int32, mtwc:BatchSaveError)">saveErrors</mca:CSharpReference>
+                </OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="scg:IDictionary(x:Int32, mtwc:BatchSaveError)">
+                  <mca:CSharpValue x:TypeArguments="scg:IDictionary(x:Int32, mtwc:BatchSaveError)">Enumerable.ToDictionary(batchSaveErrors, x=&gt; x.WorkItem.Id)</mca:CSharpValue>
+                </InArgument>
+              </Assign.Value>
+            </Assign>
+            <Assign DisplayName="Instantiate temp list" sap2010:WorkflowViewState.IdRef="Assign_6">
+              <Assign.To>
+                <OutArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
+                  <mca:CSharpReference x:TypeArguments="scg:List(mtwc:WorkItem)">workItemsToUpdateTemp</mca:CSharpReference>
+                </OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
+                  <mca:CSharpValue x:TypeArguments="scg:List(mtwc:WorkItem)">new List&lt;Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem&gt;()</mca:CSharpValue>
+                </InArgument>
+              </Assign.Value>
+            </Assign>
+            <Assign DisplayName="Decrease the retry count" sap2010:WorkflowViewState.IdRef="Assign_7">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:Int32">
+                  <mca:CSharpReference x:TypeArguments="x:Int32">retries</mca:CSharpReference>
+                </OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:Int32">
+                  <mca:CSharpValue x:TypeArguments="x:Int32">retries - 1</mca:CSharpValue>
+                </InArgument>
+              </Assign.Value>
+            </Assign>
+            <If DisplayName="If there were errors and we can still retry" sap2010:WorkflowViewState.IdRef="If_2">
+              <If.Condition>
+                <InArgument x:TypeArguments="x:Boolean">
+                  <mca:CSharpValue x:TypeArguments="x:Boolean">retries &gt; 0 &amp;&amp; saveErrors.Count &gt; 0</mca:CSharpValue>
+                </InArgument>
+              </If.Condition>
+              <If.Then>
+                <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each WorkItem" sap2010:WorkflowViewState.IdRef="ForEach`1_2">
+                  <ForEach.Values>
+                    <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
+                      <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpValue>
+                    </InArgument>
+                  </ForEach.Values>
+                  <ActivityAction x:TypeArguments="mtwc:WorkItem">
+                    <ActivityAction.Argument>
+                      <DelegateInArgument x:TypeArguments="mtwc:WorkItem" Name="workItem" />
+                    </ActivityAction.Argument>
+                    <Sequence sap2010:WorkflowViewState.IdRef="Sequence_3">
+                      <AddToCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Add WorkItem to temp update items" sap2010:WorkflowViewState.IdRef="AddToCollection`1_2">
+                        <AddToCollection.Item>
+                          <InArgument x:TypeArguments="mtwc:WorkItem">
+                            <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
+                          </InArgument>
+                        </AddToCollection.Item>
+                        <InArgument x:TypeArguments="scg:ICollection(mtwc:WorkItem)">
+                          <mca:CSharpValue x:TypeArguments="scg:ICollection(mtwc:WorkItem)">workItemsToUpdateTemp</mca:CSharpValue>
+                        </InArgument>
+                      </AddToCollection>
+                      <RemoveFromCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Remove work item from items to update" sap2010:WorkflowViewState.IdRef="RemoveFromCollection`1_1">
+                        <RemoveFromCollection.Item>
+                          <InArgument x:TypeArguments="mtwc:WorkItem">
+                            <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
+                          </InArgument>
+                        </RemoveFromCollection.Item>
+                        <InArgument x:TypeArguments="scg:ICollection(mtwc:WorkItem)">
+                          <mca:CSharpValue x:TypeArguments="scg:ICollection(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpValue>
+                        </InArgument>
+                      </RemoveFromCollection>
+                      <local:RefreshWorkItem DisplayName="Refresh WorkItem" sap2010:WorkflowViewState.IdRef="RefreshWorkItem_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild">
+                        <local:RefreshWorkItem.WorkItem>
+                          <InArgument x:TypeArguments="mtwc:WorkItem">
+                            <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
+                          </InArgument>
+                        </local:RefreshWorkItem.WorkItem>
+                      </local:RefreshWorkItem>
+                    </Sequence>
+                  </ActivityAction>
+                </ForEach>
+              </If.Then>
+            </If>
+            <Assign DisplayName="Reduce the list of work items by the error items and retry" sap2010:WorkflowViewState.IdRef="Assign_8">
+              <Assign.To>
+                <OutArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
+                  <mca:CSharpReference x:TypeArguments="scg:List(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpReference>
+                </OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
+                  <mca:CSharpValue x:TypeArguments="scg:List(mtwc:WorkItem)">workItemsToUpdateTemp</mca:CSharpValue>
+                </InArgument>
+              </Assign.Value>
+            </Assign>
+          </Sequence>
+        </ActivityAction>
+      </ForEach>
+    </While>
+    <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each updated WorkItem, report success or error" sap2010:WorkflowViewState.IdRef="ForEach`1_3">
+      <ForEach.Values>
+        <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
+          <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">updatedWorkItems</mca:CSharpValue>
+        </InArgument>
+      </ForEach.Values>
+      <ActivityAction x:TypeArguments="mtwc:WorkItem">
+        <ActivityAction.Argument>
+          <DelegateInArgument x:TypeArguments="mtwc:WorkItem" Name="workItem" />
+        </ActivityAction.Argument>
+        <If DisplayName="If a WorkItem has an error" sap2010:WorkflowViewState.IdRef="If_3">
+          <If.Condition>
+            <InArgument x:TypeArguments="x:Boolean">
+              <mca:CSharpValue x:TypeArguments="x:Boolean">saveErrors.ContainsKey(workItem.Id)</mca:CSharpValue>
+            </InArgument>
+          </If.Condition>
+          <If.Then>
+            <mtbwa:WriteBuildWarning DisplayName="Write Build Warning" sap2010:WorkflowViewState.IdRef="WriteBuildWarning_2" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+              <mtbwa:WriteBuildWarning.Importance>
+                <InArgument x:TypeArguments="mtbc:BuildMessageImportance">
+                  <mca:CSharpValue x:TypeArguments="mtbc:BuildMessageImportance">Microsoft.TeamFoundation.Build.Client.BuildMessageImportance.Low</mca:CSharpValue>
+                </InArgument>
+              </mtbwa:WriteBuildWarning.Importance>
+              <mtbwa:WriteBuildWarning.Message>
+                <InArgument x:TypeArguments="x:String">
+                  <mca:CSharpValue x:TypeArguments="x:String">string.Format("The work item '{0}' could not be updated: '{1}'", workItem.Id, saveErrors[workItem.Id])</mca:CSharpValue>
+                </InArgument>
+              </mtbwa:WriteBuildWarning.Message>
+            </mtbwa:WriteBuildWarning>
+          </If.Then>
+          <If.Else>
+            <mtbwa:WriteBuildMessage DisplayName="Write Build Message" sap2010:WorkflowViewState.IdRef="WriteBuildMessage_1" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+              <mtbwa:WriteBuildMessage.Message>
+                <InArgument x:TypeArguments="x:String">
+                  <mca:CSharpValue x:TypeArguments="x:String">string.Format("The work item '{0}' was updated with build label '{1}'.", workItem.Id, BuildNumber)</mca:CSharpValue>
+                </InArgument>
+              </mtbwa:WriteBuildMessage.Message>
+            </mtbwa:WriteBuildMessage>
+          </If.Else>
+        </If>
+      </ActivityAction>
+    </ForEach>
+    <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="Associate each WorkItem's parent" sap2010:WorkflowViewState.IdRef="ForEach`1_4">
+      <ForEach.Values>
+        <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
+          <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">WorkItems.Cast&lt;Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem&gt;()</mca:CSharpValue>
+        </InArgument>
+      </ForEach.Values>
+      <ActivityAction x:TypeArguments="mtwc:WorkItem">
+        <ActivityAction.Argument>
+          <DelegateInArgument x:TypeArguments="mtwc:WorkItem" Name="workItem" />
+        </ActivityAction.Argument>
+        <Sequence sap2010:WorkflowViewState.IdRef="Sequence_4">
+          <Sequence.Variables>
+            <Variable x:TypeArguments="x:Int32" Name="parentId" />
+            <Variable x:TypeArguments="mtwc:WorkItem" Name="updatedWorkItem" />
+          </Sequence.Variables>
+          <Assign sap2010:WorkflowViewState.IdRef="Assign_9">
+            <Assign.To>
+              <OutArgument x:TypeArguments="mtwc:WorkItem">
+                <mca:CSharpReference x:TypeArguments="mtwc:WorkItem">updatedWorkItem</mca:CSharpReference>
+              </OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="mtwc:WorkItem">
+                <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">updatedWorkItems.FirstOrDefault(w =&gt; w.Id == workItem.Id)</mca:CSharpValue>
+              </InArgument>
+            </Assign.Value>
+          </Assign>
+          <If DisplayName="If we updated the WorkItem, use the updated one" sap2010:WorkflowViewState.IdRef="If_4">
+            <If.Condition>
+              <InArgument x:TypeArguments="x:Boolean">
+                <mca:CSharpValue x:TypeArguments="x:Boolean">updatedWorkItem != null</mca:CSharpValue>
+              </InArgument>
+            </If.Condition>
+            <If.Then>
+              <Assign sap2010:WorkflowViewState.IdRef="Assign_10">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="mtwc:WorkItem">
+                    <mca:CSharpReference x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpReference>
+                  </OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="mtwc:WorkItem">
+                    <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">updatedWorkItem</mca:CSharpValue>
+                  </InArgument>
+                </Assign.Value>
+              </Assign>
+            </If.Then>
+          </If>
+          <local:GetParentId DisplayName="Get the ParentId of the WorkItem" sap2010:WorkflowViewState.IdRef="GetParentId_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild">
+            <local:GetParentId.ParentChildLinks>
+              <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)">
+                <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)">ParentChildLinks</mca:CSharpValue>
+              </InArgument>
+            </local:GetParentId.ParentChildLinks>
+            <local:GetParentId.Result>
+              <OutArgument x:TypeArguments="x:Int32">
+                <mca:CSharpReference x:TypeArguments="x:Int32">parentId</mca:CSharpReference>
+              </OutArgument>
+            </local:GetParentId.Result>
+            <local:GetParentId.WorkItem>
+              <InArgument x:TypeArguments="mtwc:WorkItem">
+                <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
+              </InArgument>
+            </local:GetParentId.WorkItem>
+          </local:GetParentId>
+          <mtbwa:WriteBuildInformation x:TypeArguments="mtbwt:AssociatedWorkItem" DisplayName="Log the Parent Work Item for the Build Log" sap2010:WorkflowViewState.IdRef="WriteBuildInformation`1_1" ParentToBuildDetail="True">
+            <mtbwa:WriteBuildInformation.Value>
+              <InArgument x:TypeArguments="mtbwt:AssociatedWorkItem">
+                <mca:CSharpValue x:TypeArguments="mtbwt:AssociatedWorkItem">new Microsoft.TeamFoundation.Build.Workflow.Tracking.AssociatedWorkItem() { AssignedTo = workItem.Fields[CoreField.AssignedTo].ToString(), Title = workItem.Title, Type = workItem.Type.Name, Status = workItem.State, WorkItemId = workItem.Id, WorkItemUri = workItem.Uri, ParentWorkItemId = parentId }</mca:CSharpValue>
+              </InArgument>
+            </mtbwa:WriteBuildInformation.Value>
+          </mtbwa:WriteBuildInformation>
+        </Sequence>
+      </ActivityAction>
+    </ForEach>
+    <sads:DebugSymbol.Symbol>d4EBYzpcY29kZXBsZXhCdWlsZENvbnRyaWJcQ3VzdG9tQWN0aXZpdGllc1xNQUlOXFNvdXJjZVxBY3Rpdml0aWVzXFRlYW1Gb3VuZGF0aW9uU2VydmVyXEluY2x1ZGVNZXJnZXNJbkJ1aWxkXEFzc29jaWF0ZVdvcmtJdGVtcy54YW1sRzwDpAMOAgEBSAVTDgMBtARUBV8OAwGZBGAFaw4DAf4DbAV1DgMB7wN2Ba0CDQMBwgGuAgXXAg8CAXjYAgWiAw8CAQJQC1CyAQMBwgRLC0txAwG1BFwLXKMBAwGnBFcLV3ADAZoEaAtohwEDAYwEYwtjggEDAf8Dcy9zMAMB/QNvC29XAwHwA3oHrAIRAwHQAXgJeIIBAwHDAbECC7ECbwMBtQG4AgnVAg4CAXnbAgvbArABAgFr4gIJoAMUAgEDfQ19cgMB4gOEAQuqAhYDAdEBuwIPuwJxAgF6vwINygInAwGYAc0CDdMCJwMBiAHnAgvyAhQCAUrzAguHAxACARiZAwufAykCAQSgAQ27ARIDAaUDyAEN0wEWAwGHA9QBDd8BFgMB6gLgAQ3rARYDAc0C7AENnQISAwHvAZ4CDakCFgMB0gHHAhPHArcBAwGnAcICE8ICpAEDAZkB0AIT0AKzAQMBigHvAhHvApABAgFb6gIR6gJrAgFL9gIR9gJnAgEZ+gIPhQMYAgEpnAMRnAOJAwIBB5kD3AGZA+IBAgEFowETowFZAwGmA6cBEbABIwMBxAOzARG5ASsDAbQD0AET0AG0AQMBlgPLARPLAYgBAwGIA9wBE9wBqwEDAfkC1wET1wF9AwHrAugBE+gBWwMB3ALjARPjAV8DAc4C7wET7wGDAQMB8AHzARGbAhsDAf4BpgITpgJ1AwHhAaECE6ECeQMB0wGCAxWCA2cCATr9AhX9AmgCASquARWuAXkDAdMDqgEXqgFiAwHFA7YBF7YBYwMBtgP2ARf2AXwDAb8C/QEVmQIgAwH/Af4BF4cCKQMBoAKIAheRAi4DAYEChQIbhQKEAQMBsAKBAh2BAmgDAaECjwIbjwKAAQMBkQKLAh2LAmgDAYIC</sads:DebugSymbol.Symbol>
+  </Sequence>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="Assign_1" sap:VirtualizedContainerService.HintSize="542,62" />
+      <sap2010:ViewStateData Id="Assign_2" sap:VirtualizedContainerService.HintSize="542,62" />
+      <sap2010:ViewStateData Id="Assign_3" sap:VirtualizedContainerService.HintSize="542,62" />
+      <sap2010:ViewStateData Id="Assign_4" sap:VirtualizedContainerService.HintSize="542,62" />
+      <sap2010:ViewStateData Id="UpdateWorkItem_2" sap:VirtualizedContainerService.HintSize="464,22" />
+      <sap2010:ViewStateData Id="ErrorActivity_1" sap:VirtualizedContainerService.HintSize="464,55" />
+      <sap2010:ViewStateData Id="AddToCollection`1_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="WriteBuildWarning_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="If_1" sap:VirtualizedContainerService.HintSize="464,210">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="WitBatchSaveWorkItems_1" sap:VirtualizedContainerService.HintSize="464,22" />
+      <sap2010:ViewStateData Id="Assign_5" sap:VirtualizedContainerService.HintSize="464,62" />
+      <sap2010:ViewStateData Id="Assign_6" sap:VirtualizedContainerService.HintSize="464,62" />
+      <sap2010:ViewStateData Id="Assign_7" sap:VirtualizedContainerService.HintSize="464,62" />
+      <sap2010:ViewStateData Id="AddToCollection`1_2" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="RemoveFromCollection`1_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="RefreshWorkItem_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="222,270">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ForEach`1_2" sap:VirtualizedContainerService.HintSize="200,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_2" sap:VirtualizedContainerService.HintSize="464,210" />
+      <sap2010:ViewStateData Id="Assign_8" sap:VirtualizedContainerService.HintSize="464,62" />
+      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="486,1147">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ForEach`1_1" sap:VirtualizedContainerService.HintSize="516,1297" />
+      <sap2010:ViewStateData Id="While_1" sap:VirtualizedContainerService.HintSize="542,1457">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="WriteBuildWarning_2" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="WriteBuildMessage_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="If_3" sap:VirtualizedContainerService.HintSize="464,210" />
+      <sap2010:ViewStateData Id="ForEach`1_3" sap:VirtualizedContainerService.HintSize="542,360">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_9" sap:VirtualizedContainerService.HintSize="242,62" />
+      <sap2010:ViewStateData Id="Assign_10" sap:VirtualizedContainerService.HintSize="242,62" />
+      <sap2010:ViewStateData Id="If_4" sap:VirtualizedContainerService.HintSize="242,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="GetParentId_1" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="WriteBuildInformation`1_1" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="264,401">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ForEach`1_4" sap:VirtualizedContainerService.HintSize="542,551">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="564,2980">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ColinsALMCorner.CustomBuildTasks.AssociateWorkItems_1" sap:VirtualizedContainerService.HintSize="604,3060" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>

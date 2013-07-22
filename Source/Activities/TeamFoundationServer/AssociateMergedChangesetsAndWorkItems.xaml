@@ -1,0 +1,565 @@
+﻿<Activity mc:Ignorable="sads sap sap2010" x:Class="TfsBuildExtensions.Activities.TeamFoundationServer.AssociateMergedChangesetsAndWorkItems" this:AssociateMergedChangesetsAndWorkItems.AssociateMerges="True"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
+ xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client"
+ xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow"
+ xmlns:mtc="clr-namespace:Microsoft.TeamFoundation.Client;assembly=Microsoft.TeamFoundation.Client"
+ xmlns:mtvc="clr-namespace:Microsoft.TeamFoundation.VersionControl.Client;assembly=Microsoft.TeamFoundation.VersionControl.Client"
+ xmlns:mtwc="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
+ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+ xmlns:s="clr-namespace:System;assembly=mscorlib"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:sc="clr-namespace:System.Collections;assembly=mscorlib"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:this="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="Result" Type="OutArgument(scg:IList(mtvc:Changeset))" />
+    <x:Property Name="AssociatedChangesets" Type="InArgument(scg:IList(mtvc:Changeset))" />
+    <x:Property Name="UpdateWorkItems" Type="InArgument(x:Boolean)" />
+    <x:Property Name="AssociateMerges" Type="InArgument(x:Boolean)" />
+  </x:Members>
+  <sap2010:ExpressionActivityEditor.ExpressionActivityEditor>C#</sap2010:ExpressionActivityEditor.ExpressionActivityEditor>
+  <sap2010:WorkflowViewState.IdRef>ColinsALMCorner.CustomBuildTasks.AssociateMergedChangesetsAndWorkItems_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>Microsoft.TeamFoundation.Build.Client</x:String>
+      <x:String>Microsoft.TeamFoundation.Framework.Client</x:String>
+      <x:String>Microsoft.TeamFoundation.Client</x:String>
+      <x:String>Microsoft.TeamFoundation.WorkItemTracking.Client</x:String>
+      <x:String>Microsoft.TeamFoundation.VersionControl.Client</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>Accessibility</AssemblyReference>
+      <AssemblyReference>Ionic.Zip</AssemblyReference>
+      <AssemblyReference>Microsoft.Build.Framework</AssemblyReference>
+      <AssemblyReference>Microsoft.Build.Tasks.v4.0</AssemblyReference>
+      <AssemblyReference>Microsoft.Build.Utilities.v4.0</AssemblyReference>
+      <AssemblyReference>Microsoft.CSharp</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Build.Client</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Build.Common</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Build.Workflow</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Client</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.Common</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.VersionControl.Client</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.VersionControl.Common</AssemblyReference>
+      <AssemblyReference>Microsoft.TeamFoundation.WorkItemTracking.Client</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Activities.Presentation</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Management</AssemblyReference>
+      <AssemblyReference>System.Management.Automation</AssemblyReference>
+      <AssemblyReference>System.Net.Http</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ServiceModel.Activities</AssemblyReference>
+      <AssemblyReference>System.Web</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>TfsBuildExtensions.TfsUtilities</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>TfsBuildExtensions.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <If DisplayName="If AssociateMerges" sap2010:WorkflowViewState.IdRef="If_8">
+    <If.Condition>
+      <InArgument x:TypeArguments="x:Boolean">
+        <mca:CSharpValue x:TypeArguments="x:Boolean">AssociateMerges</mca:CSharpValue>
+      </InArgument>
+    </If.Condition>
+    <If.Then>
+      <Sequence sap2010:WorkflowViewState.IdRef="Sequence_9">
+        <Sequence.Variables>
+          <Variable x:TypeArguments="mtbc:IBuildDetail" Name="buildDetail" />
+          <Variable x:TypeArguments="scg:IEnumerable(mtvc:Changeset)" Name="changesets" />
+          <Variable x:TypeArguments="mtvc:VersionControlServer" Name="versionControlServer" />
+          <Variable x:TypeArguments="mtc:TfsTeamProjectCollection" Name="teamProjectCollection" />
+        </Sequence.Variables>
+        <mtbwa:GetBuildDetail DisplayName="Get Build Detail" sap2010:WorkflowViewState.IdRef="GetBuildDetail_2">
+          <mtbwa:GetBuildDetail.Result>
+            <OutArgument x:TypeArguments="mtbc:IBuildDetail">
+              <mca:CSharpReference x:TypeArguments="mtbc:IBuildDetail">buildDetail</mca:CSharpReference>
+            </OutArgument>
+          </mtbwa:GetBuildDetail.Result>
+        </mtbwa:GetBuildDetail>
+        <mtbwa:GetTeamProjectCollection DisplayName="Get Team Project Collection" sap2010:WorkflowViewState.IdRef="GetTeamProjectCollection_2">
+          <mtbwa:GetTeamProjectCollection.Result>
+            <OutArgument x:TypeArguments="mtc:TfsTeamProjectCollection">
+              <mca:CSharpReference x:TypeArguments="mtc:TfsTeamProjectCollection">teamProjectCollection</mca:CSharpReference>
+            </OutArgument>
+          </mtbwa:GetTeamProjectCollection.Result>
+        </mtbwa:GetTeamProjectCollection>
+        <Assign DisplayName="Get Version Control Server" sap2010:WorkflowViewState.IdRef="Assign_5">
+          <Assign.To>
+            <OutArgument x:TypeArguments="mtvc:VersionControlServer">
+              <mca:CSharpReference x:TypeArguments="mtvc:VersionControlServer">versionControlServer</mca:CSharpReference>
+            </OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="mtvc:VersionControlServer">
+              <mca:CSharpValue x:TypeArguments="mtvc:VersionControlServer">teamProjectCollection.GetService&lt;VersionControlServer&gt;()</mca:CSharpValue>
+            </InArgument>
+          </Assign.Value>
+        </Assign>
+        <local:GetMergedChangesets DisplayName="Get Merged Changesets" sap2010:WorkflowViewState.IdRef="GetMergedChangesets_3">
+          <local:GetMergedChangesets.AssociatedChangesets>
+            <InArgument x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">
+              <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">AssociatedChangesets</mca:CSharpValue>
+            </InArgument>
+          </local:GetMergedChangesets.AssociatedChangesets>
+          <local:GetMergedChangesets.Result>
+            <OutArgument x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">
+              <mca:CSharpReference x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">changesets</mca:CSharpReference>
+            </OutArgument>
+          </local:GetMergedChangesets.Result>
+          <local:GetMergedChangesets.VersionControlServer>
+            <InArgument x:TypeArguments="mtvc:VersionControlServer">
+              <mca:CSharpValue x:TypeArguments="mtvc:VersionControlServer">versionControlServer</mca:CSharpValue>
+            </InArgument>
+          </local:GetMergedChangesets.VersionControlServer>
+        </local:GetMergedChangesets>
+        <If DisplayName="If there are changesets to associate" sap2010:WorkflowViewState.IdRef="If_6">
+          <If.Condition>
+            <InArgument x:TypeArguments="x:Boolean">
+              <mca:CSharpValue x:TypeArguments="x:Boolean">changesets.Count() &gt; 0</mca:CSharpValue>
+            </InArgument>
+          </If.Condition>
+          <If.Then>
+            <mtbwa:RunOnce DisplayName="Associate changesets (but only once ever)" sap2010:WorkflowViewState.IdRef="RunOnce_3">
+              <mtbwa:RunOnce.Name>
+                <InArgument x:TypeArguments="x:String">
+                  <mca:CSharpValue x:TypeArguments="x:String">string.Format("{0}_AssociateMergedChangesetsAndWorkItems", buildDetail.Uri)</mca:CSharpValue>
+                </InArgument>
+              </mtbwa:RunOnce.Name>
+              <local:AssociateChangesets DisplayName="Associate Changesets" sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#" sap2010:WorkflowViewState.IdRef="AssociateChangesets_3">
+                <local:AssociateChangesets.BuildNumber>
+                  <InArgument x:TypeArguments="x:String">
+                    <mca:CSharpValue x:TypeArguments="x:String">buildDetail.BuildNumber</mca:CSharpValue>
+                  </InArgument>
+                </local:AssociateChangesets.BuildNumber>
+                <local:AssociateChangesets.Changesets>
+                  <InArgument x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">
+                    <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">changesets</mca:CSharpValue>
+                  </InArgument>
+                </local:AssociateChangesets.Changesets>
+                <sap2010:WorkflowViewState.ViewStateManager>
+                  <sap2010:ViewStateManager>
+                    <sap2010:ViewStateData Id="WriteBuildInformation`1_1" sap2010:WorkflowViewState.IdRef="ViewStateData_1" />
+                    <sap2010:ViewStateData Id="WriteBuildMessage_1" sap2010:WorkflowViewState.IdRef="ViewStateData_2" />
+                    <sap2010:ViewStateData Id="Sequence_1" sap2010:WorkflowViewState.IdRef="ViewStateData_3" />
+                    <sap2010:ViewStateData Id="ForEach`1_1" sap2010:WorkflowViewState.IdRef="ViewStateData_4" />
+                    <sap2010:ViewStateData Id="ColinsALMCorner.CustomBuildTasks.AssociateChangesets_1" sap2010:WorkflowViewState.IdRef="ViewStateData_5" />
+                  </sap2010:ViewStateManager>
+                </sap2010:WorkflowViewState.ViewStateManager>
+              </local:AssociateChangesets>
+              <If DisplayName="If we must update WorkItems" sap2010:WorkflowViewState.IdRef="If_9">
+                <If.Condition>
+                  <InArgument x:TypeArguments="x:Boolean">
+                    <mca:CSharpValue x:TypeArguments="x:Boolean">UpdateWorkItems</mca:CSharpValue>
+                  </InArgument>
+                </If.Condition>
+                <If.Then>
+                  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_10">
+                    <Sequence.Variables>
+                      <Variable x:TypeArguments="mtwc:WorkItemStore" Name="workItemStore" />
+                      <Variable x:TypeArguments="scg:IList(x:Int32)" Name="workItemIds" />
+                      <Variable x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)" Name="parentChildLinks" />
+                      <Variable x:TypeArguments="mtwc:WorkItemCollection" Name="workItemsToAssociate" />
+                    </Sequence.Variables>
+                    <Assign DisplayName="Get the WorkItem Store" sap2010:WorkflowViewState.IdRef="Assign_9">
+                      <Assign.To>
+                        <OutArgument x:TypeArguments="mtwc:WorkItemStore">
+                          <mca:CSharpReference x:TypeArguments="mtwc:WorkItemStore">workItemStore</mca:CSharpReference>
+                        </OutArgument>
+                      </Assign.To>
+                      <Assign.Value>
+                        <InArgument x:TypeArguments="mtwc:WorkItemStore">
+                          <mca:CSharpValue x:TypeArguments="mtwc:WorkItemStore">teamProjectCollection.GetService&lt;WorkItemStore&gt;()</mca:CSharpValue>
+                        </InArgument>
+                      </Assign.Value>
+                    </Assign>
+                    <local:WitGetWorkItemsForArtifacts DisplayName="Get WorkItem IDs associated with the included Changesets" sap2010:WorkflowViewState.IdRef="WitGetWorkItemsForArtifacts_3">
+                      <local:WitGetWorkItemsForArtifacts.ArtifactUris>
+                        <InArgument x:TypeArguments="scg:IEnumerable(x:Uri)">
+                          <mca:CSharpValue x:TypeArguments="scg:IEnumerable(x:Uri)">changesets.Select(c =&gt; c.ArtifactUri)</mca:CSharpValue>
+                        </InArgument>
+                      </local:WitGetWorkItemsForArtifacts.ArtifactUris>
+                      <local:WitGetWorkItemsForArtifacts.AsOfDate>
+                        <InArgument x:TypeArguments="s:DateTime">
+                          <mca:CSharpValue x:TypeArguments="s:DateTime">DateTime.MinValue</mca:CSharpValue>
+                        </InArgument>
+                      </local:WitGetWorkItemsForArtifacts.AsOfDate>
+                      <local:WitGetWorkItemsForArtifacts.Result>
+                        <OutArgument x:TypeArguments="scg:IList(x:Int32)">
+                          <mca:CSharpReference x:TypeArguments="scg:IList(x:Int32)">workItemIds</mca:CSharpReference>
+                        </OutArgument>
+                      </local:WitGetWorkItemsForArtifacts.Result>
+                      <local:WitGetWorkItemsForArtifacts.WorkItemStore>
+                        <InArgument x:TypeArguments="mtwc:WorkItemStore">
+                          <mca:CSharpValue x:TypeArguments="mtwc:WorkItemStore">workItemStore</mca:CSharpValue>
+                        </InArgument>
+                      </local:WitGetWorkItemsForArtifacts.WorkItemStore>
+                    </local:WitGetWorkItemsForArtifacts>
+                    <local:WitQueryWorkItems DisplayName="Get the WorkItems and their parent info" sap2010:WorkflowViewState.IdRef="WitQueryWorkItems_3" IncludeParentWorkItems="True" PageSize="50">
+                      <local:WitQueryWorkItems.Fields>
+                        <InArgument x:TypeArguments="scg:IEnumerable(x:String)">
+                          <mca:CSharpValue x:TypeArguments="scg:IEnumerable(x:String)">new string [] { IncludeMergesInBuild.UpdateWorkItem.IntegrationBuildFieldRef, CoreFieldReferenceNames.History }</mca:CSharpValue>
+                        </InArgument>
+                      </local:WitQueryWorkItems.Fields>
+                      <local:WitQueryWorkItems.Ids>
+                        <InArgument x:TypeArguments="scg:IEnumerable(x:Int32)">
+                          <mca:CSharpValue x:TypeArguments="scg:IEnumerable(x:Int32)">workItemIds</mca:CSharpValue>
+                        </InArgument>
+                      </local:WitQueryWorkItems.Ids>
+                      <local:WitQueryWorkItems.ParentChildLinks>
+                        <OutArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)">
+                          <mca:CSharpReference x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)">parentChildLinks</mca:CSharpReference>
+                        </OutArgument>
+                      </local:WitQueryWorkItems.ParentChildLinks>
+                      <local:WitQueryWorkItems.Result>
+                        <OutArgument x:TypeArguments="mtwc:WorkItemCollection">
+                          <mca:CSharpReference x:TypeArguments="mtwc:WorkItemCollection">workItemsToAssociate</mca:CSharpReference>
+                        </OutArgument>
+                      </local:WitQueryWorkItems.Result>
+                      <local:WitQueryWorkItems.WorkItemStore>
+                        <InArgument x:TypeArguments="mtwc:WorkItemStore">
+                          <mca:CSharpValue x:TypeArguments="mtwc:WorkItemStore">workItemStore</mca:CSharpValue>
+                        </InArgument>
+                      </local:WitQueryWorkItems.WorkItemStore>
+                    </local:WitQueryWorkItems>
+                    <local:AssociateWorkItems DisplayName="Associate WorkItems to the build" sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#" sap2010:WorkflowViewState.IdRef="AssociateWorkItems_3">
+                      <local:AssociateWorkItems.BuildNumber>
+                        <InArgument x:TypeArguments="x:String">
+                          <mca:CSharpValue x:TypeArguments="x:String">buildDetail.BuildNumber</mca:CSharpValue>
+                        </InArgument>
+                      </local:AssociateWorkItems.BuildNumber>
+                      <local:AssociateWorkItems.ParentChildLinks>
+                        <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)">
+                          <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)">parentChildLinks</mca:CSharpValue>
+                        </InArgument>
+                      </local:AssociateWorkItems.ParentChildLinks>
+                      <sap2010:WorkflowViewState.ViewStateManager>
+                        <sap2010:ViewStateManager>
+                          <sap2010:ViewStateData Id="Assign_1" sap2010:WorkflowViewState.IdRef="ViewStateData_6" />
+                          <sap2010:ViewStateData Id="Assign_2" sap2010:WorkflowViewState.IdRef="ViewStateData_7" />
+                          <sap2010:ViewStateData Id="Assign_3" sap2010:WorkflowViewState.IdRef="ViewStateData_8" />
+                          <sap2010:ViewStateData Id="Assign_4" sap2010:WorkflowViewState.IdRef="ViewStateData_9" />
+                          <sap2010:ViewStateData Id="UpdateWorkItem_2" sap2010:WorkflowViewState.IdRef="ViewStateData_10" />
+                          <sap2010:ViewStateData Id="ErrorActivity_1" sap2010:WorkflowViewState.IdRef="ViewStateData_11" />
+                          <sap2010:ViewStateData Id="AddToCollection`1_1" sap2010:WorkflowViewState.IdRef="ViewStateData_12" />
+                          <sap2010:ViewStateData Id="WriteBuildWarning_1" sap2010:WorkflowViewState.IdRef="ViewStateData_13" />
+                          <sap2010:ViewStateData Id="If_1" sap2010:WorkflowViewState.IdRef="ViewStateData_14" />
+                          <sap2010:ViewStateData Id="WitBatchSaveWorkItems_1" sap2010:WorkflowViewState.IdRef="ViewStateData_15" />
+                          <sap2010:ViewStateData Id="Assign_5" sap2010:WorkflowViewState.IdRef="ViewStateData_16" />
+                          <sap2010:ViewStateData Id="Assign_6" sap2010:WorkflowViewState.IdRef="ViewStateData_17" />
+                          <sap2010:ViewStateData Id="Assign_7" sap2010:WorkflowViewState.IdRef="ViewStateData_18" />
+                          <sap2010:ViewStateData Id="AddToCollection`1_2" sap2010:WorkflowViewState.IdRef="ViewStateData_19" />
+                          <sap2010:ViewStateData Id="RemoveFromCollection`1_1" sap2010:WorkflowViewState.IdRef="ViewStateData_20" />
+                          <sap2010:ViewStateData Id="RefreshWorkItem_1" sap2010:WorkflowViewState.IdRef="ViewStateData_21" />
+                          <sap2010:ViewStateData Id="Sequence_3" sap2010:WorkflowViewState.IdRef="ViewStateData_22" />
+                          <sap2010:ViewStateData Id="ForEach`1_2" sap2010:WorkflowViewState.IdRef="ViewStateData_23" />
+                          <sap2010:ViewStateData Id="If_2" sap2010:WorkflowViewState.IdRef="ViewStateData_24" />
+                          <sap2010:ViewStateData Id="Assign_8" sap2010:WorkflowViewState.IdRef="ViewStateData_25" />
+                          <sap2010:ViewStateData Id="Sequence_2" sap2010:WorkflowViewState.IdRef="ViewStateData_26" />
+                          <sap2010:ViewStateData Id="ForEach`1_1" sap2010:WorkflowViewState.IdRef="ViewStateData_27" />
+                          <sap2010:ViewStateData Id="While_1" sap2010:WorkflowViewState.IdRef="ViewStateData_28" />
+                          <sap2010:ViewStateData Id="WriteBuildWarning_2" sap2010:WorkflowViewState.IdRef="ViewStateData_29" />
+                          <sap2010:ViewStateData Id="WriteBuildMessage_1" sap2010:WorkflowViewState.IdRef="ViewStateData_30" />
+                          <sap2010:ViewStateData Id="If_3" sap2010:WorkflowViewState.IdRef="ViewStateData_31" />
+                          <sap2010:ViewStateData Id="ForEach`1_3" sap2010:WorkflowViewState.IdRef="ViewStateData_32" />
+                          <sap2010:ViewStateData Id="Assign_9" sap2010:WorkflowViewState.IdRef="ViewStateData_33" />
+                          <sap2010:ViewStateData Id="Assign_10" sap2010:WorkflowViewState.IdRef="ViewStateData_34" />
+                          <sap2010:ViewStateData Id="If_4" sap2010:WorkflowViewState.IdRef="ViewStateData_35" />
+                          <sap2010:ViewStateData Id="GetParentId_1" sap2010:WorkflowViewState.IdRef="ViewStateData_36" />
+                          <sap2010:ViewStateData Id="WriteBuildInformation`1_1" sap2010:WorkflowViewState.IdRef="ViewStateData_37" />
+                          <sap2010:ViewStateData Id="Sequence_4" sap2010:WorkflowViewState.IdRef="ViewStateData_38" />
+                          <sap2010:ViewStateData Id="ForEach`1_4" sap2010:WorkflowViewState.IdRef="ViewStateData_39" />
+                          <sap2010:ViewStateData Id="Sequence_1" sap2010:WorkflowViewState.IdRef="ViewStateData_40" />
+                          <sap2010:ViewStateData Id="ColinsALMCorner.CustomBuildTasks.AssociateWorkItems_1" sap2010:WorkflowViewState.IdRef="ViewStateData_41" />
+                        </sap2010:ViewStateManager>
+                      </sap2010:WorkflowViewState.ViewStateManager>
+                      <local:AssociateWorkItems.WorkItems>
+                        <InArgument x:TypeArguments="sc:IEnumerable">
+                          <mca:CSharpValue x:TypeArguments="sc:IEnumerable">workItemsToAssociate</mca:CSharpValue>
+                        </InArgument>
+                      </local:AssociateWorkItems.WorkItems>
+                    </local:AssociateWorkItems>
+                  </Sequence>
+                </If.Then>
+              </If>
+            </mtbwa:RunOnce>
+          </If.Then>
+        </If>
+        <Assign DisplayName="Assign the Result" sap2010:WorkflowViewState.IdRef="Assign_7">
+          <Assign.To>
+            <OutArgument x:TypeArguments="scg:IList(mtvc:Changeset)">
+              <mca:CSharpReference x:TypeArguments="scg:IList(mtvc:Changeset)">Result</mca:CSharpReference>
+            </OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="scg:IList(mtvc:Changeset)">
+              <mca:CSharpValue x:TypeArguments="scg:IList(mtvc:Changeset)">changesets.ToList()</mca:CSharpValue>
+            </InArgument>
+          </Assign.Value>
+        </Assign>
+        <If DisplayName="If there are no merged changesets" sap2010:WorkflowViewState.IdRef="If_7">
+          <If.Condition>
+            <InArgument x:TypeArguments="x:Boolean">
+              <mca:CSharpValue x:TypeArguments="x:Boolean">changesets == null || changesets.Count() == 0</mca:CSharpValue>
+            </InArgument>
+          </If.Condition>
+          <If.Then>
+            <Sequence sap2010:WorkflowViewState.IdRef="Sequence_8">
+              <mtbwa:WriteBuildMessage sap2010:WorkflowViewState.IdRef="WriteBuildMessage_2" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+                <mtbwa:WriteBuildMessage.Importance>
+                  <InArgument x:TypeArguments="mtbc:BuildMessageImportance">
+                    <mca:CSharpValue x:TypeArguments="mtbc:BuildMessageImportance">BuildMessageImportance.Normal</mca:CSharpValue>
+                  </InArgument>
+                </mtbwa:WriteBuildMessage.Importance>
+                <mtbwa:WriteBuildMessage.Message>
+                  <InArgument x:TypeArguments="x:String">
+                    <mca:CSharpValue x:TypeArguments="x:String">string.Format("No merged changesets are submitted to build '{0}'.", buildDetail.BuildNumber)</mca:CSharpValue>
+                  </InArgument>
+                </mtbwa:WriteBuildMessage.Message>
+              </mtbwa:WriteBuildMessage>
+              <Assign sap2010:WorkflowViewState.IdRef="Assign_8">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="scg:IList(mtvc:Changeset)">
+                    <mca:CSharpReference x:TypeArguments="scg:IList(mtvc:Changeset)">Result</mca:CSharpReference>
+                  </OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="scg:IList(mtvc:Changeset)">
+                    <mca:CSharpValue x:TypeArguments="scg:IList(mtvc:Changeset)">new List&lt;Changeset&gt;()</mca:CSharpValue>
+                  </InArgument>
+                </Assign.Value>
+              </Assign>
+            </Sequence>
+          </If.Then>
+        </If>
+      </Sequence>
+    </If.Then>
+    <If.Else>
+      <mtbwa:WriteBuildWarning sap2010:WorkflowViewState.IdRef="WriteBuildWarning_2" Message="AssociateMerges is false - not associating merged work items" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
+        <mtbwa:WriteBuildWarning.Importance>
+          <InArgument x:TypeArguments="mtbc:BuildMessageImportance">
+            <mca:CSharpValue x:TypeArguments="mtbc:BuildMessageImportance">BuildMessageImportance.Normal</mca:CSharpValue>
+          </InArgument>
+        </mtbwa:WriteBuildWarning.Importance>
+      </mtbwa:WriteBuildWarning>
+    </If.Else>
+    <sads:DebugSymbol.Symbol>d39jOlxjb2RlcGxleEJ1aWxkQ29udHJpYlxDdXN0b21BY3Rpdml0aWVzXE1BSU5cU291cmNlXEFjdGl2aXRpZXNcVGVhbUZvdW5kYXRpb25TZXJ2ZXJcQXNzb2NpYXRlTWVyZ2VkQ2hhbmdlc2V0c0FuZFdvcmtJdGVtcy54YW1sPAHJAQHOAQECUwPzAggCAQFWCVZXAgECWgfnAhICAQ7qAgfwAiECAQdhCWcgAwH6AmgJbioDAfACbwl6EgMB3QJ7CYsBJQMBwQKMAQm3Ag4CAVO4AgnDAhICAUDEAgnmAg4CAQ/qAl7qApwBAgEN7QIN7QJ7AgEIZA9kaQMB+wJrD2t+AwHxAncPd5wBAwHnAnIPcnoDAd4Cfg9+eAMB1AKDAQ+DAXYDAcsCiAEPiAFyAwHCAo8BD48BZwIBVJMBDbUCHQIBXcACD8ACcQIBSrsCD7sCbAIBQccCD8cCewIBEMsCDeQCGAIBGZYBE5YBnAECAV6ZAQ+tASsDAa4CrgEPtAIUAgFnzAIP1wIpAgEt2AIP4wIYAgEaoQEVoQF0AwG4ApwBFZwBagMBrwKxARWxAWMCAWi1AROyAh4CAXHUAhXUAq8BAgE3zwIVzwKDAQIBLuACFeACfwIBJNsCFdsCcgIBG7wBFccBHgMBkwLIARXdATkDAd4B3gEV+AEvAwGaAfkBFbECMAIBcsQBG8QBmgEDAaECvwEbvwF4AwGUAtoBG9oBcAMBhgLQARvQAWwDAfkBywEbywGPAQMB7AHVARvVAXYDAd8B9QEb9QFwAwHRAesBG+sBjwEDAcQB5gEb5gF0AwG3AfABG/ABhAEDAaoB3gGxAd4BtwEDAakB4QEb4QHZAQMBnAHeAcEB3gHFAQMBmwGuAhuuAnMDAY0BgQIbgQKHAQMBgAH8ARv8AXACAXM=</sads:DebugSymbol.Symbol>
+  </If>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="GetBuildDetail_2" sap:VirtualizedContainerService.HintSize="611,22" />
+      <sap2010:ViewStateData Id="GetTeamProjectCollection_2" sap:VirtualizedContainerService.HintSize="611,22" />
+      <sap2010:ViewStateData Id="Assign_5" sap:VirtualizedContainerService.HintSize="611,62" />
+      <sap2010:ViewStateData Id="GetMergedChangesets_3" sap:VirtualizedContainerService.HintSize="611,22" />
+      <sap2010:ViewStateData Id="ViewStateData_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_2" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_3" sap:VirtualizedContainerService.HintSize="222,208">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_4" sap:VirtualizedContainerService.HintSize="287,358" />
+      <sap2010:ViewStateData Id="ViewStateData_5" sap:VirtualizedContainerService.HintSize="327,438" />
+      <sap2010:ViewStateData Id="AssociateChangesets_3" sap:VirtualizedContainerService.HintSize="464,22" />
+      <sap2010:ViewStateData Id="Assign_9" sap:VirtualizedContainerService.HintSize="242,62" />
+      <sap2010:ViewStateData Id="WitGetWorkItemsForArtifacts_3" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="WitQueryWorkItems_3" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="ViewStateData_6" sap:VirtualizedContainerService.HintSize="542,62" />
+      <sap2010:ViewStateData Id="ViewStateData_7" sap:VirtualizedContainerService.HintSize="542,62" />
+      <sap2010:ViewStateData Id="ViewStateData_8" sap:VirtualizedContainerService.HintSize="542,62" />
+      <sap2010:ViewStateData Id="ViewStateData_9" sap:VirtualizedContainerService.HintSize="542,62" />
+      <sap2010:ViewStateData Id="ViewStateData_10" sap:VirtualizedContainerService.HintSize="464,22" />
+      <sap2010:ViewStateData Id="ViewStateData_11" sap:VirtualizedContainerService.HintSize="464,55" />
+      <sap2010:ViewStateData Id="ViewStateData_12" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_13" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_14" sap:VirtualizedContainerService.HintSize="464,210">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_15" sap:VirtualizedContainerService.HintSize="464,22" />
+      <sap2010:ViewStateData Id="ViewStateData_16" sap:VirtualizedContainerService.HintSize="464,62" />
+      <sap2010:ViewStateData Id="ViewStateData_17" sap:VirtualizedContainerService.HintSize="464,62" />
+      <sap2010:ViewStateData Id="ViewStateData_18" sap:VirtualizedContainerService.HintSize="464,62" />
+      <sap2010:ViewStateData Id="ViewStateData_19" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_20" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_21" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_22" sap:VirtualizedContainerService.HintSize="222,270">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_23" sap:VirtualizedContainerService.HintSize="200,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_24" sap:VirtualizedContainerService.HintSize="464,210" />
+      <sap2010:ViewStateData Id="ViewStateData_25" sap:VirtualizedContainerService.HintSize="464,62" />
+      <sap2010:ViewStateData Id="ViewStateData_26" sap:VirtualizedContainerService.HintSize="486,1147">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_27" sap:VirtualizedContainerService.HintSize="516,1297" />
+      <sap2010:ViewStateData Id="ViewStateData_28" sap:VirtualizedContainerService.HintSize="542,1457">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_29" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_30" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="ViewStateData_31" sap:VirtualizedContainerService.HintSize="464,210" />
+      <sap2010:ViewStateData Id="ViewStateData_32" sap:VirtualizedContainerService.HintSize="542,360">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_33" sap:VirtualizedContainerService.HintSize="242,62" />
+      <sap2010:ViewStateData Id="ViewStateData_34" sap:VirtualizedContainerService.HintSize="242,62" />
+      <sap2010:ViewStateData Id="ViewStateData_35" sap:VirtualizedContainerService.HintSize="242,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_36" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="ViewStateData_37" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="ViewStateData_38" sap:VirtualizedContainerService.HintSize="264,401">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_39" sap:VirtualizedContainerService.HintSize="542,551">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_40" sap:VirtualizedContainerService.HintSize="564,2980">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ViewStateData_41" sap:VirtualizedContainerService.HintSize="604,3060" />
+      <sap2010:ViewStateData Id="AssociateWorkItems_3" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Sequence_10" sap:VirtualizedContainerService.HintSize="264,372">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_9" sap:VirtualizedContainerService.HintSize="464,522">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="RunOnce_3" sap:VirtualizedContainerService.HintSize="486,708">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_6" sap:VirtualizedContainerService.HintSize="611,858">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_7" sap:VirtualizedContainerService.HintSize="611,62" />
+      <sap2010:ViewStateData Id="WriteBuildMessage_2" sap:VirtualizedContainerService.HintSize="242,22" />
+      <sap2010:ViewStateData Id="Assign_8" sap:VirtualizedContainerService.HintSize="242,62" />
+      <sap2010:ViewStateData Id="Sequence_8" sap:VirtualizedContainerService.HintSize="264,248">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_7" sap:VirtualizedContainerService.HintSize="611,398">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_9" sap:VirtualizedContainerService.HintSize="633,1810">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="WriteBuildWarning_2" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="If_8" sap:VirtualizedContainerService.HintSize="858,1960">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ColinsALMCorner.CustomBuildTasks.AssociateMergedChangesetsAndWorkItems_1" sap:VirtualizedContainerService.HintSize="898,2040" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>
