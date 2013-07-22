@@ -76,6 +76,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="..\..\..\Common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="GetCodeCoverageTotal\GetCodeCoverageTotalTests.cs" />
     <Compile Include="IncludeMergesInBuild\GetMergedChangesetsTests.cs" />
     <Compile Include="IncludeMergesInBuild\GetParentIdTests.cs" />
@@ -95,7 +98,7 @@
     <Fakes Include="Fakes\Microsoft.TeamFoundation.VersionControl.Client.fakes" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Activities\Activities.csproj">
+    <ProjectReference Include="..\..\..\Activities\Activities.csproj">
       <Project>{cdf9ff31-b9da-411e-b50e-38f9c4fa33e3}</Project>
       <Name>Activities</Name>
     </ProjectReference>
