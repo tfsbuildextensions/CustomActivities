@@ -156,7 +156,6 @@
     <Compile Include="SharePoint\ProcessSharePointPowerShellScriptsOutputTests.cs" />
     <Compile Include="SqlServer\SqlExecuteTests.cs" />
     <Compile Include="Compression\ZipTests.cs" />
-    <Shadow Include="Test References\TfsBuildExtensions.Activities.accessor" />
     <None Include="Framework\TestFiles\AssemblyInfo %281%29.fs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -178,7 +177,9 @@
     </None>
     <None Include="Demonstration Workflows\PSDemoScript.ps1" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Test References\" />
+  </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\Common\CodeAnalysis.Dictionary.xml">
       <Link>Properties\CodeAnalysis.Dictionary.xml</Link>

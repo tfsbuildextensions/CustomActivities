@@ -33,7 +33,6 @@ namespace TfsBuildExtensions.Activities.Tests.ClickOnce
 
             var workflow = new ClickOnceDeployment();
          
-            workflow.OnlineOnly = false;
             workflow.ApplicationName = "TestApp";
             workflow.BinLocation = @"C:\tfs\test2\CustomBuildSource\CustomBuildArtifacts\TestApp\bin\Debug";
             workflow.Version = "1.0.0.1";
@@ -43,7 +42,6 @@ namespace TfsBuildExtensions.Activities.Tests.ClickOnce
             workflow.ManifestCertificateThumbprint = "9C6B1A418C9DF9E42F31AE811B659F4773FF6AA3";
             workflow.PublishLocation = @"\\dlvrn2010md\builddropfolder\testc1";
             workflow.InstallLocation = "http://localhost:8055/Testclickonce2";
-            workflow.Publisher = "CompanyA";
             workflow.TargetFrameworkVersion = "4.0";
 
             // Create the workflow run-time environment

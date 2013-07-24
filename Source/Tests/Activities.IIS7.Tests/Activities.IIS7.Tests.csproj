@@ -97,9 +97,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Shadow Include="Test References\TfsBuildExtensions.Activities.IIS7.accessor" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Activities.IIS7\Activities.IIS7.csproj">
       <Project>{7621C5C6-2A5D-47B4-9C97-4478062E15E3}</Project>
       <Name>Activities.IIS7</Name>
@@ -109,6 +106,9 @@
     <CodeAnalysisDictionary Include="..\..\Common\CodeAnalysis.Dictionary.xml">
       <Link>Properties\CodeAnalysis.Dictionary.xml</Link>
     </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Test References\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
