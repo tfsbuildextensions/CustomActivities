@@ -159,6 +159,7 @@
     <Compile Include="CodeQuality\CodeMetrics\UnknownMetricNameException.cs" />
     <Compile Include="CodeQuality\NUnit\NUnit.cs" />
     <Compile Include="CodeQuality\NUnit\SimpleCommandLineBuilder.cs" />
+    <Compile Include="CodeQuality\Sonar\Sonar.cs" />
     <Compile Include="CodeQuality\StatLight\StatLight.cs" />
     <Compile Include="CodeQuality\FxCop.cs" />
     <Compile Include="CodeQuality\VSTest\IProcess.cs" />
