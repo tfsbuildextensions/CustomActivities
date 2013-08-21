@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="FxCop.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
+// <copyright file="Sonar.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
 namespace TfsBuildExtensions.Activities.CodeQuality
 {
@@ -22,17 +22,8 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     [BuildActivity(HostEnvironmentOption.All)]
     public class Sonar : BaseCodeActivity
     {
-        /// <summary>
-        /// Internal class for handling a Sonar analysis result
-        /// </summary>
-        private class SonarRunResult
-        {
-            public bool HasBreakingAlerts;
-            public int ReturnCode;
-        }
-
-        private InArgument<Boolean> generatePropertiesIfMissing = true;
-        private InArgument<String> sonarPropertiesFileName = "sonar-project.properties";
+        private InArgument<bool> generatePropertiesIfMissing = true;
+        private InArgument<string> sonarPropertiesFileName = "sonar-project.properties";
 
         /// <summary>
         /// Projects (solutions) list to analyze, typically pass the ProjectsToBuild variable.
@@ -42,14 +33,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         [RequiredArgument]
         public InArgument<StringList> ProjectsToAnalyze { get; set; }
 
-
         /// <summary>
         /// Sonar runner cmd (or bat) file path.
         /// </summary>
         [Description("Sonar Runner command file Path")]
         [Browsable(true)]
         [RequiredArgument]
-        public InArgument<String> SonarRunnerPath { get; set; }
+        public InArgument<string> SonarRunnerPath { get; set; }
 
         /// <summary>
         /// Gets or sets the build workspace. This is used to obtain the project folder in the build workspace.
@@ -59,13 +49,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         [RequiredArgument]
         public InArgument<Workspace> BuildWorkspace { get; set; }
 
-
         /// <summary>
         /// The path to a Sonar properties template file, that will be used for generating a customized version every build.
         /// </summary>
         [Description("Path to a template sonar properties file")]
         [Browsable(true)]
-        public InArgument<String> SonarPropertiesTemplatePath { get; set; }
+        public InArgument<string> SonarPropertiesTemplatePath { get; set; }
 
         /// <summary>
         /// Gets or sets the option to fail the build if alerts are raised by Sonar
@@ -73,13 +62,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         [Description("Set to true to fail the build if alerts are raised by Sonar")]
         public InArgument<bool> FailBuildOnAlert { get; set; }
 
-
         /// <summary>
         /// Gets or sets the option to fail the build if alerts are raised by Sonar
         /// </summary>
         [Description("If the sonar properties file for the projects to analyze are missing, they can be generated from a template file. Default value is true.")]
         [Browsable(true)]
-        public InArgument<Boolean> GeneratePropertiesIfMissing
+        public InArgument<bool> GeneratePropertiesIfMissing
         {
             get { return this.generatePropertiesIfMissing; }
             set { this.generatePropertiesIfMissing = value; }
@@ -87,7 +75,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         [Description("Name of the Sonar for c# properties file. Default value is sonar-project.properties")]
         [Browsable(true)]
-        public InArgument<String> SonarPropertiesFileName
+        public InArgument<string> SonarPropertiesFileName
         {
             get { return this.sonarPropertiesFileName; }
             set { this.sonarPropertiesFileName = value; }
@@ -95,93 +83,37 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         [Description("Custom parameter CUSTOMPARAM1 that can be used to customize further the sonar properties file.")]
         [Browsable(true)]
-        public InArgument<String> PropertiesCustomParameter1 { get; set; }
+        public InArgument<string> PropertiesCustomParameter1 { get; set; }
 
         [Description("Custom parameter CUSTOMPARAM2 that can be used to customize further the sonar properties file.")]
         [Browsable(true)]
-        public InArgument<String> PropertiesCustomParameter2 { get; set; }
+        public InArgument<string> PropertiesCustomParameter2 { get; set; }
 
         [Description("Custom parameter CUSTOMPARAM3 that can be used to customize further the sonar properties file.")]
         [Browsable(true)]
-        public InArgument<String> PropertiesCustomParameter3 { get; set; }
+        public InArgument<string> PropertiesCustomParameter3 { get; set; }
 
         [Description("Custom parameter CUSTOMPARAM4 that can be used to customize further the sonar properties file.")]
         [Browsable(true)]
-        public InArgument<String> PropertiesCustomParameter4 { get; set; }
+        public InArgument<string> PropertiesCustomParameter4 { get; set; }
 
         [Description("Custom parameter CUSTOMPARAM5 that can be used to customize further the sonar properties file.")]
         [Browsable(true)]
-        public InArgument<String> PropertiesCustomParameter5 { get; set; }
+        public InArgument<string> PropertiesCustomParameter5 { get; set; }
 
-
-        private SonarRunResult RunProcess(string fullPath, string workingDirectory, string arguments)
-        {
-            if (!Directory.Exists(workingDirectory))
-            {
-                this.LogBuildError(String.Format("Working directory for sonar analysis {0} not found", workingDirectory));
-            }
-            using (Process proc = new Process())
-            {
-                var result = new SonarRunResult();
-
-                proc.StartInfo.FileName = fullPath;
-
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.Arguments = arguments;
-                this.LogBuildMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments, BuildMessageImportance.High);
-
-                if (!string.IsNullOrEmpty(workingDirectory))
-                {
-                    proc.StartInfo.WorkingDirectory = workingDirectory;
-                }
-
-                proc.Start();
-
-                string outputStream = proc.StandardOutput.ReadToEnd();
-                string errorStream = proc.StandardError.ReadToEnd();
-
-                // log the full output of sonar to the build logs folder
-                IBuildDetail build = this.ActivityContext.GetExtension<IBuildDetail>();
-                String logFolder = Path.GetDirectoryName(build.LogLocation);
-                String sonarLogFile = Path.Combine(logFolder, "Sonar.log");
-                File.WriteAllText(sonarLogFile, outputStream);
-                File.AppendAllText(sonarLogFile, "\n");
-                File.AppendAllText(sonarLogFile, errorStream);
-
-                result.HasBreakingAlerts = outputStream.Contains("[BUILD BREAKER]");
-
-                if (outputStream.Length > 0)
-                {
-                    this.LogBuildMessage(outputStream);
-                }
-
-                if (errorStream.Length > 0)
-                {
-                    this.LogBuildWarning(errorStream);
-                }
-
-                proc.WaitForExit();
-                result.ReturnCode = proc.ExitCode;
-                return result;
-            }
-        }
-
-
-        public string TransformSonarProperties(String templatePath, String solutionPath)
+        public string TransformSonarProperties(string templatePath, string solutionPath)
         {
             StringBuilder content = new StringBuilder(File.ReadAllText(templatePath));
 
             IBuildDetail build = this.ActivityContext.GetExtension<IBuildDetail>();
-            String buildDefinition = build.BuildDefinition.Name;
-            String buildNumber = build.BuildNumber;
+            string buildDefinition = build.BuildDefinition.Name;
+            string buildNumber = build.BuildNumber;
 
             content.Replace("%BUILD_DEFINITION%", buildDefinition);
             content.Replace("%BUILD_DEFINITION_UNDERSCORE%", buildDefinition.Replace(' ', '_'));
             content.Replace("%BUILD_NUMBER%", buildNumber);
             content.Replace("%BUILD_NUMBER_UNDERSCORE%", buildNumber.Replace(' ', '_'));
-            content.Replace("%BUILD_NUMBER_DEFAULT_SUFFIX%", buildNumber.Replace(buildDefinition + "_", String.Empty));
+            content.Replace("%BUILD_NUMBER_DEFAULT_SUFFIX%", buildNumber.Replace(buildDefinition + "_", string.Empty));
             content.Replace("%SOLUTION_FILE%", Path.GetFileName(solutionPath));
             content.Replace("%SOLUTION_FILE_PATH%", solutionPath);
             content.Replace("%SOLUTION_DIRECTORY_PATH%", Path.GetDirectoryName(solutionPath));
@@ -194,14 +126,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             return content.ToString();
         }
 
-
         /// <summary>
         /// Executes the logic for this custom activity
         /// </summary>
         protected override void InternalExecute()
         {
             Workspace workspace = this.BuildWorkspace.Get(this.ActivityContext);
-            String sonarRunnerPath = this.SonarRunnerPath.Get(this.ActivityContext);
+            string sonarRunnerPath = this.SonarRunnerPath.Get(this.ActivityContext);
             if (!File.Exists(sonarRunnerPath))
             {
                 this.LogBuildError("Sonar runner file not found: " + sonarRunnerPath);
@@ -210,26 +141,26 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
             foreach (string projectToAnalyze in this.ProjectsToAnalyze.Get(this.ActivityContext))
             {
-                if (!String.IsNullOrWhiteSpace(projectToAnalyze))
+                if (!string.IsNullOrWhiteSpace(projectToAnalyze))
                 {
                     string localProjectPath = workspace.GetLocalItemForServerItem(projectToAnalyze);
                     string localFolderPath = System.IO.Path.GetDirectoryName(localProjectPath);
 
                     if (this.GeneratePropertiesIfMissing.Get(this.ActivityContext))
                     {
-                        String sonarPropertiesPath = Path.Combine(localFolderPath, this.SonarPropertiesFileName.Get(this.ActivityContext));
-                        String templatePropertiesPath = SonarPropertiesTemplatePath.Get(this.ActivityContext);
+                        string sonarPropertiesPath = Path.Combine(localFolderPath, this.SonarPropertiesFileName.Get(this.ActivityContext));
+                        string templatePropertiesPath = this.SonarPropertiesTemplatePath.Get(this.ActivityContext);
                         if (!File.Exists(sonarPropertiesPath))
                         {
                             this.LogBuildMessage("sonar.properties file not found in working folder.");
-                            if (!String.IsNullOrWhiteSpace(templatePropertiesPath))
+                            if (!string.IsNullOrWhiteSpace(templatePropertiesPath))
                             {
                                 if (File.Exists(templatePropertiesPath))
                                 {
                                     this.LogBuildMessage("Generating sonar properties file from " + templatePropertiesPath);
-                                    string properties = TransformSonarProperties(templatePropertiesPath,
-                                        localProjectPath
-                                        );
+                                    string properties = this.TransformSonarProperties(
+                                        templatePropertiesPath,
+                                        localProjectPath);
                                     this.LogBuildMessage(properties, BuildMessageImportance.Low);
                                     File.WriteAllText(sonarPropertiesPath, properties);
                                 }
@@ -245,9 +176,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                         }
                     }
 
-                    string arguments = String.Format("/c \"{0}\"", this.SonarRunnerPath.Get(this.ActivityContext));
+                    string arguments = string.Format("/c \"{0}\"", this.SonarRunnerPath.Get(this.ActivityContext));
 
-                    SonarRunResult result = RunProcess("cmd.exe", localFolderPath, arguments);
+                    SonarRunResult result = this.RunProcess("cmd.exe", localFolderPath, arguments);
 
                     if (result.HasBreakingAlerts)
                     {
@@ -272,8 +203,71 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                     }
                 }
             }
-
         }
 
+        private SonarRunResult RunProcess(string fullPath, string workingDirectory, string arguments)
+        {
+            if (!Directory.Exists(workingDirectory))
+            {
+                this.LogBuildError(string.Format("Working directory for sonar analysis {0} not found", workingDirectory));
+            }
+
+            using (Process proc = new Process())
+            {
+                var result = new SonarRunResult();
+
+                proc.StartInfo.FileName = fullPath;
+
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.Arguments = arguments;
+                this.LogBuildMessage("Running " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments, BuildMessageImportance.High);
+
+                if (!string.IsNullOrEmpty(workingDirectory))
+                {
+                    proc.StartInfo.WorkingDirectory = workingDirectory;
+                }
+
+                proc.Start();
+
+                string outputStream = proc.StandardOutput.ReadToEnd();
+                string errorStream = proc.StandardError.ReadToEnd();
+
+                // log the full output of sonar to the build logs folder
+                IBuildDetail build = this.ActivityContext.GetExtension<IBuildDetail>();
+                string logFolder = Path.GetDirectoryName(build.LogLocation);
+                string sonarLogFile = Path.Combine(logFolder, "Sonar.log");
+                File.WriteAllText(sonarLogFile, outputStream);
+                File.AppendAllText(sonarLogFile, "\n");
+                File.AppendAllText(sonarLogFile, errorStream);
+
+                result.HasBreakingAlerts = outputStream.Contains("[BUILD BREAKER]");
+
+                if (outputStream.Length > 0)
+                {
+                    this.LogBuildMessage(outputStream);
+                }
+
+                if (errorStream.Length > 0)
+                {
+                    this.LogBuildWarning(errorStream);
+                }
+
+                proc.WaitForExit();
+                result.ReturnCode = proc.ExitCode;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Internal class for handling a Sonar analysis result
+        /// </summary>
+        private class SonarRunResult
+        {
+            public bool HasBreakingAlerts { get; set; }
+
+            public int ReturnCode { get; set; }
+        }
     }
 }
