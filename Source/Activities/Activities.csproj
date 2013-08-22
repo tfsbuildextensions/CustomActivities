@@ -219,6 +219,7 @@
     <Compile Include="TeamFoundationServer\AgentSettingsTags.cs" />
     <Compile Include="TeamFoundationServer\BuildAgentTags.cs" />
     <Compile Include="TeamFoundationServer\BuildReport\BuildReport.cs" />
+    <Compile Include="TeamFoundationServer\BuildStepDuration.cs" />
     <Compile Include="TeamFoundationServer\BuildWorkspace.cs" />
     <Compile Include="TeamFoundationServer\CompareLabels.cs" />
     <Compile Include="TeamFoundationServer\ConvertToProperties.cs" />
