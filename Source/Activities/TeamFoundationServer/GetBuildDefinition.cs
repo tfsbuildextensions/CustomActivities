@@ -13,7 +13,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// based on the Build Server and build definition name provided.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class GetBuildDefinition : CodeActivity<IBuildDefinition>
+    public sealed class GetBuildDefinition : BaseCodeActivity<IBuildDefinition>
     {
         /// <summary>
         /// The name of the team project where the build definition exists.
@@ -41,23 +41,15 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Executes the logic for this workflow activity.
         /// </summary>
-        /// <param name="context">The workflow context.</param>
         /// <returns>The <see cref="Microsoft.TeamFoundation.Build.Client.IBuildDefinition"/>
         /// that is specified.</returns>
-        protected override IBuildDefinition Execute(CodeActivityContext context)
+        protected override IBuildDefinition InternalExecute()
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-
-            IBuildServer buildServer = context.GetValue(this.BuildServer);
-            string teamProjectName = context.GetValue(this.TeamProjectName);
-            string buildDefinitionName = context.GetValue(this.BuildDefinitionName);
+            IBuildServer buildServer = this.BuildServer.Get(this.ActivityContext);
+            string teamProjectName = this.TeamProjectName.Get(this.ActivityContext);
+            string buildDefinitionName = this.BuildDefinitionName.Get(this.ActivityContext);
             
-            IBuildDefinition buildDefinition = buildServer.GetBuildDefinition(teamProjectName, buildDefinitionName);
-
-            return buildDefinition;
+            return buildServer.GetBuildDefinition(teamProjectName, buildDefinitionName);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// Get BuildAgent MachineName
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class GetBuildAgentMachineName : CodeActivity
+    public sealed class GetBuildAgentMachineName : BaseCodeActivity
     {
         /// <summary>
         /// BuildAgent
@@ -31,16 +31,10 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// When implemented in a derived class, performs the execution of the activity.
         /// </summary>
-        /// <param name="context">The execution context under which the activity executes.</param>
-        protected override void Execute(CodeActivityContext context)
+        protected override void InternalExecute()
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-
-            IBuildAgent buildAgent = context.GetValue(this.BuildAgent);
-            context.SetValue(this.AgentMachineName, buildAgent.Url.Host);
+            IBuildAgent buildAgent = this.BuildAgent.Get(this.ActivityContext);
+            this.AgentMachineName.Set(this.ActivityContext, buildAgent.Url.Host);
         }
     }
 }

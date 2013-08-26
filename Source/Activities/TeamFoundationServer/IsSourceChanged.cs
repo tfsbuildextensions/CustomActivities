@@ -14,7 +14,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// Checks build definition workspace to determine if the source control has changed since a given datetime (i.e. when the last good build ran).  Useful for not launching builds if source hasn't changed.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class IsSourceChanged : CodeActivity<bool>
+    public sealed class IsSourceChanged : BaseCodeActivity<bool>
     {
         private IBuildServer bs;
         private VersionControlServer vcs;
@@ -45,7 +45,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// Specifies the ServerPath to query
         /// </summary>
         public InArgument<string> ServerPath { get; set; }
- 
+
         /// <summary>
         /// Since
         /// </summary>
@@ -59,22 +59,22 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Executes the logic for this workflow activity
         /// </summary>
-        /// <param name="context">CodeActivityContext</param>
         /// <returns>bool</returns>
-        protected override bool Execute(CodeActivityContext context)
+        protected override bool InternalExecute()
         {
-            this.buildDefinition = context.GetValue(this.BuildDefinition);
-            this.serverPath = (context.GetValue(this.ServerPath) == null) ? string.Empty : context.GetValue(this.ServerPath);
-            this.teamProject = context.GetValue(this.TeamProject);
-            this.teamFoundationServer = context.GetValue(this.TeamFoundationServer);
-            this.since = context.GetValue(this.Since);
-            this.exclusions = context.GetValue(this.Exclusions);
+            this.buildDefinition = this.BuildDefinition.Get(this.ActivityContext);
+            this.serverPath = (this.ServerPath.Get(this.ActivityContext) == null) ? string.Empty : this.ServerPath.Get(this.ActivityContext);
+            this.teamProject = this.TeamProject.Get(this.ActivityContext);
+            this.teamFoundationServer = this.TeamFoundationServer.Get(this.ActivityContext);
+            this.since = this.Since.Get(this.ActivityContext);
+            this.exclusions = this.Exclusions.Get(this.ActivityContext);
 
             this.ConnectToTFS();
 
             bool containsChanges = string.IsNullOrEmpty(this.serverPath) ? this.CheckWorkspaces() : this.CheckServerPath();
 
-            context.SetValue(this.Result, containsChanges);
+            this.Result.Set(this.ActivityContext, containsChanges);
+
             return containsChanges;
         }
 

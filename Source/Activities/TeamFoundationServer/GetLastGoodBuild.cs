@@ -13,7 +13,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "TODO: Need to resolve this."), BuildActivity(HostEnvironmentOption.All)]
     [BuildExtension(HostEnvironmentOption.All)]
-    public sealed class GetLastGoodBuild : CodeActivity<IBuildDetail>
+    public sealed class GetLastGoodBuild : BaseCodeActivity<IBuildDetail>
     {
         private TfsTeamProjectCollection mtfs;
         private IBuildServer bs;
@@ -51,26 +51,22 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// </summary>
         public InArgument<string> BuildQuality { get; set; }
 
-        private CodeActivityContext ActivityContext { get; set; }
-
         /// <summary>
         /// Executes the workflow
         /// </summary>
-        /// <param name="context">The CodeActivityContext</param>
         /// <returns>IBuildDetail</returns>
-        protected override IBuildDetail Execute(CodeActivityContext context)
+        protected override IBuildDetail InternalExecute()
         {
-            this.ActivityContext = context;
-
-            this.buildDefinition = context.GetValue(this.BuildDefinition);
-            this.teamProject = context.GetValue(this.TeamProject);
-            this.teamFoundationServer = context.GetValue(this.TeamFoundationServer);
-            this.build = context.GetValue(this.ParentBuild);
-            this.buildQuality = context.GetValue(this.BuildQuality);
+            this.buildDefinition = this.BuildDefinition.Get(this.ActivityContext);
+            this.teamProject = this.TeamProject.Get(this.ActivityContext);
+            this.teamFoundationServer = this.TeamFoundationServer.Get(this.ActivityContext);
+            this.build = this.ParentBuild.Get(this.ActivityContext);
+            this.buildQuality = this.BuildQuality.Get(this.ActivityContext);
 
             this.ConnectToTFS();
             this.build = this.GetGoodBuild() ?? this.build;
-            context.SetValue(this.Result, this.build);
+            this.Result.Set(this.ActivityContext, this.build);
+            
             return this.build;
         }
 

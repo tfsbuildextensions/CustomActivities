@@ -14,7 +14,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// based on the Team Foundation Server URL that is provided.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class GetBuildServer : CodeActivity<IBuildServer>
+    public sealed class GetBuildServer : BaseCodeActivity<IBuildServer>
     {
         /// <summary>
         /// The URL for the Team Foundation Server to use.
@@ -26,17 +26,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Executes the logic for this workflow activity.
         /// </summary>
-        /// <param name="context">The workflow context.</param>
         /// <returns>The <see cref="Microsoft.TeamFoundation.Build.Client.IBuildServer"/>
         /// that is specified.</returns>
-        protected override IBuildServer Execute(CodeActivityContext context)
+        protected override IBuildServer InternalExecute()
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-            
-            string serverUrl = context.GetValue(this.TeamFoundationServerUrl);
+            string serverUrl = this.TeamFoundationServerUrl.Get(this.ActivityContext);
 
             using (TfsTeamProjectCollection tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri(serverUrl)))
             {

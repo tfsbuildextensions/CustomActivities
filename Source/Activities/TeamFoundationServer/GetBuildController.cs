@@ -13,7 +13,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// based on the Build Server and controller name provided.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class GetBuildController : CodeActivity<IBuildController>
+    public sealed class GetBuildController : BaseCodeActivity<IBuildController>
     {
         /// <summary>
         /// The build controller's name that exists on the TFS server.
@@ -34,18 +34,12 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Executes the logic for this workflow activity.
         /// </summary>
-        /// <param name="context">The workflow context.</param>
         /// <returns>The <see cref="Microsoft.TeamFoundation.Build.Client.IBuildController"/>
         /// that is specified.</returns>
-        protected override IBuildController Execute(CodeActivityContext context)
+        protected override IBuildController InternalExecute()
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-
-            IBuildServer buildServer = context.GetValue(this.BuildServer);
-            string buildControllerName = context.GetValue(this.BuildControllerName);
+            IBuildServer buildServer = this.BuildServer.Get(this.ActivityContext);
+            string buildControllerName = this.BuildControllerName.Get(this.ActivityContext);
 
             return buildServer.GetBuildController(buildControllerName);
         }

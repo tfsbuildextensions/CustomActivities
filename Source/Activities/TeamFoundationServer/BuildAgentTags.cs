@@ -28,7 +28,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// BuildAgent Tags
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class BuildAgentTags : CodeActivity
+    public sealed class BuildAgentTags : BaseCodeActivity
     {
         private TagAction action = TagAction.Add;
 
@@ -58,17 +58,12 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
         /// <summary>
         /// When implemented in a derived class, performs the execution of the activity.
-        /// </summary>
-        /// <param name="context">The execution context under which the activity executes.</param>
-        protected override void Execute(CodeActivityContext context)
+        /// </summary>        
+        protected override void InternalExecute()
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
+            IBuildAgent buildAgent = this.BuildAgent.Get(this.ActivityContext);
+            string tag = this.Tag.Get(this.ActivityContext);
 
-            IBuildAgent buildAgent = context.GetValue(this.BuildAgent);
-            string tag = context.GetValue(this.Tag);
             switch (this.action)
             {
                 case TagAction.Add:

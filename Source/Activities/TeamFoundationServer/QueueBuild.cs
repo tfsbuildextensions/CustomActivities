@@ -13,7 +13,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// and TFS Build Server.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class QueueBuild : CodeActivity<IQueuedBuild>
+    public sealed class QueueBuild : BaseCodeActivity<IQueuedBuild>
     {
         /// <summary>
         /// The <see cref="Microsoft.TeamFoundation.Build.Client.IBuildServer"/>
@@ -59,30 +59,24 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Executes the logic for this workflow activity.
         /// </summary>
-        /// <param name="context">The workflow context.</param>
         /// <returns>The <see cref="Microsoft.TeamFoundation.Build.Client.IQueuedBuild"/>
         /// object that is returned after queueing the new build.</returns>
-        protected override IQueuedBuild Execute(CodeActivityContext context)
+        protected override IQueuedBuild InternalExecute()
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
+            IBuildServer buildServer = this.BuildServer.Get(this.ActivityContext);
 
-            IBuildServer buildServer = context.GetValue(this.BuildServer);
-
-            IBuildDefinition buildDefinition = context.GetValue(this.BuildDefinition);
+            IBuildDefinition buildDefinition = this.BuildDefinition.Get(this.ActivityContext);
             IBuildRequest buildRequest = buildServer.CreateBuildRequest(buildDefinition.Uri);
 
-            buildRequest.Priority = context.GetValue(this.Priority);
+            buildRequest.Priority = this.Priority.Get(this.ActivityContext);
 
-            string processParameters = context.GetValue(this.ProcessParameters);
+            string processParameters = this.ProcessParameters.Get(this.ActivityContext);
             if (!string.IsNullOrEmpty(processParameters))
             {
                 buildRequest.ProcessParameters = processParameters;
             }
 
-            IBuildController buildController = context.GetValue(this.BuildController);
+            IBuildController buildController = this.BuildController.Get(this.ActivityContext);
             if (buildController != null)
             {
                 buildRequest.BuildController = buildController;

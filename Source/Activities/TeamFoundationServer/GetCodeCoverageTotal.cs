@@ -15,7 +15,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// no event to hook into, so you need to "sleep" a while before executing this task.
     /// </summary>
     [BuildActivity(HostEnvironmentOption.All)]
-    public sealed class GetCodeCoverageTotal : CodeActivity<int>
+    public sealed class GetCodeCoverageTotal : BaseCodeActivity<int>
     {
         /// <summary>
         /// The BuildDetail object for the build
@@ -25,11 +25,10 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Calculates the total code coverage for the build
         /// </summary>
-        /// <param name="context">The workflow context</param>
         /// <returns>Code coverage total (percentage)</returns>
-        protected override int Execute(CodeActivityContext context)
+        protected override int InternalExecute()
         {
-            var buildDetail = context.GetValue(this.BuildDetail);
+            var buildDetail = this.BuildDetail.Get(this.ActivityContext);
             var testService = buildDetail.BuildServer.TeamProjectCollection.GetService<ITestManagementService>();
             var project = testService.GetTeamProject(buildDetail.TeamProject);
             var runs = project.TestRuns.ByBuild(buildDetail.Uri);
