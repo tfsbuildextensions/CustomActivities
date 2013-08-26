@@ -62,11 +62,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.VisualStudio", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFSBuildExtensions.TestsWithFakes", "Tests\TFSBuildExtensions.TestsWithFakes\TFSBuildExtensions.TestsWithFakes\TFSBuildExtensions.TestsWithFakes.csproj", "{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBuildActivities", "TestBuildActivities\TestBuildActivities.csproj", "{B7942035-A948-49CC-8C48-2EB744D1DC66}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 21
+		SccNumberOfProjects = 20
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
@@ -136,9 +134,6 @@ Global
 		SccProjectTopLevelParentUniqueName19 = TFSBuildExtensions.sln
 		SccProjectName19 = Tests/TFSBuildExtensions.TestsWithFakes/TFSBuildExtensions.TestsWithFakes
 		SccLocalPath19 = Tests\\TFSBuildExtensions.TestsWithFakes\\TFSBuildExtensions.TestsWithFakes
-		SccProjectUniqueName20 = TestBuildActivities\\TestBuildActivities.csproj
-		SccProjectName20 = TestBuildActivities
-		SccLocalPath20 = TestBuildActivities
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Community.TeamFoundation.Build.vsmdi
@@ -328,16 +323,6 @@ Global
 		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Release|x86.ActiveCfg = Release|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{B7942035-A948-49CC-8C48-2EB744D1DC66}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
