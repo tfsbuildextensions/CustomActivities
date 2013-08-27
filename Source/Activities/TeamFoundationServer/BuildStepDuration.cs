@@ -16,7 +16,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
     /// <summary>
     /// Enumeration for which Build Steps durations should be returned
     /// </summary>
-    public enum BuildStepDurationOptions
+    public enum BuildStepDurationDisplayOption
     {
         /// <summary>
         /// Duration of all build steps would be returned
@@ -63,8 +63,8 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// <summary>
         /// Gets or sets the option to select whether to return all, slowest ten or fast test build steps. Default Value is Slowest Ten Steps
         /// </summary>
-        [DefaultValue(BuildStepDurationOptions.SlowestTenSteps)]
-        public InArgument<BuildStepDurationOptions> BuildStepDurationOption { get; set; }
+        [DefaultValue(BuildStepDurationDisplayOption.SlowestTenSteps)]
+        public InArgument<BuildStepDurationDisplayOption> BuildStepDurationOption { get; set; }
 
         /// <summary>
         /// Executes the logic for this workflow activity
@@ -112,14 +112,14 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
             return outputMessages;
         }
 
-        private static IEnumerable<Tuple<string, TimeSpan>> GetSortedDurationSteps(BuildStepDurationOptions buildStepDurationOption, Dictionary<int, Tuple<string, TimeSpan>> buildStepList)
+        private static IEnumerable<Tuple<string, TimeSpan>> GetSortedDurationSteps(BuildStepDurationDisplayOption buildStepDurationOption, Dictionary<int, Tuple<string, TimeSpan>> buildStepList)
         {
             switch (buildStepDurationOption)
             {
-                case BuildStepDurationOptions.FastestTenSteps:
+                case BuildStepDurationDisplayOption.FastestTenSteps:
                     return buildStepList.Values.OrderBy(s => s.Item2).Take(10);
 
-                case BuildStepDurationOptions.SlowestTenSteps:
+                case BuildStepDurationDisplayOption.SlowestTenSteps:
                     return buildStepList.Values.OrderByDescending(s => s.Item2).Take(10);
             }
 
