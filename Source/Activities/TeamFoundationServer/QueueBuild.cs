@@ -70,8 +70,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 
             buildRequest.Priority = this.Priority.Get(this.ActivityContext);
 
-            
-            if (Enum.IsDefined(typeof(QueuePriority), buildRequest.Priority ) == false)
+            if (Enum.IsDefined(typeof(QueuePriority), buildRequest.Priority) == false)
             {
                 // Set default value to normal, if no value has been passed.
                 buildRequest.Priority = QueuePriority.Normal;
