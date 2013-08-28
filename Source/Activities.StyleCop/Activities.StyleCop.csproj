@@ -101,8 +101,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common\BaseCodeActivity.cs">
+      <Link>Properties\BaseCodeActivity.cs</Link>
+    </Compile>
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\FailingBuildException.cs">
+      <Link>Properties\FailingBuildException.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\IBaseActivityMinimumArguments.cs">
+      <Link>Properties\IBaseActivityMinimumArguments.cs</Link>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -112,12 +121,6 @@
     <CodeAnalysisDictionary Include="..\Common\CodeAnalysis.Dictionary.xml">
       <Link>Properties\CodeAnalysis.Dictionary.xml</Link>
     </CodeAnalysisDictionary>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Activities\Activities.csproj">
-      <Project>{CDF9FF31-B9DA-411E-B50E-38F9C4FA33E3}</Project>
-      <Name>Activities</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

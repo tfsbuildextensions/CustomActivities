@@ -96,13 +96,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\BaseRemoteCodeActivity.cs">
-      <Link>BaseRemoteCodeActivity.cs</Link>
+      <Link>Properties\BaseRemoteCodeActivity.cs</Link>
     </Compile>
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\Common\IBaseActivityMinimumArguments.cs">
-      <Link>IBaseActivityMinimumArguments.cs</Link>
+      <Link>Properties\IBaseActivityMinimumArguments.cs</Link>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

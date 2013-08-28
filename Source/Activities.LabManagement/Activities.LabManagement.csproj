@@ -83,16 +83,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\BaseCodeActivity.cs">
-      <Link>BaseCodeActivity.cs</Link>
+      <Link>Properties\BaseCodeActivity.cs</Link>
     </Compile>
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\Common\FailingBuildException.cs">
-      <Link>FailingBuildException.cs</Link>
+      <Link>Properties\FailingBuildException.cs</Link>
     </Compile>
     <Compile Include="..\Common\IBaseActivityMinimumArguments.cs">
-      <Link>IBaseActivityMinimumArguments.cs</Link>
+      <Link>Properties\IBaseActivityMinimumArguments.cs</Link>
     </Compile>
     <Compile Include="CheckIfEnvironmentIsLocked.cs" />
     <Compile Include="GlobalSuppressions.cs" />

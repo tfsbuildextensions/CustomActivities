@@ -22,3 +22,4 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cpu", Scope = "member", Target = "TfsBuildExtensions.Activities.Virtualization.VirtualPCAction.#WaitForLowCpuUtilization")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cpu", Scope = "member", Target = "TfsBuildExtensions.Activities.Virtualization.VirtualPC.#MaxCpuUsage")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cpu", Scope = "member", Target = "TfsBuildExtensions.Activities.Virtualization.VirtualPC.#MaxCpuThreshold")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "TfsBuildExtensions.Activities")]

@@ -64,8 +64,17 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common\BaseCodeActivity.cs">
+      <Link>Properties\BaseCodeActivity.cs</Link>
+    </Compile>
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\FailingBuildException.cs">
+      <Link>Properties\FailingBuildException.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\IBaseActivityMinimumArguments.cs">
+      <Link>Properties\IBaseActivityMinimumArguments.cs</Link>
     </Compile>
     <Compile Include="ServiceExtensions.cs" />
     <Compile Include="BaseAmazonActivity.cs" />
@@ -82,12 +91,6 @@
     <Compile Include="EC2\TerminateInstances.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Activities\Activities.csproj">
-      <Project>{CDF9FF31-B9DA-411E-B50E-38F9C4FA33E3}</Project>
-      <Name>Activities</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
