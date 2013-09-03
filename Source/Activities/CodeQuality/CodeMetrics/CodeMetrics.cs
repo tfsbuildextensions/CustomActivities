@@ -18,8 +18,8 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     using TfsBuildExtensions.Activities.CodeQuality.Extended;
 
     /// <summary>
-    /// Activity for processing code metrics using the Visual Studio Code Metrics PowerTool 10.0
-    /// (http://www.microsoft.com/downloads/en/details.aspx?FamilyID=edd1dfb0-b9fe-4e90-b6a6-5ed6f6f6e615)
+    /// Activity for processing code metrics using the Visual Studio Code Metrics PowerTool 11.0
+    /// (http://www.microsoft.com/en-gb/download/details.aspx?id=38196)
     /// <para/>
     /// <example>
     /// <code lang="xml"><![CDATA[
@@ -36,6 +36,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         private const string ClassCoupling = "ClassCoupling";
         private const string DepthOfInheritance = "DepthOfInheritance";
         private const string LinesOfCode = "LinesOfCode";
+        private CompareMode assemblyCompareMode = CompareMode.StrongName;
 
         private InArgument<bool> searchGac = false;
         private InArgument<bool> analyzeMetricsResult = true;
@@ -56,6 +57,24 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         private bool logCodeMetrics;
 
         private delegate void LogToBuild(string message);
+
+        private enum CompareMode
+        {
+            /// <summary>
+            /// None
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// StrongName
+            /// </summary>
+            StrongName,
+
+            /// <summary>
+            /// StrongNameIgnoringVersion
+            /// </summary>
+            StrongNameIgnoringVersion
+        }
 
         /// <summary>
         /// Path to where the binaries are placed
@@ -92,6 +111,11 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 this.generatedFileName = value;
             }
         }
+
+        /// <summary>
+        /// Set the assembly comparison mode. Supports None, StrongName, StrongNameIgnoringVersion. Default is StrongName.
+        /// </summary>
+        public InArgument<string> AssemblyCompareMode { get; set; }
 
         /// <summary>
         /// Optional: Enables/Disables searchGac. Default false
@@ -532,10 +556,10 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 
         private bool RunCodeMetrics(string output)
         {
-            string metricsExePath = Path.Combine(ProgramFilesX86(), @"Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\metrics.exe");
+            string metricsExePath = Path.Combine(ProgramFilesX86(), @"Microsoft Visual Studio 11.0\Team Tools\Static Analysis Tools\FxCop\metrics.exe");
             if (!File.Exists(metricsExePath))
             {
-                this.LogBuildError("Could not locate " + metricsExePath + ". Please download Visual Studio Code Metrics PowerTool 10.0 at http://www.microsoft.com/downloads/en/details.aspx?FamilyID=edd1dfb0-b9fe-4e90-b6a6-5ed6f6f6e615");
+                this.LogBuildError("Could not locate " + metricsExePath + ". Please download Visual Studio Code Metrics PowerTool 11.0 at http://www.microsoft.com/en-gb/download/details.aspx?id=38196");
                 return false;
             }
 
@@ -551,6 +575,16 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 metricsExeArguments += " /ignoregeneratedcode";
             }
 
+            if (!string.IsNullOrEmpty(this.AssemblyCompareMode.Get(this.ActivityContext)))
+            {
+                this.assemblyCompareMode = (CompareMode)Enum.Parse(typeof(CompareMode), this.AssemblyCompareMode.Get(this.ActivityContext));
+
+                if (this.assemblyCompareMode != CodeQuality.CodeMetrics.CompareMode.StrongName)
+                {
+                    metricsExeArguments += " /assemblyCompareMode:" + this.assemblyCompareMode.ToString();
+                }
+            }
+            
             ProcessStartInfo psi = new ProcessStartInfo { FileName = metricsExePath, UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true, Arguments = metricsExeArguments, WorkingDirectory = this.BinariesDirectory.Get(this.ActivityContext) };
             this.LogBuildMessage("Running " + psi.FileName + " " + psi.Arguments);
 
