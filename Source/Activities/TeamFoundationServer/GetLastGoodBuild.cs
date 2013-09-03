@@ -5,6 +5,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 {
     using System;
     using System.Activities;
+    using System.Linq;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Client;
 
@@ -79,22 +80,17 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         private IBuildDetail GetGoodBuild()
         {
             IBuildDefinition buildDef = this.bs.GetBuildDefinition(this.teamProject, this.buildDefinition);
-            IBuildDetail[] builds = this.bs.QueryBuilds(buildDef);
-            IBuildDetail latestBuild = null;
-
-            foreach (IBuildDetail b in builds)
+            IBuildDetailSpec buildDetailSpec = this.bs.CreateBuildDetailSpec(buildDef);
+            buildDetailSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
+            buildDetailSpec.Status = BuildStatus.Succeeded;
+            if (string.IsNullOrEmpty(this.buildQuality))
             {
-                if (b.Status == BuildStatus.Succeeded)
-                {
-                    if (latestBuild == null || b.StartTime > latestBuild.StartTime)
-                    {
-                        if (string.IsNullOrEmpty(this.buildQuality) || string.Compare(b.Quality, this.buildQuality, StringComparison.OrdinalIgnoreCase) == 0) 
-                        {
-                            latestBuild = b;
-                        }
-                    }
-                }
+                buildDetailSpec.Quality = this.buildQuality;
             }
+
+            IBuildQueryResult builds = this.bs.QueryBuilds(buildDetailSpec);
+
+            IBuildDetail latestBuild = builds.Builds.FirstOrDefault();
 
             return latestBuild;
         }
