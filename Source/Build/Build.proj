@@ -1,7 +1,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
     <PropertyGroup>
-        <ReleaseVersion>TfsBuildExtensions July 2013</ReleaseVersion>
+        <ReleaseVersion>TfsBuildExtensions</ReleaseVersion>
         <PackageDrive>C:</PackageDrive>
         <PackageRoot>$(PackageDrive)\Releases\TFSBE\$(ReleaseVersion)</PackageRoot>
         <Configuration>Release|Any CPU</Configuration>
