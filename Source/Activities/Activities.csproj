@@ -66,8 +66,7 @@
     <Reference Include="Microsoft.TeamFoundation.Build.Client">
       <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Build.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.TeamFoundation.Build.Common">
       <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.Build.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Build.Workflow">
@@ -79,7 +78,9 @@
     <Reference Include="Microsoft.TeamFoundation.Common">
       <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client">
+      <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.TestManagement.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.TeamFoundation.VersionControl.Client">
       <HintPath>..\AssemblyReferences\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
     </Reference>
