@@ -83,7 +83,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
             IBuildDetailSpec buildDetailSpec = this.bs.CreateBuildDetailSpec(buildDef);
             buildDetailSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
             buildDetailSpec.Status = BuildStatus.Succeeded;
-            if (string.IsNullOrEmpty(this.buildQuality))
+            if (!string.IsNullOrEmpty(this.buildQuality))
             {
                 buildDetailSpec.Quality = this.buildQuality;
             }
