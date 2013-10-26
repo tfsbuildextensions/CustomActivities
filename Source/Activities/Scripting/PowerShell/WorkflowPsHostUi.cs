@@ -81,7 +81,10 @@ namespace TfsBuildExtensions.Activities.Scripting
 
         public override void WriteLine(string value)
         {
-            this.activityContext.TrackBuildMessage(value, BuildMessageImportance.Normal);
+            if (!string.IsNullOrEmpty(value))
+            {
+                this.activityContext.TrackBuildMessage(value, BuildMessageImportance.Normal);
+            }
         }
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
