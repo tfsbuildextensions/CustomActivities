@@ -1,0 +1,32 @@
+# Project identification
+sonar.projectKey=myCompany:%BUILD_DEFINITION_UNDERSCORE%
+sonar.projectVersion=%BUILDNAME%
+sonar.projectName=%BUILDDEFNAME%
+ 
+# Info required for Sonar
+sonar.sources=.
+sonar.language=cs
+
+# If multiple solutions in folder, use the following line to disambiguate
+sonar.dotnet.visualstudio.solution.file=%SOLUTION_FILE%
+
+# sonar.fxcop.mode=skip
+# sonar.gendarme.mode=skip
+# sonar.gallio.mode=skip
+# sonar.ndeps.mode=skip
+# sonar.squid.mode=skip
+# sonar.stylecop.mode=skip
+
+sonar.fxcop.installDirectory=D:/Sonar.Net/Microsoft Fxcop 10.0
+sonar.fxcop.assemblyDependencyDirectories=$(SolutionDir)/../Binaries
+sonar.dotnet.visualstudio.testProjectPattern=*.Tests.*
+
+sonar.dotnet.assemblies=$(SolutionDir)/../Binaries/$(AssemblyName).$(OutputType)
+sonar.dotnet.test.assemblies=$(SolutionDir)/../Binaries/$(AssemblyName).$(OutputType)
+
+sonar.gallio.installDirectory=D:/Sonar.Net/Gallio
+sonar.gallio.coverage.tool=OpenCover
+sonar.gallio.runner=IsolatedProcess
+sonar.opencover.installDirectory=D:/Sonar.Net/OpenCover
+
+sonar.gallio.coverage.excludes=Microsoft.Practices.*

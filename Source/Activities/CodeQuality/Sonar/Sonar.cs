@@ -11,6 +11,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Build.Workflow.Activities;
     using Microsoft.TeamFoundation.VersionControl.Client;
@@ -50,6 +51,15 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         public InArgument<Workspace> BuildWorkspace { get; set; }
 
         /// <summary>
+        /// Gets or sets the binaries directory. This is the path where Sonar may find all the binaries to analyze.
+        /// It is set up by the build process template.
+        /// </summary>
+        /// <value>The binaries directory as defined by the current build template</value>
+        [Browsable(true)]
+        [RequiredArgument]
+        public InArgument<string> BinariesDirectory { get; set; }
+
+        /// <summary>
         /// The path to a Sonar properties template file, that will be used for generating a customized version every build.
         /// </summary>
         [Description("Path to a template sonar properties file")]
@@ -57,13 +67,13 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         public InArgument<string> SonarPropertiesTemplatePath { get; set; }
 
         /// <summary>
-        /// Gets or sets the option to fail the build if alerts are raised by Sonar
+        /// Gets or sets the option to fail the build if alerts are raised by Sonar.
         /// </summary>
         [Description("Set to true to fail the build if alerts are raised by Sonar")]
         public InArgument<bool> FailBuildOnAlert { get; set; }
 
         /// <summary>
-        /// Gets or sets the option to fail the build if alerts are raised by Sonar
+        /// Gets or sets the option to fail the build if alerts are raised by Sonar.
         /// </summary>
         [Description("If the sonar properties file for the projects to analyze are missing, they can be generated from a template file. Default value is true.")]
         [Browsable(true)]
@@ -73,6 +83,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             set { this.generatePropertiesIfMissing = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the name of the file that will hold the Sonar properties during the build.
+        /// </summary>
         [Description("Name of the Sonar for c# properties file. Default value is sonar-project.properties")]
         [Browsable(true)]
         public InArgument<string> SonarPropertiesFileName
@@ -81,49 +94,69 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             set { this.sonarPropertiesFileName = value; }
         }
 
-        [Description("Custom parameter CUSTOMPARAM1 that can be used to customize further the sonar properties file.")]
+        /// <summary>
+        /// Gets or sets the list of properties names and values that are overriden for a build definition.
+        /// </summary>
+        /// <example>
+        /// sonar.fxcop.mode=skip
+        /// sonar.ndeps.mode=active
+        /// </example>
+        [Description("Sonar properties to be added (or overwritten if found) in the properties file")]
         [Browsable(true)]
-        public InArgument<string> PropertiesCustomParameter1 { get; set; }
-
-        [Description("Custom parameter CUSTOMPARAM2 that can be used to customize further the sonar properties file.")]
-        [Browsable(true)]
-        public InArgument<string> PropertiesCustomParameter2 { get; set; }
-
-        [Description("Custom parameter CUSTOMPARAM3 that can be used to customize further the sonar properties file.")]
-        [Browsable(true)]
-        public InArgument<string> PropertiesCustomParameter3 { get; set; }
-
-        [Description("Custom parameter CUSTOMPARAM4 that can be used to customize further the sonar properties file.")]
-        [Browsable(true)]
-        public InArgument<string> PropertiesCustomParameter4 { get; set; }
-
-        [Description("Custom parameter CUSTOMPARAM5 that can be used to customize further the sonar properties file.")]
-        [Browsable(true)]
-        public InArgument<string> PropertiesCustomParameter5 { get; set; }
+        public InArgument<StringList> SonarProperties { get; set; }
 
         public string TransformSonarProperties(string templatePath, string solutionPath)
         {
-            StringBuilder content = new StringBuilder(File.ReadAllText(templatePath));
-
+            StringList properties = this.SonarProperties.Get(this.ActivityContext);
             IBuildDetail build = this.ActivityContext.GetExtension<IBuildDetail>();
             string buildDefinition = build.BuildDefinition.Name;
             string buildNumber = build.BuildNumber;
 
-            content.Replace("%BUILD_DEFINITION%", buildDefinition);
-            content.Replace("%BUILD_DEFINITION_UNDERSCORE%", buildDefinition.Replace(' ', '_'));
-            content.Replace("%BUILD_NUMBER%", buildNumber);
-            content.Replace("%BUILD_NUMBER_UNDERSCORE%", buildNumber.Replace(' ', '_'));
-            content.Replace("%BUILD_NUMBER_DEFAULT_SUFFIX%", buildNumber.Replace(buildDefinition + "_", string.Empty));
-            content.Replace("%SOLUTION_FILE%", Path.GetFileName(solutionPath));
-            content.Replace("%SOLUTION_FILE_PATH%", solutionPath);
-            content.Replace("%SOLUTION_DIRECTORY_PATH%", Path.GetDirectoryName(solutionPath));
-            content.Replace("%CUSTOMPARAM1%", this.PropertiesCustomParameter1.Get(this.ActivityContext));
-            content.Replace("%CUSTOMPARAM2%", this.PropertiesCustomParameter2.Get(this.ActivityContext));
-            content.Replace("%CUSTOMPARAM3%", this.PropertiesCustomParameter3.Get(this.ActivityContext));
-            content.Replace("%CUSTOMPARAM4%", this.PropertiesCustomParameter4.Get(this.ActivityContext));
-            content.Replace("%CUSTOMPARAM5%", this.PropertiesCustomParameter5.Get(this.ActivityContext));
+            string content = File.ReadAllText(templatePath);
+            if (properties != null)
+            {
+                Regex nameRegex = new Regex("^\\s*(?<name>[^#=\\s]+)\\s*=*.");
+                foreach (string propertyLine in properties)
+                {
+                    MatchCollection matches = nameRegex.Matches(propertyLine);
+                    if (matches.Count > 0)
+                    {
+                        string propertyName = matches[0].Groups["name"].Value;
+                        Regex lineRegex = new Regex("[\\x020\\t]*" + propertyName.Replace(".", "\\.") + "[\\x020\\t]*=.*\\r?\\n");
+                        if (lineRegex.IsMatch(content))
+                        {
+                            content = lineRegex.Replace(content, propertyLine + "\r\n");
+                        }
+                        else
+                        {
+                            content += "\r\n" + propertyLine;
+                        }
+                    }
+                }
+            }
 
-            return content.ToString();
+            string binariesDirectory = Path.GetFullPath(this.BinariesDirectory.Get(this.ActivityContext));
+
+            // remove trailing \ if found
+            if (binariesDirectory.EndsWith("\\"))
+            {
+                binariesDirectory = binariesDirectory.Remove(binariesDirectory.Length - 1);
+            }
+
+            StringBuilder sb = new StringBuilder(content);
+
+            sb.Replace("%BUILD_DEFINITION%", buildDefinition);
+            sb.Replace("%BUILD_DEFINITION_UNDERSCORE%", buildDefinition.Replace(' ', '_'));
+            sb.Replace("%BUILD_NUMBER%", buildNumber);
+            sb.Replace("%BUILD_NUMBER_UNDERSCORE%", buildNumber.Replace(' ', '_'));
+            sb.Replace("%BUILD_NUMBER_DEFAULT_SUFFIX%", buildNumber.Replace(buildDefinition + "_", string.Empty));
+            sb.Replace("%SOLUTION_FILE%", Path.GetFileName(solutionPath));
+            sb.Replace("%SOLUTION_FILE_PATH%", solutionPath);
+            sb.Replace("%SOLUTION_DIRECTORY_PATH%", Path.GetDirectoryName(solutionPath));
+            sb.Replace("%BINARIES_DIRECTORY_PATH%", binariesDirectory);
+            sb.Replace("%BINARIES_DIRECTORY_PATH_SLASH%", binariesDirectory.Replace('\\', '/'));
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -162,7 +195,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                                         templatePropertiesPath,
                                         localProjectPath);
                                     this.LogBuildMessage(properties, BuildMessageImportance.Low);
-                                    File.WriteAllText(sonarPropertiesPath, properties);
+                                    File.WriteAllText(sonarPropertiesPath, properties, Encoding.ASCII);
                                 }
                                 else
                                 {

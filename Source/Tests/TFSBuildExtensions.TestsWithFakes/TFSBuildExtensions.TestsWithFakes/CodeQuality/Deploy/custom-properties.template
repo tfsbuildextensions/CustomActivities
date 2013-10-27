@@ -1,0 +1,15 @@
+# Project identification
+sonar.projectKey=myCompany:%BUILD_DEFINITION_UNDERSCORE%
+sonar.projectVersion=3.2.1
+sonar.projectName=%BUILDDEFNAME%
+ 
+# If multiple solutions in folder, use the following line to disambiguate
+sonar.dotnet.visualstudio.solution.file=%SOLUTION_FILE%
+
+sonar.gallio.installDirectory=D:/Sonar.Net/Gallio
+sonar.gallio.coverage.tool=OpenCover
+sonar.gallio.runner=IsolatedProcess
+
+sonar.opencover.installDirectory=D:/Sonar.Net/OpenCover
+
+sonar.gallio.coverage.excludes=Microsoft.Practices.*
