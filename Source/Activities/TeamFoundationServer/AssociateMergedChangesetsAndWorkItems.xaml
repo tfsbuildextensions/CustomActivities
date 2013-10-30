@@ -5,6 +5,7 @@
  xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
  xmlns:mtbc="clr-namespace:Microsoft.TeamFoundation.Build.Client;assembly=Microsoft.TeamFoundation.Build.Client"
  xmlns:mtbwa="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Activities;assembly=Microsoft.TeamFoundation.Build.Workflow"
+ xmlns:mtbwt="clr-namespace:Microsoft.TeamFoundation.Build.Workflow.Tracking;assembly=Microsoft.TeamFoundation.Build.Workflow"
  xmlns:mtc="clr-namespace:Microsoft.TeamFoundation.Client;assembly=Microsoft.TeamFoundation.Client"
  xmlns:mtvc="clr-namespace:Microsoft.TeamFoundation.VersionControl.Client;assembly=Microsoft.TeamFoundation.VersionControl.Client"
  xmlns:mtwc="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
@@ -80,35 +81,35 @@
       <AssemblyReference>TfsBuildExtensions.Activities</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <If DisplayName="If AssociateMerges" sap2010:WorkflowViewState.IdRef="If_8">
+  <If DisplayName="If AssociateMerges" sap2010:WorkflowViewState.IdRef="If_8" mtbwt:BuildTrackingParticipant.Importance="Low">
     <If.Condition>
       <InArgument x:TypeArguments="x:Boolean">
         <mca:CSharpValue x:TypeArguments="x:Boolean">AssociateMerges</mca:CSharpValue>
       </InArgument>
     </If.Condition>
     <If.Then>
-      <Sequence sap2010:WorkflowViewState.IdRef="Sequence_9">
+      <Sequence sap2010:WorkflowViewState.IdRef="Sequence_9" mtbwt:BuildTrackingParticipant.Importance="None">
         <Sequence.Variables>
           <Variable x:TypeArguments="mtbc:IBuildDetail" Name="buildDetail" />
           <Variable x:TypeArguments="scg:IEnumerable(mtvc:Changeset)" Name="changesets" />
           <Variable x:TypeArguments="mtvc:VersionControlServer" Name="versionControlServer" />
           <Variable x:TypeArguments="mtc:TfsTeamProjectCollection" Name="teamProjectCollection" />
         </Sequence.Variables>
-        <mtbwa:GetBuildDetail DisplayName="Get Build Detail" sap2010:WorkflowViewState.IdRef="GetBuildDetail_2">
+        <mtbwa:GetBuildDetail DisplayName="Get Build Detail" sap2010:WorkflowViewState.IdRef="GetBuildDetail_2" mtbwt:BuildTrackingParticipant.Importance="None">
           <mtbwa:GetBuildDetail.Result>
             <OutArgument x:TypeArguments="mtbc:IBuildDetail">
               <mca:CSharpReference x:TypeArguments="mtbc:IBuildDetail">buildDetail</mca:CSharpReference>
             </OutArgument>
           </mtbwa:GetBuildDetail.Result>
         </mtbwa:GetBuildDetail>
-        <mtbwa:GetTeamProjectCollection DisplayName="Get Team Project Collection" sap2010:WorkflowViewState.IdRef="GetTeamProjectCollection_2">
+        <mtbwa:GetTeamProjectCollection DisplayName="Get Team Project Collection" sap2010:WorkflowViewState.IdRef="GetTeamProjectCollection_2" mtbwt:BuildTrackingParticipant.Importance="None">
           <mtbwa:GetTeamProjectCollection.Result>
             <OutArgument x:TypeArguments="mtc:TfsTeamProjectCollection">
               <mca:CSharpReference x:TypeArguments="mtc:TfsTeamProjectCollection">teamProjectCollection</mca:CSharpReference>
             </OutArgument>
           </mtbwa:GetTeamProjectCollection.Result>
         </mtbwa:GetTeamProjectCollection>
-        <Assign DisplayName="Get Version Control Server" sap2010:WorkflowViewState.IdRef="Assign_5">
+        <Assign DisplayName="Get Version Control Server" sap2010:WorkflowViewState.IdRef="Assign_5" mtbwt:BuildTrackingParticipant.Importance="None">
           <Assign.To>
             <OutArgument x:TypeArguments="mtvc:VersionControlServer">
               <mca:CSharpReference x:TypeArguments="mtvc:VersionControlServer">versionControlServer</mca:CSharpReference>
@@ -120,7 +121,7 @@
             </InArgument>
           </Assign.Value>
         </Assign>
-        <local:GetMergedChangesets DisplayName="Get Merged Changesets" sap2010:WorkflowViewState.IdRef="GetMergedChangesets_3">
+        <local:GetMergedChangesets DisplayName="Get Merged Changesets" sap2010:WorkflowViewState.IdRef="GetMergedChangesets_3" mtbwt:BuildTrackingParticipant.Importance="Low">
           <local:GetMergedChangesets.AssociatedChangesets>
             <InArgument x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">
               <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">AssociatedChangesets</mca:CSharpValue>
@@ -137,20 +138,20 @@
             </InArgument>
           </local:GetMergedChangesets.VersionControlServer>
         </local:GetMergedChangesets>
-        <If DisplayName="If there are changesets to associate" sap2010:WorkflowViewState.IdRef="If_6">
+        <If DisplayName="If there are changesets to associate" sap2010:WorkflowViewState.IdRef="If_6" mtbwt:BuildTrackingParticipant.Importance="None">
           <If.Condition>
             <InArgument x:TypeArguments="x:Boolean">
               <mca:CSharpValue x:TypeArguments="x:Boolean">changesets.Count() &gt; 0</mca:CSharpValue>
             </InArgument>
           </If.Condition>
           <If.Then>
-            <mtbwa:RunOnce DisplayName="Associate changesets (but only once ever)" sap2010:WorkflowViewState.IdRef="RunOnce_3">
+            <mtbwa:RunOnce DisplayName="Associate changesets (but only once ever)" sap2010:WorkflowViewState.IdRef="RunOnce_3" mtbwt:BuildTrackingParticipant.Importance="Low">
               <mtbwa:RunOnce.Name>
                 <InArgument x:TypeArguments="x:String">
                   <mca:CSharpValue x:TypeArguments="x:String">string.Format("{0}_AssociateMergedChangesetsAndWorkItems", buildDetail.Uri)</mca:CSharpValue>
                 </InArgument>
               </mtbwa:RunOnce.Name>
-              <local:AssociateChangesets DisplayName="Associate Changesets" sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#" sap2010:WorkflowViewState.IdRef="AssociateChangesets_3">
+              <local:AssociateChangesets DisplayName="Associate Changesets" sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#" sap2010:WorkflowViewState.IdRef="AssociateChangesets_3" mtbwt:BuildTrackingParticipant.Importance="None">
                 <local:AssociateChangesets.BuildNumber>
                   <InArgument x:TypeArguments="x:String">
                     <mca:CSharpValue x:TypeArguments="x:String">buildDetail.BuildNumber</mca:CSharpValue>
@@ -171,21 +172,21 @@
                   </sap2010:ViewStateManager>
                 </sap2010:WorkflowViewState.ViewStateManager>
               </local:AssociateChangesets>
-              <If DisplayName="If we must update WorkItems" sap2010:WorkflowViewState.IdRef="If_9">
+              <If DisplayName="If we must update WorkItems" sap2010:WorkflowViewState.IdRef="If_9" mtbwt:BuildTrackingParticipant.Importance="Low">
                 <If.Condition>
                   <InArgument x:TypeArguments="x:Boolean">
                     <mca:CSharpValue x:TypeArguments="x:Boolean">UpdateWorkItems</mca:CSharpValue>
                   </InArgument>
                 </If.Condition>
                 <If.Then>
-                  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_10">
+                  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_10" mtbwt:BuildTrackingParticipant.Importance="None">
                     <Sequence.Variables>
                       <Variable x:TypeArguments="mtwc:WorkItemStore" Name="workItemStore" />
                       <Variable x:TypeArguments="scg:IList(x:Int32)" Name="workItemIds" />
                       <Variable x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)" Name="parentChildLinks" />
                       <Variable x:TypeArguments="mtwc:WorkItemCollection" Name="workItemsToAssociate" />
                     </Sequence.Variables>
-                    <Assign DisplayName="Get the WorkItem Store" sap2010:WorkflowViewState.IdRef="Assign_9">
+                    <Assign DisplayName="Get the WorkItem Store" sap2010:WorkflowViewState.IdRef="Assign_9" mtbwt:BuildTrackingParticipant.Importance="None">
                       <Assign.To>
                         <OutArgument x:TypeArguments="mtwc:WorkItemStore">
                           <mca:CSharpReference x:TypeArguments="mtwc:WorkItemStore">workItemStore</mca:CSharpReference>
@@ -197,7 +198,7 @@
                         </InArgument>
                       </Assign.Value>
                     </Assign>
-                    <local:WitGetWorkItemsForArtifacts DisplayName="Get WorkItem IDs associated with the included Changesets" sap2010:WorkflowViewState.IdRef="WitGetWorkItemsForArtifacts_3">
+                    <local:WitGetWorkItemsForArtifacts DisplayName="Get WorkItem IDs associated with the included Changesets" sap2010:WorkflowViewState.IdRef="WitGetWorkItemsForArtifacts_3" mtbwt:BuildTrackingParticipant.Importance="Low">
                       <local:WitGetWorkItemsForArtifacts.ArtifactUris>
                         <InArgument x:TypeArguments="scg:IEnumerable(x:Uri)">
                           <mca:CSharpValue x:TypeArguments="scg:IEnumerable(x:Uri)">changesets.Select(c =&gt; c.ArtifactUri)</mca:CSharpValue>
@@ -219,7 +220,7 @@
                         </InArgument>
                       </local:WitGetWorkItemsForArtifacts.WorkItemStore>
                     </local:WitGetWorkItemsForArtifacts>
-                    <local:WitQueryWorkItems DisplayName="Get the WorkItems and their parent info" sap2010:WorkflowViewState.IdRef="WitQueryWorkItems_3" IncludeParentWorkItems="True" PageSize="50">
+                    <local:WitQueryWorkItems DisplayName="Get the WorkItems and their parent info" sap2010:WorkflowViewState.IdRef="WitQueryWorkItems_3" IncludeParentWorkItems="True" PageSize="50" mtbwt:BuildTrackingParticipant.Importance="Low">
                       <local:WitQueryWorkItems.Fields>
                         <InArgument x:TypeArguments="scg:IEnumerable(x:String)">
                           <mca:CSharpValue x:TypeArguments="scg:IEnumerable(x:String)">new string [] { IncludeMergesInBuild.UpdateWorkItem.IntegrationBuildFieldRef, CoreFieldReferenceNames.History }</mca:CSharpValue>
@@ -246,7 +247,7 @@
                         </InArgument>
                       </local:WitQueryWorkItems.WorkItemStore>
                     </local:WitQueryWorkItems>
-                    <local:AssociateWorkItems DisplayName="Associate WorkItems to the build" sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#" sap2010:WorkflowViewState.IdRef="AssociateWorkItems_3">
+                    <local:AssociateWorkItems DisplayName="Associate WorkItems to the build" sap2010:ExpressionActivityEditor.ExpressionActivityEditor="C#" sap2010:WorkflowViewState.IdRef="AssociateWorkItems_3" mtbwt:BuildTrackingParticipant.Importance="Low">
                       <local:AssociateWorkItems.BuildNumber>
                         <InArgument x:TypeArguments="x:String">
                           <mca:CSharpValue x:TypeArguments="x:String">buildDetail.BuildNumber</mca:CSharpValue>
@@ -309,7 +310,7 @@
             </mtbwa:RunOnce>
           </If.Then>
         </If>
-        <Assign DisplayName="Assign the Result" sap2010:WorkflowViewState.IdRef="Assign_7">
+        <Assign DisplayName="Assign the Result" sap2010:WorkflowViewState.IdRef="Assign_7" mtbwt:BuildTrackingParticipant.Importance="None">
           <Assign.To>
             <OutArgument x:TypeArguments="scg:IList(mtvc:Changeset)">
               <mca:CSharpReference x:TypeArguments="scg:IList(mtvc:Changeset)">Result</mca:CSharpReference>
@@ -321,14 +322,14 @@
             </InArgument>
           </Assign.Value>
         </Assign>
-        <If DisplayName="If there are no merged changesets" sap2010:WorkflowViewState.IdRef="If_7">
+        <If DisplayName="If there are no merged changesets" sap2010:WorkflowViewState.IdRef="If_7" mtbwt:BuildTrackingParticipant.Importance="None">
           <If.Condition>
             <InArgument x:TypeArguments="x:Boolean">
               <mca:CSharpValue x:TypeArguments="x:Boolean">changesets == null || changesets.Count() == 0</mca:CSharpValue>
             </InArgument>
           </If.Condition>
           <If.Then>
-            <Sequence sap2010:WorkflowViewState.IdRef="Sequence_8">
+            <Sequence sap2010:WorkflowViewState.IdRef="Sequence_8" mtbwt:BuildTrackingParticipant.Importance="None">
               <mtbwa:WriteBuildMessage sap2010:WorkflowViewState.IdRef="WriteBuildMessage_2" mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces">
                 <mtbwa:WriteBuildMessage.Importance>
                   <InArgument x:TypeArguments="mtbc:BuildMessageImportance">
@@ -341,7 +342,7 @@
                   </InArgument>
                 </mtbwa:WriteBuildMessage.Message>
               </mtbwa:WriteBuildMessage>
-              <Assign sap2010:WorkflowViewState.IdRef="Assign_8">
+              <Assign sap2010:WorkflowViewState.IdRef="Assign_8" mtbwt:BuildTrackingParticipant.Importance="None">
                 <Assign.To>
                   <OutArgument x:TypeArguments="scg:IList(mtvc:Changeset)">
                     <mca:CSharpReference x:TypeArguments="scg:IList(mtvc:Changeset)">Result</mca:CSharpReference>

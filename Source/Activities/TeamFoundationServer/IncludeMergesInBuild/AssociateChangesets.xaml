@@ -53,7 +53,7 @@
       <AssemblyReference>ColinsALMCorner.CustomBuildTasks</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <ForEach x:TypeArguments="mtvc:Changeset" DisplayName="For Each Changeset" sap2010:WorkflowViewState.IdRef="ForEach`1_1">
+  <ForEach x:TypeArguments="mtvc:Changeset" DisplayName="For Each Changeset" sap2010:WorkflowViewState.IdRef="ForEach`1_1" mtbwt:BuildTrackingParticipant.Importance="Low">
     <ForEach.Values>
       <InArgument x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">
         <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtvc:Changeset)">Changesets</mca:CSharpValue>
@@ -63,7 +63,7 @@
       <ActivityAction.Argument>
         <DelegateInArgument x:TypeArguments="mtvc:Changeset" Name="changeset" />
       </ActivityAction.Argument>
-      <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1">
+      <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1" mtbwt:BuildTrackingParticipant.Importance="None">
         <mtbwa:WriteBuildInformation x:TypeArguments="mtbwt:AssociatedChangeset" DisplayName="Write Build Information" sap2010:WorkflowViewState.IdRef="WriteBuildInformation`1_1" ParentToBuildDetail="True">
           <mtbwa:WriteBuildInformation.Value>
             <InArgument x:TypeArguments="mtbwt:AssociatedChangeset">

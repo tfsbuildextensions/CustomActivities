@@ -75,11 +75,12 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuil
             }
         }
 
-        private IEnumerable<Changeset> GetMergesForChangesets(VersionControlServer versioncontrolServer, IEnumerable<Changeset> changesets)
+        private IEnumerable<Changeset> GetMergesForChangesets(VersionControlServer versioncontrolServer, IEnumerable<Changeset> changesets, int recursionLevel = 0)
         {
+			recursionLevel++;
             var list = new List<Changeset>();
 
-            if (changesets == null || !changesets.Any())
+            if (changesets == null || !changesets.Any() || recursionLevel == 10)
             {
                 return list;
             }
@@ -106,11 +107,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuil
                         }
                     }
 
-                    list.AddRange(GetMergesForChangesets(versioncontrolServer, mergeSets));
+                    list.AddRange(GetMergesForChangesets(versioncontrolServer, mergeSets, recursionLevel));
                 });
             }
 
-            return list;
+            return list.Except(changesets);
         }
     }
 }

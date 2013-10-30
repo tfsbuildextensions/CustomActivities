@@ -57,7 +57,7 @@
       <AssemblyReference>ColinsALMCorner.CustomBuildTasks</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1" mtbwt:BuildTrackingParticipant.Importance="None">
     <Sequence.Variables>
       <Variable x:TypeArguments="scg:IList(mtwc:BatchSaveError)" Name="batchSaveErrors" />
       <Variable x:TypeArguments="scg:IDictionary(x:Int32, mtwc:BatchSaveError)" Name="saveErrors" />
@@ -69,7 +69,7 @@
       <Variable x:TypeArguments="scg:Dictionary(x:String, x:Boolean)" Name="workItemTypeDictionary" />
       <Variable x:TypeArguments="x:String" Name="warningMessage" />
     </Sequence.Variables>
-    <Assign DisplayName="Convert IEnum to List" sap2010:WorkflowViewState.IdRef="Assign_1">
+    <Assign DisplayName="Convert IEnum to List" sap2010:WorkflowViewState.IdRef="Assign_1" mtbwt:BuildTrackingParticipant.Importance="None">
       <Assign.To>
         <OutArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
           <mca:CSharpReference x:TypeArguments="scg:List(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpReference>
@@ -81,7 +81,7 @@
         </InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Instantiate new list" sap2010:WorkflowViewState.IdRef="Assign_2">
+    <Assign DisplayName="Instantiate new list" sap2010:WorkflowViewState.IdRef="Assign_2" mtbwt:BuildTrackingParticipant.Importance="None">
       <Assign.To>
         <OutArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
           <mca:CSharpReference x:TypeArguments="scg:List(mtwc:WorkItem)">updatedWorkItems</mca:CSharpReference>
@@ -93,7 +93,7 @@
         </InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Instantiate the &quot;WIT Type -&gt; has IntegratedIn&quot; Dictionary" sap2010:WorkflowViewState.IdRef="Assign_3">
+    <Assign DisplayName="Instantiate the &quot;WIT Type -&gt; has IntegratedIn&quot; Dictionary" sap2010:WorkflowViewState.IdRef="Assign_3" mtbwt:BuildTrackingParticipant.Importance="None">
       <Assign.To>
         <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:Boolean)">
           <mca:CSharpReference x:TypeArguments="scg:Dictionary(x:String, x:Boolean)">workItemTypeDictionary</mca:CSharpReference>
@@ -105,7 +105,7 @@
         </InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Instantiate retries to 3" sap2010:WorkflowViewState.IdRef="Assign_4">
+    <Assign DisplayName="Instantiate retries to 3" sap2010:WorkflowViewState.IdRef="Assign_4" mtbwt:BuildTrackingParticipant.Importance="None">
       <Assign.To>
         <OutArgument x:TypeArguments="x:Int32">
           <mca:CSharpReference x:TypeArguments="x:Int32">retries</mca:CSharpReference>
@@ -115,11 +115,11 @@
         <InArgument x:TypeArguments="x:Int32">3</InArgument>
       </Assign.Value>
     </Assign>
-    <While DisplayName="While there are items to update and retries left" sap2010:WorkflowViewState.IdRef="While_1">
+    <While DisplayName="While there are items to update and retries left" sap2010:WorkflowViewState.IdRef="While_1" mtbwt:BuildTrackingParticipant.Importance="Low">
       <While.Condition>
         <mca:CSharpValue x:TypeArguments="x:Boolean">retries &gt; 0 &amp;&amp; workItemsToUpdate.Count() &gt; 0</mca:CSharpValue>
       </While.Condition>
-      <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each WorkItem" sap2010:WorkflowViewState.IdRef="ForEach`1_1">
+      <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each WorkItem" sap2010:WorkflowViewState.IdRef="ForEach`1_1" mtbwt:BuildTrackingParticipant.Importance="None">
         <ForEach.Values>
           <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
             <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpValue>
@@ -129,8 +129,8 @@
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="mtwc:WorkItem" Name="workItem" />
           </ActivityAction.Argument>
-          <Sequence sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <local:UpdateWorkItem DisplayName="Update Work Item" sap2010:WorkflowViewState.IdRef="UpdateWorkItem_2" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild">
+          <Sequence sap2010:WorkflowViewState.IdRef="Sequence_2" mtbwt:BuildTrackingParticipant.Importance="None">
+            <local:UpdateWorkItem DisplayName="Update Work Item" sap2010:WorkflowViewState.IdRef="UpdateWorkItem_2" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild" mtbwt:BuildTrackingParticipant.Importance="Low">
               <local:UpdateWorkItem.BuildNumber>
                 <InArgument x:TypeArguments="x:String">
                   <mca:CSharpValue x:TypeArguments="x:String">BuildNumber</mca:CSharpValue>
@@ -157,14 +157,14 @@
                 </InArgument>
               </local:UpdateWorkItem.WorkItemTypeFieldCache>
             </local:UpdateWorkItem>
-            <If DisplayName="If we updated the work item" sap2010:WorkflowViewState.IdRef="If_1">
+            <If DisplayName="If we updated the work item" sap2010:WorkflowViewState.IdRef="If_1" mtbwt:BuildTrackingParticipant.Importance="None">
               <If.Condition>
                 <InArgument x:TypeArguments="x:Boolean">
                   <mca:CSharpValue x:TypeArguments="x:Boolean">updated</mca:CSharpValue>
                 </InArgument>
               </If.Condition>
               <If.Then>
-                <AddToCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Add To Updated WorkItems" sap2010:WorkflowViewState.IdRef="AddToCollection`1_1">
+                <AddToCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Add To Updated WorkItems" sap2010:WorkflowViewState.IdRef="AddToCollection`1_1" mtbwt:BuildTrackingParticipant.Importance="None">
                   <AddToCollection.Item>
                     <InArgument x:TypeArguments="mtwc:WorkItem">
                       <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
@@ -185,7 +185,7 @@
                 </mtbwa:WriteBuildWarning>
               </If.Else>
             </If>
-            <local:WitBatchSaveWorkItems DisplayName="Batch Save the WorkItems" sap2010:WorkflowViewState.IdRef="WitBatchSaveWorkItems_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild">
+            <local:WitBatchSaveWorkItems DisplayName="Batch Save the WorkItems" sap2010:WorkflowViewState.IdRef="WitBatchSaveWorkItems_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild" mtbwt:BuildTrackingParticipant.Importance="Low">
               <local:WitBatchSaveWorkItems.Result>
                 <OutArgument x:TypeArguments="scg:IList(mtwc:BatchSaveError)">
                   <mca:CSharpReference x:TypeArguments="scg:IList(mtwc:BatchSaveError)">batchSaveErrors</mca:CSharpReference>
@@ -197,7 +197,7 @@
                 </InArgument>
               </local:WitBatchSaveWorkItems.WorkItems>
             </local:WitBatchSaveWorkItems>
-            <Assign DisplayName="Save the errors for later" sap2010:WorkflowViewState.IdRef="Assign_5">
+            <Assign DisplayName="Save the errors for later" sap2010:WorkflowViewState.IdRef="Assign_5" mtbwt:BuildTrackingParticipant.Importance="None">
               <Assign.To>
                 <OutArgument x:TypeArguments="scg:IDictionary(x:Int32, mtwc:BatchSaveError)">
                   <mca:CSharpReference x:TypeArguments="scg:IDictionary(x:Int32, mtwc:BatchSaveError)">saveErrors</mca:CSharpReference>
@@ -209,7 +209,7 @@
                 </InArgument>
               </Assign.Value>
             </Assign>
-            <Assign DisplayName="Instantiate temp list" sap2010:WorkflowViewState.IdRef="Assign_6">
+            <Assign DisplayName="Instantiate temp list" sap2010:WorkflowViewState.IdRef="Assign_6" mtbwt:BuildTrackingParticipant.Importance="None">
               <Assign.To>
                 <OutArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
                   <mca:CSharpReference x:TypeArguments="scg:List(mtwc:WorkItem)">workItemsToUpdateTemp</mca:CSharpReference>
@@ -221,7 +221,7 @@
                 </InArgument>
               </Assign.Value>
             </Assign>
-            <Assign DisplayName="Decrease the retry count" sap2010:WorkflowViewState.IdRef="Assign_7">
+            <Assign DisplayName="Decrease the retry count" sap2010:WorkflowViewState.IdRef="Assign_7" mtbwt:BuildTrackingParticipant.Importance="Low">
               <Assign.To>
                 <OutArgument x:TypeArguments="x:Int32">
                   <mca:CSharpReference x:TypeArguments="x:Int32">retries</mca:CSharpReference>
@@ -233,14 +233,14 @@
                 </InArgument>
               </Assign.Value>
             </Assign>
-            <If DisplayName="If there were errors and we can still retry" sap2010:WorkflowViewState.IdRef="If_2">
+            <If DisplayName="If there were errors and we can still retry" sap2010:WorkflowViewState.IdRef="If_2" mtbwt:BuildTrackingParticipant.Importance="Low">
               <If.Condition>
                 <InArgument x:TypeArguments="x:Boolean">
                   <mca:CSharpValue x:TypeArguments="x:Boolean">retries &gt; 0 &amp;&amp; saveErrors.Count &gt; 0</mca:CSharpValue>
                 </InArgument>
               </If.Condition>
               <If.Then>
-                <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each WorkItem" sap2010:WorkflowViewState.IdRef="ForEach`1_2">
+                <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each WorkItem" sap2010:WorkflowViewState.IdRef="ForEach`1_2" mtbwt:BuildTrackingParticipant.Importance="None">
                   <ForEach.Values>
                     <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
                       <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpValue>
@@ -250,8 +250,8 @@
                     <ActivityAction.Argument>
                       <DelegateInArgument x:TypeArguments="mtwc:WorkItem" Name="workItem" />
                     </ActivityAction.Argument>
-                    <Sequence sap2010:WorkflowViewState.IdRef="Sequence_3">
-                      <AddToCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Add WorkItem to temp update items" sap2010:WorkflowViewState.IdRef="AddToCollection`1_2">
+                    <Sequence sap2010:WorkflowViewState.IdRef="Sequence_3" mtbwt:BuildTrackingParticipant.Importance="None">
+                      <AddToCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Add WorkItem to temp update items" sap2010:WorkflowViewState.IdRef="AddToCollection`1_2" mtbwt:BuildTrackingParticipant.Importance="None">
                         <AddToCollection.Item>
                           <InArgument x:TypeArguments="mtwc:WorkItem">
                             <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
@@ -261,7 +261,7 @@
                           <mca:CSharpValue x:TypeArguments="scg:ICollection(mtwc:WorkItem)">workItemsToUpdateTemp</mca:CSharpValue>
                         </InArgument>
                       </AddToCollection>
-                      <RemoveFromCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Remove work item from items to update" sap2010:WorkflowViewState.IdRef="RemoveFromCollection`1_1">
+                      <RemoveFromCollection x:TypeArguments="mtwc:WorkItem" DisplayName="Remove work item from items to update" sap2010:WorkflowViewState.IdRef="RemoveFromCollection`1_1" mtbwt:BuildTrackingParticipant.Importance="None">
                         <RemoveFromCollection.Item>
                           <InArgument x:TypeArguments="mtwc:WorkItem">
                             <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
@@ -271,7 +271,7 @@
                           <mca:CSharpValue x:TypeArguments="scg:ICollection(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpValue>
                         </InArgument>
                       </RemoveFromCollection>
-                      <local:RefreshWorkItem DisplayName="Refresh WorkItem" sap2010:WorkflowViewState.IdRef="RefreshWorkItem_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild">
+                      <local:RefreshWorkItem DisplayName="Refresh WorkItem" sap2010:WorkflowViewState.IdRef="RefreshWorkItem_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild" mtbwt:BuildTrackingParticipant.Importance="None">
                         <local:RefreshWorkItem.WorkItem>
                           <InArgument x:TypeArguments="mtwc:WorkItem">
                             <mca:CSharpValue x:TypeArguments="mtwc:WorkItem">workItem</mca:CSharpValue>
@@ -283,7 +283,7 @@
                 </ForEach>
               </If.Then>
             </If>
-            <Assign DisplayName="Reduce the list of work items by the error items and retry" sap2010:WorkflowViewState.IdRef="Assign_8">
+            <Assign DisplayName="Reduce the list of work items by the error items and retry" sap2010:WorkflowViewState.IdRef="Assign_8" mtbwt:BuildTrackingParticipant.Importance="Low">
               <Assign.To>
                 <OutArgument x:TypeArguments="scg:List(mtwc:WorkItem)">
                   <mca:CSharpReference x:TypeArguments="scg:List(mtwc:WorkItem)">workItemsToUpdate</mca:CSharpReference>
@@ -299,7 +299,7 @@
         </ActivityAction>
       </ForEach>
     </While>
-    <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each updated WorkItem, report success or error" sap2010:WorkflowViewState.IdRef="ForEach`1_3">
+    <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="For Each updated WorkItem, report success or error" sap2010:WorkflowViewState.IdRef="ForEach`1_3" mtbwt:BuildTrackingParticipant.Importance="Low">
       <ForEach.Values>
         <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
           <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">updatedWorkItems</mca:CSharpValue>
@@ -309,7 +309,7 @@
         <ActivityAction.Argument>
           <DelegateInArgument x:TypeArguments="mtwc:WorkItem" Name="workItem" />
         </ActivityAction.Argument>
-        <If DisplayName="If a WorkItem has an error" sap2010:WorkflowViewState.IdRef="If_3">
+        <If DisplayName="If a WorkItem has an error" sap2010:WorkflowViewState.IdRef="If_3" mtbwt:BuildTrackingParticipant.Importance="None">
           <If.Condition>
             <InArgument x:TypeArguments="x:Boolean">
               <mca:CSharpValue x:TypeArguments="x:Boolean">saveErrors.ContainsKey(workItem.Id)</mca:CSharpValue>
@@ -341,7 +341,7 @@
         </If>
       </ActivityAction>
     </ForEach>
-    <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="Associate each WorkItem's parent" sap2010:WorkflowViewState.IdRef="ForEach`1_4">
+    <ForEach x:TypeArguments="mtwc:WorkItem" DisplayName="Associate each WorkItem's parent" sap2010:WorkflowViewState.IdRef="ForEach`1_4" mtbwt:BuildTrackingParticipant.Importance="Low">
       <ForEach.Values>
         <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">
           <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItem)">WorkItems.Cast&lt;Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem&gt;()</mca:CSharpValue>
@@ -351,12 +351,12 @@
         <ActivityAction.Argument>
           <DelegateInArgument x:TypeArguments="mtwc:WorkItem" Name="workItem" />
         </ActivityAction.Argument>
-        <Sequence sap2010:WorkflowViewState.IdRef="Sequence_4">
+        <Sequence sap2010:WorkflowViewState.IdRef="Sequence_4" mtbwt:BuildTrackingParticipant.Importance="None">
           <Sequence.Variables>
             <Variable x:TypeArguments="x:Int32" Name="parentId" />
             <Variable x:TypeArguments="mtwc:WorkItem" Name="updatedWorkItem" />
           </Sequence.Variables>
-          <Assign sap2010:WorkflowViewState.IdRef="Assign_9">
+          <Assign sap2010:WorkflowViewState.IdRef="Assign_9" mtbwt:BuildTrackingParticipant.Importance="None">
             <Assign.To>
               <OutArgument x:TypeArguments="mtwc:WorkItem">
                 <mca:CSharpReference x:TypeArguments="mtwc:WorkItem">updatedWorkItem</mca:CSharpReference>
@@ -368,7 +368,7 @@
               </InArgument>
             </Assign.Value>
           </Assign>
-          <If DisplayName="If we updated the WorkItem, use the updated one" sap2010:WorkflowViewState.IdRef="If_4">
+          <If DisplayName="If we updated the WorkItem, use the updated one" sap2010:WorkflowViewState.IdRef="If_4" mtbwt:BuildTrackingParticipant.Importance="None">
             <If.Condition>
               <InArgument x:TypeArguments="x:Boolean">
                 <mca:CSharpValue x:TypeArguments="x:Boolean">updatedWorkItem != null</mca:CSharpValue>
@@ -389,7 +389,7 @@
               </Assign>
             </If.Then>
           </If>
-          <local:GetParentId DisplayName="Get the ParentId of the WorkItem" sap2010:WorkflowViewState.IdRef="GetParentId_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild">
+          <local:GetParentId DisplayName="Get the ParentId of the WorkItem" sap2010:WorkflowViewState.IdRef="GetParentId_1" xmlns:local="clr-namespace:TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuild" mtbwt:BuildTrackingParticipant.Importance="None">
             <local:GetParentId.ParentChildLinks>
               <InArgument x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)">
                 <mca:CSharpValue x:TypeArguments="scg:IEnumerable(mtwc:WorkItemLinkInfo)">ParentChildLinks</mca:CSharpValue>
