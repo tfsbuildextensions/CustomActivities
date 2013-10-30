@@ -77,7 +77,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer.IncludeMergesInBuil
 
         private IEnumerable<Changeset> GetMergesForChangesets(VersionControlServer versioncontrolServer, IEnumerable<Changeset> changesets, int recursionLevel = 0)
         {
-			recursionLevel++;
+            recursionLevel++;
             var list = new List<Changeset>();
 
             if (changesets == null || !changesets.Any() || recursionLevel == 10)
