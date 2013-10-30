@@ -5,11 +5,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality
 {
     using System;
     using System.Activities;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.TeamFoundation.Build.Client;
@@ -138,7 +136,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             string binariesDirectory = Path.GetFullPath(this.BinariesDirectory.Get(this.ActivityContext));
 
             // remove trailing \ if found
-            if (binariesDirectory.EndsWith("\\"))
+            if (binariesDirectory.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
             {
                 binariesDirectory = binariesDirectory.Remove(binariesDirectory.Length - 1);
             }
