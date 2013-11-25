@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TfsBuildExtensions.TestsWithFakes</RootNamespace>
-    <AssemblyName>TfsBuildExtensions.TestsWithFakes</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>TFSBuildExtensions.TestsWithFakes</RootNamespace>
+    <AssemblyName>TFSBuildExtensions.TestsWithFakes</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -20,6 +20,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,30 +40,45 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.TeamFoundation.Build.Client.11.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.Build.Client.11.0.0.0.Fakes.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Build.Workflow, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes" />
+    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\AssemblyReferences\Microsoft.TeamFoundation.Build.Workflow.dll</HintPath>
+      <HintPath>..\..\..\AssemblyReferences\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.TeamFoundation.Client.11.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.Client.11.0.0.0.Fakes.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Build.Client.12.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.Build.Client.12.0.0.0.Fakes.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client.11.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.TestManagement.Client.11.0.0.0.Fakes.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\AssemblyReferences\Microsoft.TeamFoundation.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client.11.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.VersionControl.Client.11.0.0.0.Fakes.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Client.12.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.Client.12.0.0.0.Fakes.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client.11.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.WorkItemTracking.Client.11.0.0.0.Fakes.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\AssemblyReferences\Microsoft.TeamFoundation.TestManagement.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client.12.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.TestManagement.Client.12.0.0.0.Fakes.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\AssemblyReferences\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client.12.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.VersionControl.Client.12.0.0.0.Fakes.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\AssemblyReferences\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client.12.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.WorkItemTracking.Client.12.0.0.0.Fakes.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Services.Common, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\AssemblyReferences\Microsoft.VisualStudio.Services.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Activities" />
@@ -83,8 +99,6 @@
     <Compile Include="..\..\..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CodeQuality\BuildMessageTrackingParticipant.cs" />
-    <Compile Include="CodeQuality\SonarTests.cs" />
     <Compile Include="GetCodeCoverageTotal\GetCodeCoverageTotalTests.cs" />
     <Compile Include="IncludeMergesInBuild\GetMergedChangesetsTests.cs" />
     <Compile Include="IncludeMergesInBuild\GetParentIdTests.cs" />
@@ -101,6 +115,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Activities\Activities.csproj">
+      <Project>{cdf9ff31-b9da-411e-b50e-38f9c4fa33e3}</Project>
+      <Name>Activities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Fakes Include="Fakes\Microsoft.TeamFoundation.VersionControl.Client.fakes" />
   </ItemGroup>
   <ItemGroup>
@@ -110,25 +130,10 @@
     <Fakes Include="Fakes\Microsoft.TeamFoundation.Build.Client.fakes" />
   </ItemGroup>
   <ItemGroup>
-    <Fakes Include="Fakes\Microsoft.TeamFoundation.TestManagement.Client.fakes" />
-  </ItemGroup>
-  <ItemGroup>
     <Fakes Include="Fakes\Microsoft.TeamFoundation.Client.fakes" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Activities\Activities.csproj">
-      <Project>{cdf9ff31-b9da-411e-b50e-38f9c4fa33e3}</Project>
-      <Name>Activities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <None Include="CodeQuality\Deploy\all-properties.template" />
-    <None Include="CodeQuality\Deploy\custom-properties.template" />
-    <None Include="CodeQuality\Deploy\fake-runner-that-fails.cmd" />
-    <None Include="CodeQuality\Deploy\fake-runner-with-alerts.cmd" />
-    <None Include="CodeQuality\Deploy\fake-runner.cmd" />
-    <None Include="CodeQuality\Deploy\sonar-properties.template" />
+    <Fakes Include="Fakes\Microsoft.TeamFoundation.TestManagement.Client.fakes" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

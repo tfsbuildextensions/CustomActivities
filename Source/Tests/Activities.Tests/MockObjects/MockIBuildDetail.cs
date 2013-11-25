@@ -297,10 +297,16 @@ namespace TfsBuildExtensions.Activities.Tests
             get { throw new NotImplementedException(); }
         }
 
+        public long? ContainerId
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public event StatusChangedEventHandler StatusChanging;
         public event StatusChangedEventHandler StatusChanged;
         public event PollingCompletedEventHandler PollingCompleted;
 
         #endregion
+        
     }
 }

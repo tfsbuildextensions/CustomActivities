@@ -65,8 +65,6 @@
 <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.xml" />
 <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.dll" />
 <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.xml" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VirtualPC.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VirtualPC.xml" />
 <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VisualStudio.dll" />
 <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VisualStudio.xml" />
 <DocumentationSource sourceFile="..\..\BuildBinaries\TFSBuildExtensions.Activities.xml" /></DocumentationSources>

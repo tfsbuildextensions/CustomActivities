@@ -5,7 +5,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
 {
     using System.Activities;
     using Microsoft.TeamFoundation.Build.Client;
-    using Microsoft.Web.Publishing.Tasks;
+    using Microsoft.Web.XmlTransform;
 
     /// <summary>
     /// Activity to transform config files using the Xml Document Transformations.

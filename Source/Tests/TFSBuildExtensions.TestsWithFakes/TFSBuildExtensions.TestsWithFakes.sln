@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFSBuildExtensions.TestsWit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities", "..\..\Activities\Activities.csproj", "{CDF9FF31-B9DA-411E-B50E-38F9C4FA33E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsUtilities", "..\..\TfsUtilities\TfsUtilities.csproj", "{BDD3B7A5-223A-460D-B48B-F28F7B79473A}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
 		SccLocalPath0 = .
@@ -18,9 +20,11 @@ Global
 		SccProjectName1 = TFSBuildExtensions.TestsWithFakes
 		SccLocalPath1 = TFSBuildExtensions.TestsWithFakes
 		SccProjectUniqueName2 = ..\\..\\Activities\\Activities.csproj
-		SccProjectTopLevelParentUniqueName2 = TFSBuildExtensions.TestsWithFakes.sln
 		SccProjectName2 = ../../Activities
 		SccLocalPath2 = ..\\..\\Activities
+		SccProjectUniqueName3 = ..\\..\\TfsUtilities\\TfsUtilities.csproj
+		SccProjectName3 = ../../TfsUtilities
+		SccLocalPath3 = ..\\..\\TfsUtilities
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,10 @@ Global
 		{CDF9FF31-B9DA-411E-B50E-38F9C4FA33E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDF9FF31-B9DA-411E-B50E-38F9C4FA33E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDF9FF31-B9DA-411E-B50E-38F9C4FA33E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDD3B7A5-223A-460D-B48B-F28F7B79473A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDD3B7A5-223A-460D-B48B-F28F7B79473A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDD3B7A5-223A-460D-B48B-F28F7B79473A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDD3B7A5-223A-460D-B48B-F28F7B79473A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

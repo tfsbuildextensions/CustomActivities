@@ -5,8 +5,8 @@
         <PackageDrive>C:</PackageDrive>
         <PackageRoot>$(PackageDrive)\Releases\TFSBE\$(ReleaseVersion)</PackageRoot>
         <Configuration>Release|Any CPU</Configuration>
-        <VisualStudioVersion>11.0</VisualStudioVersion>
-        <VisualStudioVersionFriendly>VS2012</VisualStudioVersionFriendly>
+        <VisualStudioVersion>12.0</VisualStudioVersion>
+        <VisualStudioVersionFriendly>VS2013</VisualStudioVersionFriendly>
     </PropertyGroup>
 
     <Target Name="PreCheckin" DependsOnTargets="StyleCop;Compile"/>
