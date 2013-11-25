@@ -48,6 +48,10 @@
     <Reference Include="Microsoft.TeamFoundation.Build.Client.12.0.0.0.Fakes">
       <HintPath>FakesAssemblies\Microsoft.TeamFoundation.Build.Client.12.0.0.0.Fakes.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Build.Workflow, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\AssemblyReferences\Microsoft.TeamFoundation.Build.Workflow.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\AssemblyReferences\Microsoft.TeamFoundation.Client.dll</HintPath>
@@ -99,6 +103,8 @@
     <Compile Include="..\..\..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CodeQuality\BuildMessageTrackingParticipant.cs" />
+    <Compile Include="CodeQuality\SonarTests.cs" />
     <Compile Include="GetCodeCoverageTotal\GetCodeCoverageTotalTests.cs" />
     <Compile Include="IncludeMergesInBuild\GetMergedChangesetsTests.cs" />
     <Compile Include="IncludeMergesInBuild\GetParentIdTests.cs" />
@@ -134,6 +140,14 @@
   </ItemGroup>
   <ItemGroup>
     <Fakes Include="Fakes\Microsoft.TeamFoundation.TestManagement.Client.fakes" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CodeQuality\Deploy\all-properties.template" />
+    <None Include="CodeQuality\Deploy\custom-properties.template" />
+    <None Include="CodeQuality\Deploy\fake-runner-that-fails.cmd" />
+    <None Include="CodeQuality\Deploy\fake-runner-with-alerts.cmd" />
+    <None Include="CodeQuality\Deploy\fake-runner.cmd" />
+    <None Include="CodeQuality\Deploy\sonar-properties.template" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
