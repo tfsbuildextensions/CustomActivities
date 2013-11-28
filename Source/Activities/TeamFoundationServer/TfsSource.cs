@@ -143,7 +143,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         public InArgument<string[]> ItemspecList { get; set; }
 
         /// <summary>
-        /// Path to TF.exe. Defaults to %VS100COMNTOOLS%\..\IDE\tf.exe
+        /// Path to TF.exe. Defaults to %VS120COMNTOOLS%..\IDE\tf.exe
         /// </summary>
         [Browsable(true)]
         public InArgument<string> ToolPath
@@ -303,7 +303,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 string fileName = this.toolPath.Get(this.ActivityContext);
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    string visualStudioTools = Environment.GetEnvironmentVariable("VS100COMNTOOLS");
+                    string visualStudioTools = Environment.GetEnvironmentVariable("VS120COMNTOOLS");
                     if (visualStudioTools != null)
                     {
                         fileName = Path.Combine(visualStudioTools, @"..\IDE\tf.exe");
