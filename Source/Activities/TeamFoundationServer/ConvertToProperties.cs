@@ -75,7 +75,7 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                         this.properties.Remove(pair[0]);
                     }
 
-                    this.properties.Add(pair[0], pair[1]);
+                    this.properties.Add(pair[0].Trim().Replace("\"", string.Empty), pair[1].Trim().Replace("\"", string.Empty));
                 }
             }
             catch
