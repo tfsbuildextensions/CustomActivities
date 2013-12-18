@@ -679,7 +679,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             string typeFail = (status == BuildStatus.Failed) ? "error" : "warning";
             string message = string.Format(metricCheck.Format, fullyQualifiedName, metricValue, typeFail, metricCheck.LimitThatFailed(status));
             logToBuild(message);
-            this.ChangeStatusCurrentBuild(status);
+
+            if (this.BuildDetail.Status != BuildStatus.Failed)
+            {
+                this.ChangeStatusCurrentBuild(status);
+            }
+
             thecomplainlist.Add(metricCheck.Name + ": " + metricValue + " fails on " + message);
         }
     }
