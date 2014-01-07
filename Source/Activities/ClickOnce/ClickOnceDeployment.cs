@@ -120,7 +120,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 CopyDirectory(binLocation, toFile, true);
 
                 string manifestCertificateThumbprintArg = !string.IsNullOrEmpty(manifestCertificateThumbprint) ? "-CertHash " + manifestCertificateThumbprint : string.Empty;
-                string certFilePathArg = !string.IsNullOrEmpty(certFilePath) ? "-CertFilePath " + certFilePath : string.Empty;
+                string certFilePathArg = !string.IsNullOrEmpty(certFilePath) ? "-CertFile " + certFilePath : string.Empty;
                 string certPasswordArg = !string.IsNullOrEmpty(certPassword) ? "-Password " + certPassword : string.Empty;
 
                 // Create Application Manifest
