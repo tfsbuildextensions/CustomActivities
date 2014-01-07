@@ -19,6 +19,17 @@ namespace TfsBuildExtensions.Activities.ClickOnce
     [BuildActivity(HostEnvironmentOption.Agent)]
     public sealed class ClickOnceDeployment : BaseCodeActivity
     {
+        private InArgument<string> processor = "x86";
+
+        /// <summary>
+        /// Sets the Processor to use. Default is x86.
+        /// </summary>
+        public InArgument<string> Processor
+        {
+            get { return this.processor; }
+            set { this.processor = value; }
+        }
+
         /// <summary>
         /// Full Path and Filename to Mage.exe (Located in .NET SDK)
         /// </summary>
@@ -113,7 +124,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 string certPasswordArg = !string.IsNullOrEmpty(certPassword) ? "-Password " + certPassword : string.Empty;
 
                 // Create Application Manifest
-                string args = "-New Application -Processor x86 -ToFile \"" + toFile + "\\" + applicationName + ".exe.manifest\" -name " + applicationName + " -Version " + version + " -FromDirectory \"" + toFile + "\"";
+                string args = "-New Application -Processor " + this.Processor.Get(this.ActivityContext) + " -ToFile \"" + toFile + "\\" + applicationName + ".exe.manifest\" -name " + applicationName + " -Version " + version + " -FromDirectory \"" + toFile + "\"";
                 RunMage(mageFilePath, args);
 
                 // Sign Application Manifest
