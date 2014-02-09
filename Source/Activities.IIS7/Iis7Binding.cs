@@ -184,7 +184,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
@@ -194,11 +194,10 @@ namespace TfsBuildExtensions.Activities.Web
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Looking for Binding: [{0}] {1} for: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Looking for Binding: [{0}] {1} for: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName.Get(this.ActivityContext)));
             if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && (binding.BindingInformation == this.BindingInformation)))
             {
                 this.Exists.Set(this.ActivityContext, true);
-                return;
             }
         }
 
@@ -206,11 +205,11 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting BindingInformation: [{0}] {1} from {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting BindingInformation: [{0}] {1} from {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName.Get(this.ActivityContext)));
             foreach (Binding binding in this.website.Bindings.Where(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation))
             {
                 this.website.Bindings.Remove(binding);
@@ -224,7 +223,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
@@ -246,7 +245,7 @@ namespace TfsBuildExtensions.Activities.Web
             }
             else
             {
-                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding BindingInformation: [{0}] {1} to: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName));
+                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding BindingInformation: [{0}] {1} to: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName.Get(this.ActivityContext)));
                 if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation))
                 {
                     this.LogBuildError("A binding with the same ip, port and host header already exists.");
@@ -263,7 +262,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} does not exists on: {1}", this.Name, this.MachineName));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} does not exists on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
@@ -273,7 +272,7 @@ namespace TfsBuildExtensions.Activities.Web
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying BindingInformation, setting: {0} for: {1} on: {2}", this.BindingInformation, this.Name, this.MachineName));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying BindingInformation, setting: {0} for: {1} on: {2}", this.BindingInformation, this.Name, this.MachineName.Get(this.ActivityContext)));
             foreach (Binding binding in this.website.Bindings.Where(binding => binding.Protocol.Equals(this.PreviousBindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.PreviousBindingInformation))
             {
                 binding.BindingInformation = this.BindingInformation;
