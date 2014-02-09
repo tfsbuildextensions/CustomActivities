@@ -45,7 +45,7 @@ namespace TfsBuildExtensions.Activities.Web
     {
         private ServerManager iisServerManager;
         private Site website;
-        private string bindingProtocol = "http";
+        private InArgument<string> bindingProtocol = "http";
         private IIS7BindingAction action = IIS7BindingAction.Add;
 
         /// <summary>
@@ -61,12 +61,7 @@ namespace TfsBuildExtensions.Activities.Web
         /// Sets the name of the Website
         /// </summary>
         [RequiredArgument]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Sets the port of the Binding to Modify
-        /// </summary>
-        public int Port { get; set; }
+        public InArgument<string> Name { get; set; }
 
         /// <summary>
         /// String containing binding information.
@@ -75,17 +70,17 @@ namespace TfsBuildExtensions.Activities.Web
         /// <para/>
         /// Example: *:80:sample.example.com or : *:443:
         /// </summary>
-        public string BindingInformation { get; set; }
+        public InArgument<string> BindingInformation { get; set; }
 
         /// <summary>
         /// Sets the PreviousBindingInformation to use when calling Modify
         /// </summary>
-        public string PreviousBindingInformation { get; set; }
+        public InArgument<string> PreviousBindingInformation { get; set; }
 
         /// <summary>
         /// Sets the PreviousBindingProtocol to use when calling Modify
         /// </summary>
-        public string PreviousBindingProtocol { get; set; }
+        public InArgument<string> PreviousBindingProtocol { get; set; }
 
         /// <summary>
         /// If HTTPS is used, this is the certificate hash. This is the value of "thumbprint" value of the certificate you want to use.
@@ -94,12 +89,12 @@ namespace TfsBuildExtensions.Activities.Web
         /// <para/>
         /// Example: 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a 0a
         /// </summary>
-        public string CertificateHash { get; set; }
+        public InArgument<string> CertificateHash { get; set; }
 
         /// <summary>
         /// The name of the certificate store. Default is "MY" for the personal store
         /// </summary>
-        public string CertificateStoreName { get; set; }
+        public InArgument<string> CertificateStoreName { get; set; }
 
         /// <summary>
         /// Gets whether the binding exists
@@ -109,7 +104,7 @@ namespace TfsBuildExtensions.Activities.Web
         /// <summary>
         /// Binding protocol. Example: "http", "https", "ftp". Default is http.
         /// </summary>
-        public string BindingProtocol
+        public InArgument<string> BindingProtocol
         {
             get { return this.bindingProtocol; }
             set { this.bindingProtocol = value; }
@@ -184,18 +179,18 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.BindingInformation))
+            if (string.IsNullOrEmpty(this.BindingInformation.Get(this.ActivityContext)))
             {
                 this.LogBuildError("BindingInformation is required.");
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Looking for Binding: [{0}] {1} for: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName.Get(this.ActivityContext)));
-            if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && (binding.BindingInformation == this.BindingInformation)))
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Looking for Binding: [{0}] {1} for: {2} on: {3}", this.BindingProtocol.Get(this.ActivityContext), this.BindingInformation.Get(this.ActivityContext), this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
+            if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol.Get(this.ActivityContext), StringComparison.OrdinalIgnoreCase) && (binding.BindingInformation == this.BindingInformation.Get(this.ActivityContext))))
             {
                 this.Exists.Set(this.ActivityContext, true);
             }
@@ -205,12 +200,12 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting BindingInformation: [{0}] {1} from {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName.Get(this.ActivityContext)));
-            foreach (Binding binding in this.website.Bindings.Where(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation))
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting BindingInformation: [{0}] {1} from {2} on: {3}", this.BindingProtocol.Get(this.ActivityContext), this.BindingInformation.Get(this.ActivityContext), this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
+            foreach (Binding binding in this.website.Bindings.Where(binding => binding.Protocol.Equals(this.BindingProtocol.Get(this.ActivityContext), StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation.Get(this.ActivityContext)))
             {
                 this.website.Bindings.Remove(binding);
                 break;
@@ -223,36 +218,36 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.BindingInformation))
+            if (string.IsNullOrEmpty(this.BindingInformation.Get(this.ActivityContext)))
             {
                 this.LogBuildError("BindingInformation is required.");
                 return;
             }
 
-            if (!string.IsNullOrEmpty(this.CertificateHash))
+            if (!string.IsNullOrEmpty(this.CertificateHash.Get(this.ActivityContext)))
             {
-                if (string.IsNullOrEmpty(this.CertificateStoreName))
+                if (string.IsNullOrEmpty(this.CertificateStoreName.Get(this.ActivityContext)))
                 {
                     this.CertificateStoreName = "MY";
                 }
 
-                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Creating binding with certificate: thumb print '{0}' in store '{1}'", this.CertificateHash, this.CertificateStoreName));
-                this.website.Bindings.Add(this.BindingInformation, HexToData(this.CertificateHash), this.CertificateStoreName);
+                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Creating binding with certificate: thumb print '{0}' in store '{1}'", this.CertificateHash.Get(this.ActivityContext), this.CertificateStoreName.Get(this.ActivityContext)));
+                this.website.Bindings.Add(this.BindingInformation.Get(this.ActivityContext), HexToData(this.CertificateHash.Get(this.ActivityContext)), this.CertificateStoreName.Get(this.ActivityContext));
             }
             else
             {
-                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding BindingInformation: [{0}] {1} to: {2} on: {3}", this.BindingProtocol, this.BindingInformation, this.Name, this.MachineName.Get(this.ActivityContext)));
-                if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation))
+                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding BindingInformation: [{0}] {1} to: {2} on: {3}", this.BindingProtocol, this.BindingInformation.Get(this.ActivityContext), this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
+                if (this.website.Bindings.Any(binding => binding.Protocol.Equals(this.BindingProtocol.Get(this.ActivityContext), StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.BindingInformation.Get(this.ActivityContext)))
                 {
                     this.LogBuildError("A binding with the same ip, port and host header already exists.");
                     return;
                 }
 
-                this.website.Bindings.Add(this.BindingInformation, this.BindingProtocol);
+                this.website.Bindings.Add(this.BindingInformation.Get(this.ActivityContext), this.BindingProtocol.Get(this.ActivityContext));
             }
 
             this.iisServerManager.CommitChanges();
@@ -262,21 +257,21 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} does not exists on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} does not exists on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.BindingInformation))
+            if (string.IsNullOrEmpty(this.BindingInformation.Get(this.ActivityContext)))
             {
                 this.LogBuildError("BindingInformation is required.");
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying BindingInformation, setting: {0} for: {1} on: {2}", this.BindingInformation, this.Name, this.MachineName.Get(this.ActivityContext)));
-            foreach (Binding binding in this.website.Bindings.Where(binding => binding.Protocol.Equals(this.PreviousBindingProtocol, StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.PreviousBindingInformation))
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying BindingInformation, setting: {0} for: {1} on: {2}", this.BindingInformation.Get(this.ActivityContext), this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
+            foreach (Binding binding in this.website.Bindings.Where(binding => binding.Protocol.Equals(this.PreviousBindingProtocol.Get(this.ActivityContext), StringComparison.OrdinalIgnoreCase) && binding.BindingInformation == this.PreviousBindingInformation.Get(this.ActivityContext)))
             {
-                binding.BindingInformation = this.BindingInformation;
-                binding.Protocol = this.BindingProtocol;
+                binding.BindingInformation = this.BindingInformation.Get(this.ActivityContext);
+                binding.Protocol = this.BindingProtocol.Get(this.ActivityContext);
                 break;
             }
 
@@ -285,7 +280,7 @@ namespace TfsBuildExtensions.Activities.Web
 
         private bool SiteExists()
         {
-            this.website = this.iisServerManager.Sites[this.Name];
+            this.website = this.iisServerManager.Sites[this.Name.Get(this.ActivityContext)];
             return this.website != null;
         }
     }
