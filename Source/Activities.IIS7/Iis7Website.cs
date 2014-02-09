@@ -6,7 +6,6 @@ namespace TfsBuildExtensions.Activities.Web
     using System;
     using System.Activities;
     using System.Globalization;
-    using System.IO;
     using System.Linq;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.Web.Administration;
@@ -91,7 +90,7 @@ namespace TfsBuildExtensions.Activities.Web
         /// Sets the name of the Website
         /// </summary>
         [RequiredArgument]
-        public string Name { get; set; }
+        public InArgument<string> Name { get; set; }
 
         /// <summary>
         /// Sets the Application Name
@@ -126,12 +125,12 @@ namespace TfsBuildExtensions.Activities.Web
         /// <summary>
         /// Sets the path.
         /// </summary>
-        public string Path { get; set; }
+        public InArgument<string> Path { get; set; }
 
         /// <summary>
         /// Sets the app pool.
         /// </summary>
-        public string AppPool { get; set; }
+        public InArgument<string> AppPool { get; set; }
 
         /// <summary>
         /// Sets the Enabled Protocols for the website
@@ -141,7 +140,7 @@ namespace TfsBuildExtensions.Activities.Web
         /// <summary>
         /// Sets the port.
         /// </summary>
-        public int Port { get; set; }
+        public InArgument<int> Port { get; set; }
 
         /// <summary>
         /// Set to true to force the creation of a website, even if it exists.
@@ -218,7 +217,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
@@ -236,7 +235,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
@@ -250,7 +249,7 @@ namespace TfsBuildExtensions.Activities.Web
 
         private void CheckExists()
         {
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether website: {0} exists on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Checking whether website: {0} exists on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
             this.Exists.Set(this.ActivityContext, this.SiteExists());
         }
 
@@ -258,7 +257,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
@@ -272,25 +271,20 @@ namespace TfsBuildExtensions.Activities.Web
         private void ProcessApplications()
         {
             string physicalPath = this.ApplicationPhysicalPath;
-            if (!Directory.Exists(physicalPath))
-            {
-                Directory.CreateDirectory(physicalPath);
-            }
-
             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding Application: {0}", this.ApplicationName));
             this.website.Applications.Add(this.ApplicationName, physicalPath);
 
             // Set Application Pool if given
-            if (!string.IsNullOrEmpty(this.AppPool))
+            if (!string.IsNullOrEmpty(this.AppPool.Get(this.ActivityContext)))
             {
-                ApplicationPool pool = this.iisServerManager.ApplicationPools[this.AppPool];
+                ApplicationPool pool = this.iisServerManager.ApplicationPools[this.AppPool.Get(this.ActivityContext)];
                 if (pool == null)
                 {
-                    this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} specified for: {1} was not found", this.AppPool, this.ApplicationName));
+                    this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The Application Pool: {0} specified for: {1} was not found", this.AppPool.Get(this.ActivityContext), this.ApplicationName));
                     return;
                 }
 
-                this.website.Applications[this.ApplicationName].ApplicationPoolName = this.AppPool;
+                this.website.Applications[this.ApplicationName].ApplicationPoolName = this.AppPool.Get(this.ActivityContext);
             }
         }
 
@@ -298,7 +292,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
@@ -313,11 +307,11 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
             this.iisServerManager.Sites.Remove(this.website);
             this.iisServerManager.CommitChanges();
         }
@@ -326,7 +320,7 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildWarning(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
@@ -347,25 +341,20 @@ namespace TfsBuildExtensions.Activities.Web
             {
                 if (!this.Force)
                 {
-                    this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} already exists on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                    this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} already exists on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                     return;
                 }
 
-                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Deleting website: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 this.iisServerManager.Sites.Remove(this.website);
                 this.iisServerManager.CommitChanges();
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
-            if (!Directory.Exists(this.Path))
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Creating website: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
+            this.website = this.iisServerManager.Sites.Add(this.Name.Get(this.ActivityContext), this.Path.Get(this.ActivityContext), this.Port.Get(this.ActivityContext));
+            if (!string.IsNullOrEmpty(this.AppPool.Get(this.ActivityContext)))
             {
-                Directory.CreateDirectory(this.Path);
-            }
-
-            this.website = this.iisServerManager.Sites.Add(this.Name, this.Path, this.Port);
-            if (!string.IsNullOrEmpty(this.AppPool))
-            {
-                this.website.ApplicationDefaults.ApplicationPoolName = this.AppPool;
+                this.website.ApplicationDefaults.ApplicationPoolName = this.AppPool.Get(this.ActivityContext);
             }
 
             if (!string.IsNullOrEmpty(this.ApplicationName))
@@ -390,11 +379,6 @@ namespace TfsBuildExtensions.Activities.Web
         private void ProcessVirtualDirectories()
         {
             string physicalPath = this.VirtualDirectoryPhysicalPath;
-            if (!Directory.Exists(physicalPath))
-            {
-                Directory.CreateDirectory(physicalPath);
-            }
-
             this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Adding VirtualDirectory: {0} to: {1}", this.VirtualDirectoryName, this.VirtualDirectoryApplicationPath));
             this.website.Applications[this.ApplicationPath].VirtualDirectories.Add(this.VirtualDirectoryName, physicalPath);
         }
@@ -403,24 +387,19 @@ namespace TfsBuildExtensions.Activities.Web
         {
             if (!this.SiteExists())
             {
-                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
+                this.LogBuildError(string.Format(CultureInfo.CurrentCulture, "The website: {0} was not found on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
                 return;
             }
 
-            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying website: {0} on: {1}", this.Name, this.MachineName.Get(this.ActivityContext)));
-            if (!Directory.Exists(this.Path))
-            {
-                Directory.CreateDirectory(this.Path);
-            }
-
+            this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Modifying website: {0} on: {1}", this.Name.Get(this.ActivityContext), this.MachineName.Get(this.ActivityContext)));
             Application app = this.website.Applications["/"];
             if (app != null)
             {
                 VirtualDirectory vdir = app.VirtualDirectories["/"];
                 if (vdir != null)
                 {
-                    this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Setting physical path: {0} on: {1}", this.Path, vdir.Path));
-                    vdir.PhysicalPath = this.Path;
+                    this.LogBuildMessage(string.Format(CultureInfo.CurrentCulture, "Setting physical path: {0} on: {1}", this.Path.Get(this.ActivityContext), vdir.Path));
+                    vdir.PhysicalPath = this.Path.Get(this.ActivityContext);
                 }
             }
 
@@ -430,7 +409,7 @@ namespace TfsBuildExtensions.Activities.Web
 
         private bool SiteExists()
         {
-            this.website = this.iisServerManager.Sites[this.Name];
+            this.website = this.iisServerManager.Sites[this.Name.Get(this.ActivityContext)];
             return this.website != null;
         }
     }
