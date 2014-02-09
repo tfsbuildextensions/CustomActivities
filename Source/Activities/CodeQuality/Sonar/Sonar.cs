@@ -265,14 +265,22 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 string outputStream = proc.StandardOutput.ReadToEnd();
                 string errorStream = proc.StandardError.ReadToEnd();
 
-                // log the full output of sonar to the build logs folder
                 IBuildDetail build = this.ActivityContext.GetExtension<IBuildDetail>();
-                string logFolder = Path.GetDirectoryName(build.LogLocation);
-                string sonarLogFile = Path.Combine(logFolder, "Sonar.log");
-                File.WriteAllText(sonarLogFile, outputStream);
-                File.AppendAllText(sonarLogFile, "\n");
-                File.AppendAllText(sonarLogFile, errorStream);
-
+                if (!string.IsNullOrEmpty(build.LogLocation))
+                {
+                    // log the full output of sonar to the build logs folder
+                    string logFolder = Path.GetDirectoryName(build.LogLocation);
+                    string sonarLogFile = Path.Combine(logFolder, "Sonar.log");
+                    File.WriteAllText(sonarLogFile, outputStream);
+                    File.AppendAllText(sonarLogFile, "\n");
+                    File.AppendAllText(sonarLogFile, errorStream);
+                }
+                else
+                {
+                    this.LogBuildWarning("Drop location not defined. Will not write to log file");
+                    return null;
+                }
+                
                 result.HasBreakingAlerts = outputStream.Contains("[BUILD BREAKER]");
 
                 if (outputStream.Length > 0)
