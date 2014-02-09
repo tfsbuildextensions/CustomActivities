@@ -11,11 +11,7 @@ namespace TfsBuildExtensions.Activities.Xml
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Xml;
-    using System.Xml.Linq;
-    using System.Xml.Schema;
-    using System.Xml.Xsl;
     using Microsoft.TeamFoundation.Build.Client;
 
     /// <summary>
@@ -448,7 +444,7 @@ namespace TfsBuildExtensions.Activities.Xml
 
             // If we have had namespace declarations specified add them to the Namespace Mgr for the XML Document.
             var namespaces = this.Namespaces.Get(this.ActivityContext);
-            if (namespaces != null && namespaces.Count() > 0)
+            if (namespaces != null && namespaces.Any())
             {
                 foreach (var key in namespaces.Keys)
                 {
@@ -608,9 +604,26 @@ namespace TfsBuildExtensions.Activities.Xml
 
         private void TrySave()
         {
+            string path = this.File.Get(this.ActivityContext);
+            bool attributesChanged = false;
+
             try
             {
-                this.xmlFileDoc.Save(this.File.Get(this.ActivityContext));
+                if (System.IO.File.Exists(path))
+                {
+                    var fileAttributes = System.IO.File.GetAttributes(path);
+                    if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    {
+                        System.IO.File.SetAttributes(path, fileAttributes ^ FileAttributes.ReadOnly);
+                        attributesChanged = true;
+                    }
+                }
+
+                this.xmlFileDoc.Save(path);
+                if (attributesChanged)
+                {
+                    System.IO.File.SetAttributes(path, FileAttributes.ReadOnly);
+                }
             }
             catch (XmlException ex)
             {
@@ -624,7 +637,22 @@ namespace TfsBuildExtensions.Activities.Xml
                     count++;
                     try
                     {
-                        this.xmlFileDoc.Save(this.File.Get(this.ActivityContext));
+                        if (System.IO.File.Exists(path))
+                        {
+                            var fileAttributes = System.IO.File.GetAttributes(path);
+                            if ((fileAttributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                            {
+                                System.IO.File.SetAttributes(path, fileAttributes ^ FileAttributes.ReadOnly);
+                                attributesChanged = true;
+                            }
+                        }
+
+                        this.xmlFileDoc.Save(path);
+                        if (attributesChanged)
+                        {
+                            System.IO.File.SetAttributes(path, FileAttributes.ReadOnly);
+                        } 
+                        
                         saved = true;
                     }
                     catch (XmlException exc)
