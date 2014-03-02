@@ -285,7 +285,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 return;
             }
 
-            if (this.Assemblies.Get(this.ActivityContext).Count() == 0)
+            if (!this.Assemblies.Get(this.ActivityContext).Any())
             {
                 this.LogBuildMessage("No unit test assemblies passed to NUnit actitity. No tests will be executed");
                 return;
@@ -295,12 +295,12 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             int exitCode = this.RunProcess(fullPath, workingDirectory, this.GenerateCommandLineCommands(this.ActivityContext, workingDirectory));
             this.ExitCode.Set(this.ActivityContext, exitCode);
             this.ProcessXmlResultsFile(this.ActivityContext, workingDirectory);
-            this.PublishTestResultsToTFS(this.ActivityContext, workingDirectory);
+            this.PublishTestResultsToTfs(this.ActivityContext, workingDirectory);
         }
 
         private static int GetAttributeInt32Value(string name, XmlNode node)
         {
-            if (node.Attributes[name] != null)
+            if (node.Attributes != null && node.Attributes[name] != null)
             {
                 return Convert.ToInt32(node.Attributes[name].Value, CultureInfo.InvariantCulture);
             }
@@ -355,7 +355,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             }
         }
 
-        private void PublishTestResultsToTFS(ActivityContext context, string folder)
+        private void PublishTestResultsToTfs(ActivityContext context, string folder)
         {
             if (!this.PublishTestResults.Get(context))
             {
@@ -376,7 +376,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                 return;
             }
 
-            this.TransformNUnitToMSTest(filename, resultTrxFile);
+            this.TransformNUnitToMsTest(filename, resultTrxFile);
 
             var buildDetail = this.ActivityContext.GetExtension<IBuildDetail>();
             string collectionUrl = buildDetail.BuildServer.TeamProjectCollection.Uri.ToString();
@@ -384,17 +384,17 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             string teamProject = buildDetail.TeamProject;
             string platform = this.Platform.Get(context);
             string flavor = this.Flavor.Get(context);
-            this.PublishMSTestResults(resultTrxFile, collectionUrl, buildNumber, teamProject, platform, flavor);
+            this.PublishMsTestResults(resultTrxFile, collectionUrl, buildNumber, teamProject, platform, flavor);
         }
 
-        private void PublishMSTestResults(string resultTrxFile, string collectionUrl, string buildNumber, string teamProject, string platform, string flavor)
+        private void PublishMsTestResults(string resultTrxFile, string collectionUrl, string buildNumber, string teamProject, string platform, string flavor)
         {
             int visualStudioVersion = (int)this.VisualStudioVersion.Get(this.ActivityContext);
             string argument = string.Format("/publish:\"{0}\" /publishresultsfile:\"{1}\" /publishbuild:\"{2}\" /teamproject:\"{3}\" /platform:\"{4}\" /flavor:\"{5}\"", collectionUrl, resultTrxFile, buildNumber, teamProject, platform, flavor);
             this.RunProcess(Environment.ExpandEnvironmentVariables(string.Format(@"%VS{0}COMNTOOLS%\..\IDE\MSTest.exe", visualStudioVersion)), null, argument);
         }
 
-        private void TransformNUnitToMSTest(string nunitResultFile, string mstestResultFile)
+        private void TransformNUnitToMsTest(string nunitResultFile, string mstestResultFile)
         {
             Stream s = this.GetType().Assembly.GetManifestResourceStream("TfsBuildExtensions.Activities.CodeQuality.NUnit.NUnitToMSTest.xslt");
             if (s == null)
@@ -433,8 +433,16 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             builder.AppendFileNamesIfNotNull(this.Assemblies.Get(context).ToArray(), " ");
             builder.AppendSwitchIfNotNull("/run=", this.Run.Get(context));
             builder.AppendSwitchIfNotNull("/config=", this.Configuration.Get(context));
-            builder.AppendSwitchIfNotNull("/include=", this.IncludeCategory.Get(context));
-            builder.AppendSwitchIfNotNull("/exclude=", this.ExcludeCategory.Get(context));
+            if (!string.IsNullOrEmpty(context.GetValue(this.IncludeCategory)))
+            {
+                builder.AppendSwitchIfNotNull("/include=", this.IncludeCategory.Get(context));
+            }
+
+            if (!string.IsNullOrEmpty(context.GetValue(this.ExcludeCategory)))
+            {
+                builder.AppendSwitchIfNotNull("/exclude=", this.ExcludeCategory.Get(context));
+            }
+
             builder.AppendSwitchIfNotNull("/process=", this.Process.Get(context));
             builder.AppendSwitchIfNotNull("/domain=", this.Domain.Get(context));
             builder.AppendSwitchIfNotNull("/framework=", this.Framework.Get(context));
