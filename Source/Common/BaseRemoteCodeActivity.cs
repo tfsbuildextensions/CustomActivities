@@ -8,7 +8,6 @@ namespace TfsBuildExtensions.Activities
     using System;
     using System.Activities;
     using System.ComponentModel;
-    using System.Diagnostics;
     using System.Management;
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Build.Workflow.Activities;
@@ -169,7 +168,6 @@ namespace TfsBuildExtensions.Activities
         /// <param name="errorMessage">Message to save</param>
         protected void LogBuildError(string errorMessage)
         {
-            Debug.WriteLine(string.Format("BuildError: {0}", errorMessage));
             if (this.FailBuildOnError.Get(this.ActivityContext))
             {
                 this.failingbuild = true;
@@ -179,7 +177,14 @@ namespace TfsBuildExtensions.Activities
                 throw new Exception(errorMessage);
             }
 
-            this.ActivityContext.TrackBuildError(errorMessage);
+            if (this.IgnoreExceptions.Get(this.ActivityContext))
+            {
+                this.ActivityContext.TrackBuildWarning(errorMessage);
+            }
+            else
+            {
+                this.ActivityContext.TrackBuildError(errorMessage);
+            }
         }
 
         /// <summary>
@@ -195,7 +200,6 @@ namespace TfsBuildExtensions.Activities
             else
             {
                 this.ActivityContext.TrackBuildWarning(warningMessage);
-                Debug.WriteLine(string.Format("BuildWarning: {0}", warningMessage));
             }
         }
 
@@ -207,7 +211,6 @@ namespace TfsBuildExtensions.Activities
         protected void LogBuildMessage(string message, BuildMessageImportance importance = BuildMessageImportance.Normal)
         {
             this.ActivityContext.TrackBuildMessage(message, importance);
-            Debug.WriteLine(string.Format("BuildMessage: {0}", message));
         }
 
         /// <summary>
@@ -220,7 +223,6 @@ namespace TfsBuildExtensions.Activities
             IActivityTracking currentTracking = this.ActivityContext.GetExtension<IBuildLoggingExtension>().GetActivityTracking(this.ActivityContext);
             var link = currentTracking.Node.Children.AddExternalLink(message, uri);
             link.Save();
-            Debug.WriteLine(string.Format("BuildLink: {0}, Uri: {1}", message, uri));
         }
 
         /// <summary>

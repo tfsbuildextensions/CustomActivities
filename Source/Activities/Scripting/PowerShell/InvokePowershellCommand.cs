@@ -6,7 +6,6 @@ namespace TfsBuildExtensions.Activities.Scripting
     using System;
     using System.Activities;
     using System.ComponentModel;
-    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -25,7 +24,7 @@ namespace TfsBuildExtensions.Activities.Scripting
         /// <summary>
         /// Interface is used to allow use to mock out calls to the TFS server for testing
         /// </summary>
-        private IUtilitiesForPowerShellActivity powershellUtilities;
+        private readonly IUtilitiesForPowerShellActivity powershellUtilities;
 
         /// <summary>
         /// Initializes a new instance of the InvokePowerShellCommand class
@@ -85,8 +84,6 @@ namespace TfsBuildExtensions.Activities.Scripting
 
             if (this.powershellUtilities.IsServerItem(script))
             {
-                Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Script being read from TFS source control path [{0}] and attributes [{1}] being used", script, arguments));
-
                 var workspaceFilePath = this.powershellUtilities.GetLocalFilePathFromWorkspace(workspace, script);
 
                 if (!this.powershellUtilities.FileExists(workspaceFilePath))
@@ -98,12 +95,7 @@ namespace TfsBuildExtensions.Activities.Scripting
             }
             else if (this.powershellUtilities.FileExists(script))
             {
-                Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Script being read from local file path [{0}] and attributes [{1}] being used", script, arguments));
                 script = string.Format("& '{0}' {1}", script, arguments);
-            }
-            else
-            {
-                Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "In-line script, attributes being ignored [{0}]", script));
             }
 
             return script;
