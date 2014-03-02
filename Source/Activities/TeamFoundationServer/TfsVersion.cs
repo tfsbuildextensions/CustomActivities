@@ -66,10 +66,13 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         private const string VBAppendAssemblyVersionFormat = "\n<assembly: System.Reflection.AssemblyVersion(\"{0}\")>";
         private const string AppendAssemblyFileVersionFormat = "\n[assembly: System.Reflection.AssemblyFileVersion(\"{0}\")]";
         private const string VBAppendAssemblyFileVersionFormat = "\n<assembly: System.Reflection.AssemblyFileVersion(\"{0}\")>";
+        private const string AppendAssemblyInformationalVersionFormat = "\n[assembly: System.Reflection.AssemblyInformationalVersion(\"{0}\")]";
+        private const string VBAppendAssemblyInformationalVersionFormat = "\n<assembly: System.Reflection.AssemblyInformationalVersion(\"{0}\")>";
         private const string AppendAssemblyDescriptionFormat = "\n[assembly: System.Reflection.AssemblyDescription(\"{0}\")]";
         private const string VBAppendAssemblyDescriptionFormat = "\n<assembly: System.Reflection.AssemblyDescription(\"{0}\")>";
         private Regex regexExpression;
         private Regex regexAssemblyVersion;
+        private Regex regexAssemblyInfomationalVersion;
         private Regex regexNugetVersion;
         private Regex regexAssemblyDescription;
         private Encoding fileEncoding = Encoding.UTF8;
@@ -114,6 +117,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         }
 
         /// <summary>
+        /// Set to True to set the AssemblyInformationalVersion when calling SetVersion. Default is false.
+        /// </summary>
+        public bool SetAssemblyInformationalVersion { get; set; }
+
+        /// <summary>
         /// Set to True to set the SetNuSpecVersion when calling SetVersion. Default is true.
         /// </summary>
         public bool SetNuSpecVersion
@@ -153,6 +161,11 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
         /// Sets the AssemblyVersion. Defaults to Version if not set.
         /// </summary>
         public InArgument<string> AssemblyVersion { get; set; }
+
+        /// <summary>
+        /// Sets the AssemblyInformationalVersion. Defaults to Version if not set.
+        /// </summary>
+        public InArgument<string> AssemblyInformationalVersion { get; set; }
 
         /// <summary>
         /// Sets the number of padding digits to use, e.g. 4
@@ -401,11 +414,16 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                 this.regexAssemblyVersion = new Regex(@"AssemblyVersion.*\(.*""" + ".*" + @""".*\)", RegexOptions.Compiled);
             }
 
+            if (this.SetAssemblyInformationalVersion)
+            {
+                this.regexAssemblyInfomationalVersion = new Regex(@"AssemblyInformationalVersion.*\(.*""" + ".*" + @""".*\)", RegexOptions.Compiled);
+            }
+
             if (this.SetAssemblyDescription)
             {
                 this.regexAssemblyDescription = new Regex(@"AssemblyDescription.*\(.*\)", RegexOptions.Compiled);
             }
-
+            
             if (this.SetNuSpecVersion)
             {
                 this.regexNugetVersion = new Regex(@"<version>.*</version>", RegexOptions.Compiled);
@@ -460,8 +478,26 @@ namespace TfsBuildExtensions.Activities.TeamFoundationServer
                     switch (file.Extension)
                     {
                         case ".nuspec":
-                            newFile = this.regexNugetVersion.Replace(entireFile, string.Format(@"<version>{0}</version>", this.ActivityContext.GetValue(this.Version)));
+                            newFile = this.regexNugetVersion.Replace(newFile, string.Format(@"<version>{0}</version>", this.ActivityContext.GetValue(this.Version)));
                             break;
+                    }
+                }
+
+                if (this.SetAssemblyInformationalVersion)
+                {
+                    string originalFile = newFile;
+                    newFile = this.regexAssemblyInfomationalVersion.Replace(newFile, string.Format(@"AssemblyInformationalVersion(""{0}"")", this.ActivityContext.GetValue(this.AssemblyInformationalVersion)));
+                    if (this.ForceSetVersion && newFile.Equals(originalFile, StringComparison.OrdinalIgnoreCase) && newFile.IndexOf("AssemblyInformationalVersion", StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        switch (file.Extension)
+                        {
+                            case ".cs":
+                                newFile = newFile.AppendFormat(AppendAssemblyInformationalVersionFormat, this.ActivityContext.GetValue(this.AssemblyInformationalVersion));
+                                break;
+                            case ".vb":
+                                newFile = newFile.AppendFormat(VBAppendAssemblyInformationalVersionFormat, this.ActivityContext.GetValue(this.AssemblyInformationalVersion));
+                                break;
+                        }
                     }
                 }
 
