@@ -28,7 +28,6 @@ namespace TfsBuildExtensions.Activities.CodeQuality
     {
         private InArgument<bool> logToConsole = true;
         private InArgument<bool> showSummary = true;
-        private InArgument<bool> logResultsToBuildLog;
         private CompareMode assemblyCompareMode = CompareMode.StrongName;
         
         private enum CompareMode
@@ -82,11 +81,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         /// <summary>
         /// Set to true to log the results to the build file. Default is false
         /// </summary>
-        public InArgument<bool> LogResultsToBuildLog
-        {
-            get { return this.logResultsToBuildLog; }
-            set { this.logResultsToBuildLog = value; }
-        }
+        public InArgument<bool> LogResultsToBuildLog { get; set; }
 
         /// <summary>
         /// Set to true to display a summary (/summary option). Default is true
@@ -496,6 +491,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                     foreach (XmlNode issue in message.SelectNodes("Issue"))
                     {
                         string file = issue.Attributes["File"] == null ? "No File" : issue.Attributes["File"].Value;
+                        string line = issue.Attributes["Line"] == null ? "No Line" : issue.Attributes["Line"].Value;
                         string logMessage = string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0} : {1} : {2} : {3}:{4}",
@@ -503,7 +499,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                             category,
                             issue.InnerText,
                             file,
-                            issue.Attributes["Line"].Value);
+                            line);
 
                         if (treatWarningsAsErrors)
                         {
