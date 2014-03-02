@@ -8,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ec69e55b-119e-4f53-89f4-1e66bd5ffc93}</ProjectGuid>
-    <SHFBSchemaVersion>1.9.3.0</SHFBSchemaVersion>
+    <SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>
     <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
          Studio adds them anyway -->
     <AssemblyName>Documentation</AssemblyName>
@@ -41,8 +41,8 @@
     <BuildLogFile>
     </BuildLogFile>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
-    <FrameworkVersion>.NET 4.0.30319</FrameworkVersion>
-    <HelpTitle>TFS Build Extensions Help %28August 2012%29</HelpTitle>
+    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <HelpTitle>TFS Build Extensions Help %28March 2014%29</HelpTitle>
     <CopyrightHref>http://tfsbuildextensions.codeplex.com/</CopyrightHref>
     <CopyrightText>Copyright &amp;#169%3b http://tfsbuildextensions.codeplex.com/ All rights reserved.</CopyrightText>
     <FeedbackEMailAddress>
@@ -53,21 +53,22 @@
     <SyntaxFilters>None</SyntaxFilters>
     <DocumentationSources>
       <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.AWS.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.AWS.xml" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.Azure.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.Azure.xml" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TFSBuildExtensions.Activities.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.IIS7.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.IIS7.xml" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.ILMerge.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.ILMerge.xml" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.xml" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.xml" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VisualStudio.dll" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VisualStudio.xml" />
-<DocumentationSource sourceFile="..\..\BuildBinaries\TFSBuildExtensions.Activities.xml" /></DocumentationSources>
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.AWS.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.Azure.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.Azure.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TFSBuildExtensions.Activities.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.IIS7.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.IIS7.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.ILMerge.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.ILMerge.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.LabManagement.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.StyleCop.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VisualStudio.dll" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TfsBuildExtensions.Activities.VisualStudio.xml" />
+      <DocumentationSource sourceFile="..\..\BuildBinaries\TFSBuildExtensions.Activities.xml" />
+    </DocumentationSources>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
       <NamespaceSummaryItem name="COMAdmin" isDocumented="False" />
