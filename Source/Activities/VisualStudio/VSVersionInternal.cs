@@ -14,6 +14,11 @@ namespace TfsBuildExtensions.Activities.VisualStudio
     internal enum VSVersionInternal
     {
         /// <summary>
+        /// Visual Studio 2013
+        /// </summary>
+        VS2013 = 120,
+
+        /// <summary>
         /// Visual Studio 2012
         /// </summary>
         VS2012 = 110,
