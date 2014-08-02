@@ -4,4 +4,4 @@ This project has been transitioned to a new home on GitHub from its orignal home
 
 With the updated release cadence of Visual Studio, we plan to actively develop for v.Current and v.Next (as previews become available). The Codpelex project will remain for the foreseeable future but all 2013 and future dev will happen here.
 
-For documentation on using the activities please see the Wiki on this project
+For documentation on using the activities please see the Wiki on this project https://github.com/tfsbuildextensions/CustomActivities/wiki
