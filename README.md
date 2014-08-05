@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/0mhb4a2y3f4hk1f7)](https://ci.appveyor.com/project/tfsbuildextensions/customactivities)
+
 The Community TFS Custom Activities project provides a place for build engineers to share workflow activities, build process template files, PowerShell scripts and tools for Team Foundation Build.
 
 This project has been transitioned to a new home on GitHub from its orignal home on Codeplex https://tfsbuildextensions.codeplex.com/. 
