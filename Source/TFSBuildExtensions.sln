@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.20827.3
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1F0A1FCE-1C3C-4EEA-8DFD-5DF620E14F30}"
 	ProjectSection(SolutionItems) = preProject
@@ -61,71 +61,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFSBuildExtensions.TestsWithFakes", "Tests\TFSBuildExtensions.TestsWithFakes\TFSBuildExtensions.TestsWithFakes\TFSBuildExtensions.TestsWithFakes.csproj", "{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 18
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Activities\\Activities.csproj
-		SccProjectName1 = Activities
-		SccLocalPath1 = Activities
-		SccProjectUniqueName2 = Activities.StyleCop\\Activities.StyleCop.csproj
-		SccProjectName2 = Activities.StyleCop
-		SccLocalPath2 = Activities.StyleCop
-		SccProjectUniqueName3 = TfsUtilities\\TfsUtilities.csproj
-		SccProjectName3 = TfsUtilities
-		SccLocalPath3 = TfsUtilities
-		SccProjectUniqueName4 = Activities.IIS7\\Activities.IIS7.csproj
-		SccProjectName4 = Activities.IIS7
-		SccLocalPath4 = Activities.IIS7
-		SccProjectUniqueName5 = Activities.ILMerge\\Activities.ILMerge.csproj
-		SccProjectName5 = Activities.ILMerge
-		SccLocalPath5 = Activities.ILMerge
-		SccProjectUniqueName6 = Activities.AWS\\Activities.AWS.csproj
-		SccProjectName6 = Activities.AWS
-		SccLocalPath6 = Activities.AWS
-		SccProjectUniqueName7 = Activities.Azure\\Activities.Azure.csproj
-		SccProjectName7 = Activities.Azure
-		SccLocalPath7 = Activities.Azure
-		SccProjectUniqueName8 = Activities.LabManagement\\Activities.LabManagement.csproj
-		SccProjectName8 = Activities.LabManagement
-		SccLocalPath8 = Activities.LabManagement
-		SccProjectUniqueName9 = Tests\\Activities.AWS.Tests\\Activities.AWS.Tests.csproj
-		SccProjectTopLevelParentUniqueName9 = TFSBuildExtensions.sln
-		SccProjectName9 = Tests/Activities.AWS.Tests
-		SccLocalPath9 = Tests\\Activities.AWS.Tests
-		SccProjectUniqueName10 = Tests\\Activities.Azure.Tests\\Activities.Azure.Tests.csproj
-		SccProjectTopLevelParentUniqueName10 = TFSBuildExtensions.sln
-		SccProjectName10 = Tests/Activities.Azure.Tests
-		SccLocalPath10 = Tests\\Activities.Azure.Tests
-		SccProjectUniqueName11 = Tests\\Activities.HyperV.RequiresHyperVTests\\Activities.HyperV.RequiresHyperVTests.csproj
-		SccProjectTopLevelParentUniqueName11 = TFSBuildExtensions.sln
-		SccProjectName11 = Tests/Activities.HyperV.RequiresHyperVTests
-		SccLocalPath11 = Tests\\Activities.HyperV.RequiresHyperVTests
-		SccProjectUniqueName12 = Tests\\Activities.IIS7.Tests\\Activities.IIS7.Tests.csproj
-		SccProjectTopLevelParentUniqueName12 = TFSBuildExtensions.sln
-		SccProjectName12 = Tests/Activities.IIS7.Tests
-		SccLocalPath12 = Tests\\Activities.IIS7.Tests
-		SccProjectUniqueName13 = Tests\\Activities.ILMerge.Tests\\Activities.ILMerge.Tests.csproj
-		SccProjectTopLevelParentUniqueName13 = TFSBuildExtensions.sln
-		SccProjectName13 = Tests/Activities.ILMerge.Tests
-		SccLocalPath13 = Tests\\Activities.ILMerge.Tests
-		SccProjectUniqueName14 = Tests\\Activities.StyleCop.Tests\\Activities.StyleCop.Tests.csproj
-		SccProjectTopLevelParentUniqueName14 = TFSBuildExtensions.sln
-		SccProjectName14 = Tests/Activities.StyleCop.Tests
-		SccLocalPath14 = Tests\\Activities.StyleCop.Tests
-		SccProjectUniqueName15 = Tests\\Activities.Tests\\Activities.Tests.csproj
-		SccProjectTopLevelParentUniqueName15 = TFSBuildExtensions.sln
-		SccProjectName15 = Tests/Activities.Tests
-		SccLocalPath15 = Tests\\Activities.Tests
-		SccProjectUniqueName16 = Activities.VisualStudio\\Activities.VisualStudio.csproj
-		SccProjectName16 = Activities.VisualStudio
-		SccLocalPath16 = Activities.VisualStudio
-		SccProjectUniqueName17 = Tests\\TFSBuildExtensions.TestsWithFakes\\TFSBuildExtensions.TestsWithFakes\\TFSBuildExtensions.TestsWithFakes.csproj
-		SccProjectTopLevelParentUniqueName17 = TFSBuildExtensions.sln
-		SccProjectName17 = Tests/TFSBuildExtensions.TestsWithFakes/TFSBuildExtensions.TestsWithFakes
-		SccLocalPath17 = Tests\\TFSBuildExtensions.TestsWithFakes\\TFSBuildExtensions.TestsWithFakes
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -286,7 +221,6 @@ Global
 		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
