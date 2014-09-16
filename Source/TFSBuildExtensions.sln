@@ -60,6 +60,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Activities.VisualStudio", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFSBuildExtensions.TestsWithFakes", "Tests\TFSBuildExtensions.TestsWithFakes\TFSBuildExtensions.TestsWithFakes\TFSBuildExtensions.TestsWithFakes.csproj", "{6AFCA9E1-B959-4BFD-9A33-CFCD396F1377}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{06377C3F-50A2-40E1-9380-B231CFCB0C3A}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\ApplyVersionToAssemblies.ps1 = Scripts\ApplyVersionToAssemblies.ps1
+		Scripts\CleanDrop.ps1 = Scripts\CleanDrop.ps1
+		Scripts\GatherItemsForDrop.ps1 = Scripts\GatherItemsForDrop.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
