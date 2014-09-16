@@ -65,6 +65,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{0637
 		Scripts\ApplyVersionToAssemblies.ps1 = Scripts\ApplyVersionToAssemblies.ps1
 		Scripts\CleanDrop.ps1 = Scripts\CleanDrop.ps1
 		Scripts\GatherItemsForDrop.ps1 = Scripts\GatherItemsForDrop.ps1
+		Scripts\UpdateTestPlanBuildNumber.ps1 = Scripts\UpdateTestPlanBuildNumber.ps1
 	EndProjectSection
 EndProject
 Global
