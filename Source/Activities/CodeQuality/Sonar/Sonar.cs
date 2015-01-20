@@ -193,7 +193,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                                         templatePropertiesPath,
                                         localProjectPath);
                                     this.LogBuildMessage(properties, BuildMessageImportance.Low);
-                                    File.WriteAllText(sonarPropertiesPath, properties, Encoding.ASCII);
+                                    File.WriteAllText(sonarPropertiesPath, properties, Encoding.UTF8);
                                 }
                                 else
                                 {
