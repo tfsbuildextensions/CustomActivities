@@ -24,6 +24,9 @@ namespace TfsBuildExtensions.Activities.CodeQuality
         private InArgument<bool> generatePropertiesIfMissing = true;
         private InArgument<string> sonarPropertiesFileName = "sonar-project.properties";
 
+        /// <summary>The encoding used by the java.util.Properties API (ISO 8859-1).</summary>
+        private static readonly Encoding Iso85591 = Encoding.GetEncoding(28591);
+
         /// <summary>
         /// Projects (solutions) list to analyze, typically pass the ProjectsToBuild variable.
         /// </summary>
@@ -110,7 +113,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
             string buildDefinition = build.BuildDefinition.Name;
             string buildNumber = build.BuildNumber;
 
-            string content = File.ReadAllText(templatePath);
+            string content = File.ReadAllText(templatePath, encoding: Iso85591);
             if (properties != null)
             {
                 Regex nameRegex = new Regex("^\\s*(?<name>[^#=\\s]+)\\s*=*.");
@@ -193,7 +196,7 @@ namespace TfsBuildExtensions.Activities.CodeQuality
                                         templatePropertiesPath,
                                         localProjectPath);
                                     this.LogBuildMessage(properties, BuildMessageImportance.Low);
-                                    File.WriteAllText(sonarPropertiesPath, properties, Encoding.ASCII);
+                                    File.WriteAllText(sonarPropertiesPath, properties, encoding: Iso85591);
                                 }
                                 else
                                 {
