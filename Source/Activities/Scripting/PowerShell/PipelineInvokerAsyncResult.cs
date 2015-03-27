@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TfsBuildExtensions.Activities.Scripting.PowerShell
+namespace TfsBuildExtensions.Activities.Scripting
 {
     class PipelineInvokerAsyncResult : IAsyncResult, IDisposable
     {

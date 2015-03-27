@@ -8,7 +8,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TfsBuildExtensions.Activities.Scripting.PowerShell
+namespace TfsBuildExtensions.Activities.Scripting
 {
     [Serializable]
     public class PowerShellExecutionException : Exception

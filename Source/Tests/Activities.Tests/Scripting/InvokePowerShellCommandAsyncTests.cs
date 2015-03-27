@@ -1,12 +1,12 @@
-﻿using System;
-using System.Activities;
-using System.Management.Automation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TfsBuildExtensions.Activities.Scripting;
-using TfsBuildExtensions.Activities.Scripting.PowerShell;
-
-namespace TfsBuildExtensions.Activities.Tests.Scripting
+﻿namespace TfsBuildExtensions.Activities.Tests
 {
+    using System;
+    using System.Activities;
+    using System.Management.Automation;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using TfsBuildExtensions.Activities.Scripting;
+    using TfsBuildExtensions.Activities.Scripting.PowerShell;
+
     [TestClass]
     public class InvokePowerShellCommandAsyncTests
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TfsBuildExtensions.Activities.Scripting.PowerShell
+namespace TfsBuildExtensions.Activities.Scripting
 {
     public static class ErrorMessages
     {
