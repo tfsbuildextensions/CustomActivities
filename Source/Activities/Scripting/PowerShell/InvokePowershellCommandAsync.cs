@@ -13,7 +13,7 @@ using System.Management.Automation.Runspaces;
 namespace TfsBuildExtensions.Activities.Scripting
 {
     [BuildActivity(HostEnvironmentOption.Agent)]
-    public sealed class InvokePowershellCommandAsync : AsyncCodeActivity<PSObject[]>
+    public sealed class InvokePowerShellCommandAsync : AsyncCodeActivity<PSObject[]>
     {
         /// <summary>
         /// Interface is used to allow use to mock out calls to the TFS server for testing
@@ -23,7 +23,7 @@ namespace TfsBuildExtensions.Activities.Scripting
         /// <summary>
         /// Initializes a new instance of the InvokePowerShellCommand class
         /// </summary>
-        public InvokePowershellCommandAsync()
+        public InvokePowerShellCommandAsync()
             : this(new UtilitiesForPowerShellActivity())
         {
         }
@@ -32,7 +32,7 @@ namespace TfsBuildExtensions.Activities.Scripting
         /// Initializes a new instance of the InvokePowerShellCommand class
         /// </summary>
         /// <param name="powershellUtilities">Allows a mock implementation of utilities to be passed in for testing</param>
-        internal InvokePowershellCommandAsync(IUtilitiesForPowerShellActivity powershellUtilities)
+        internal InvokePowerShellCommandAsync(IUtilitiesForPowerShellActivity powershellUtilities)
         {
             this.powershellUtilities = powershellUtilities;
         }
@@ -111,6 +111,7 @@ namespace TfsBuildExtensions.Activities.Scripting
 
             Runspace runspace = null;
             Pipeline pipeline = null;
+            PipelineInvokerAsyncResult pipelineInvokerAsyncResult = null;
 
             var script = this.ResolveScript(
               this.BuildWorkspace.Get(context),
@@ -127,7 +128,9 @@ namespace TfsBuildExtensions.Activities.Scripting
                 pipeline = runspace.CreatePipeline(script);
 
                 context.UserState = pipeline;
-                return new PipelineInvokerAsyncResult(pipeline, callback, state);
+
+                pipelineInvokerAsyncResult = new PipelineInvokerAsyncResult(pipeline, callback, state);
+                return pipelineInvokerAsyncResult;
             }
             finally
             {
@@ -139,6 +142,11 @@ namespace TfsBuildExtensions.Activities.Scripting
                 if (pipeline != null)
                 {
                     pipeline.Dispose();
+                }
+
+                if (pipelineInvokerAsyncResult != null)
+                {
+                    pipelineInvokerAsyncResult.Dispose();
                 }
             }
         }

@@ -44,7 +44,7 @@ namespace TfsBuildExtensions.Activities.Scripting
         {
             if (serializeInfo == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(context.ToString());
             }
             this.failReason = (Exception)serializeInfo.GetValue("FailReason", typeof(Exception));
             this.errorRecords = (ReadOnlyCollection<ErrorRecord>)serializeInfo.GetValue("ErrorRecords", typeof(ReadOnlyCollection<ErrorRecord>));

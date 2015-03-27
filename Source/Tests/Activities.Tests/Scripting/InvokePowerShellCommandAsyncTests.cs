@@ -13,7 +13,7 @@
         [TestMethod]
         public void PowershellActivity_ReturnsMembers_WhenGetMemberIsInvoked()
         {
-            var activity = new InvokePowershellCommandAsync { Script = "Get-Help Get-Item" };
+            var activity = new InvokePowerShellCommandAsync { Script = "Get-Help Get-Item" };
             var outputs = WorkflowInvoker.Invoke(activity);
             Assert.IsNotNull(outputs);
         }
@@ -22,7 +22,7 @@
         [ExpectedException(typeof(PowerShellExecutionException), AllowDerivedTypes = true)]
         public void PowershellActivity_ThrowsCommandNotFoundException_OnUnhandledRuntimeException()
         {
-            var activity = new InvokePowershellCommandAsync { Script = "Get-Helps Get-Item" };
+            var activity = new InvokePowerShellCommandAsync { Script = "Get-Helps Get-Item" };
             WorkflowInvoker.Invoke(activity);
         }
 
@@ -38,7 +38,7 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void PowershellActivity_ThrowsArgumentNullException_OnWhitespaceCommand()
         {
-            var activity = new InvokePowershellCommandAsync { Script = "   " };
+            var activity = new InvokePowerShellCommandAsync { Script = "   " };
             WorkflowInvoker.Invoke(activity);
         }
 
@@ -47,7 +47,7 @@
         public void PowershellActivity_ThrowsArgumentNullException_WhenServerCommandAndNoWorkspaceProvided()
         {
             // Arrange
-            var activity = new InvokePowershellCommandAsync { Script = "$/Test Path/Not A Real Path" };
+            var activity = new InvokePowerShellCommandAsync { Script = "$/Test Path/Not A Real Path" };
 
             // Act
             WorkflowInvoker.Invoke(activity);
