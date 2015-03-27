@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TfsBuildExtensions.Activities.Scripting.PowerShell
 {
-    class PipelineInvokerAsyncResult : IAsyncResult
+    class PipelineInvokerAsyncResult : IAsyncResult, IDisposable
     {
         AsyncCallback callback;
         object asyncState;
@@ -113,6 +113,8 @@ namespace TfsBuildExtensions.Activities.Scripting.PowerShell
             {
                 this.Exception = e;
                 Complete();
+
+                throw;
             }
         }
 
@@ -127,6 +129,11 @@ namespace TfsBuildExtensions.Activities.Scripting.PowerShell
                     this.ErrorRecords.Add(errorRecord);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            asyncWaitHandle.Dispose();
         }
     }
 }

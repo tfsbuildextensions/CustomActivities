@@ -10,7 +10,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace TfsBuildExtensions.Activities.Scripting.PowerShell
+namespace TfsBuildExtensions.Activities.Scripting
 {
     [BuildActivity(HostEnvironmentOption.Agent)]
     public sealed class InvokePowershellCommandAsync : AsyncCodeActivity<PSObject[]>
@@ -129,7 +129,7 @@ namespace TfsBuildExtensions.Activities.Scripting.PowerShell
                 context.UserState = pipeline;
                 return new PipelineInvokerAsyncResult(pipeline, callback, state);
             }
-            catch
+            finally
             {
                 if (runspace != null)
                 {
@@ -140,8 +140,6 @@ namespace TfsBuildExtensions.Activities.Scripting.PowerShell
                 {
                     pipeline.Dispose();
                 }
-
-                throw;
             }
         }
 
@@ -165,7 +163,7 @@ namespace TfsBuildExtensions.Activities.Scripting.PowerShell
             }
         }
 
-        void DisposePipeline(Pipeline pipelineInstance)
+        static void DisposePipeline(Pipeline pipelineInstance)
         {
             if (pipelineInstance != null)
             {
