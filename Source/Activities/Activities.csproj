@@ -203,8 +203,12 @@
     <Compile Include="NAnt\ExecutionParameters.cs" />
     <Compile Include="NAnt\InvokeNAnt.cs" />
     <Compile Include="NAnt\NAntException.cs" />
+    <Compile Include="Scripting\PowerShell\ErrorMessages.cs" />
     <Compile Include="Scripting\PowerShell\InvokePowershellCommand.cs" />
+    <Compile Include="Scripting\PowerShell\InvokePowershellCommandAsync.cs" />
     <Compile Include="Scripting\PowerShell\IUtilitiesForPowerShellActivity.cs" />
+    <Compile Include="Scripting\PowerShell\PipelineInvokerAsyncResult.cs" />
+    <Compile Include="Scripting\PowerShell\PowerShellExecutionException.cs" />
     <Compile Include="Scripting\PowerShell\UtilitiesForPowerShellActivity.cs" />
     <Compile Include="Scripting\PowerShell\WorkflowPsHost.cs" />
     <Compile Include="Scripting\PowerShell\WorkflowPsHostUi.cs" />
