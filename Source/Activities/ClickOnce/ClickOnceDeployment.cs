@@ -22,6 +22,11 @@ namespace TfsBuildExtensions.Activities.ClickOnce
         private InArgument<string> processor = "x86";
 
         /// <summary>
+        /// Publisher
+        /// </summary>
+        public InArgument<string> Publisher { get; set; }
+
+        /// <summary>
         /// Create a desktop shortcut for the Application
         /// </summary>
         public InArgument<bool> CreateDesktopShortcut { get; set; }
@@ -115,6 +120,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             string manifestCertificateThumbprint = this.ManifestCertificateThumbprint.Get(this.ActivityContext);
             string timestampUri = this.TimestampUri.Get(this.ActivityContext);
             bool createDesktopShortcut = this.CreateDesktopShortcut.Get(this.ActivityContext);
+            string publisher = this.Publisher.Get(this.ActivityContext);
 
             try
             {
@@ -135,9 +141,10 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 string certFilePathArg = !string.IsNullOrEmpty(certFilePath) ? "-CertFile " + certFilePath : string.Empty;
                 string certPasswordArg = !string.IsNullOrEmpty(certPassword) ? "-Password " + certPassword : string.Empty;
                 string timestampUriArg = !string.IsNullOrEmpty(timestampUri) ? "-TimestampUri " + timestampUri : string.Empty;
+                string publisherArg = !string.IsNullOrEmpty(publisher) ? "-Publisher " + publisher : string.Empty;
 
                 // Create Application Manifest
-                string args = "-New Application -Processor " + this.Processor.Get(this.ActivityContext) + " -ToFile \"" + toFile + "\\" + applicationName + ".exe.manifest\" -name " + applicationName + " -Version " + version + " -FromDirectory \"" + toFile + "\"";
+                string args = "-New Application -Processor " + this.Processor.Get(this.ActivityContext) + " -ToFile \"" + toFile + "\\" + applicationName + ".exe.manifest\" -name " + applicationName + " -Version " + version + " -FromDirectory \"" + toFile + "\"" + " -publisher " + publisher;
                 RunMage(mageFilePath, args);
 
                 // Sign Application Manifest
@@ -152,7 +159,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 
                 RunMage(mageFilePath, args);
 
-                CreateDeploymentManifest(version, applicationName, publishLocation, targetFrameworkVersion, createDesktopShortcut);
+                CreateDeploymentManifest(version, applicationName, publishLocation, targetFrameworkVersion, createDesktopShortcut, publisher);
 
                 // Sign Deployment Manifest
                 args = "-Sign \"" + publishLocation + "\\" + applicationName + ".application\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg + " " + timestampUriArg;
@@ -227,7 +234,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             }
         }
 
-        private static void CreateDeploymentManifest(string version, string applicationName, string publishLocation, string targetFrameworkVersion, bool createDesktopShortcut)
+        private static void CreateDeploymentManifest(string version, string applicationName, string publishLocation, string targetFrameworkVersion, bool createDesktopShortcut, string publisher)
         {
             Dictionary<string, string> metadata = new Dictionary<string, string>();
             metadata.Add("TargetPath", "Application Files\\" + applicationName + "_" + version + "\\" + applicationName + ".exe.manifest");
@@ -237,6 +244,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 AssemblyName = applicationName + ".application",
                 AssemblyVersion = version,
                 Product = applicationName,
+                Publisher = publisher,
 
                 // DeploymentUrl = installLocation,
                 Install = true,
