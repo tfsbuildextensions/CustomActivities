@@ -22,6 +22,16 @@ namespace TfsBuildExtensions.Activities.ClickOnce
         private InArgument<string> processor = "x86";
 
         /// <summary>
+        /// Create a desktop shortcut for the Application
+        /// </summary>
+        public InArgument<bool> CreateDesktopShortcut { get; set; }
+        
+        /// <summary>
+        /// Timestamp Server Location
+        /// </summary>
+        public InArgument<string> TimestampUri { get; set; }
+
+        /// <summary>
         /// Sets the Processor to use. Default is x86.
         /// </summary>
         public InArgument<string> Processor
@@ -103,6 +113,8 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             string installLocation = this.InstallLocation.Get(this.ActivityContext);
             string targetFrameworkVersion = this.TargetFrameworkVersion.Get(this.ActivityContext);
             string manifestCertificateThumbprint = this.ManifestCertificateThumbprint.Get(this.ActivityContext);
+            string timestampUri = this.TimestampUri.Get(this.ActivityContext);
+            bool createDesktopShortcut = this.CreateDesktopShortcut.Get(this.ActivityContext);
 
             try
             {
@@ -122,26 +134,28 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 string manifestCertificateThumbprintArg = !string.IsNullOrEmpty(manifestCertificateThumbprint) ? "-CertHash " + manifestCertificateThumbprint : string.Empty;
                 string certFilePathArg = !string.IsNullOrEmpty(certFilePath) ? "-CertFile " + certFilePath : string.Empty;
                 string certPasswordArg = !string.IsNullOrEmpty(certPassword) ? "-Password " + certPassword : string.Empty;
+                string timestampUriArg = !string.IsNullOrEmpty(timestampUri) ? "-TimestampUri " + timestampUri : string.Empty;
 
                 // Create Application Manifest
                 string args = "-New Application -Processor " + this.Processor.Get(this.ActivityContext) + " -ToFile \"" + toFile + "\\" + applicationName + ".exe.manifest\" -name " + applicationName + " -Version " + version + " -FromDirectory \"" + toFile + "\"";
                 RunMage(mageFilePath, args);
 
                 // Sign Application Manifest
-                args = "-Sign \"" + toFile + "\\" + applicationName + ".exe.manifest\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg;
-                RunMage(mageFilePath, args);
+                //args = "-Sign \"" + toFile + "\\" + applicationName + ".exe.manifest\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg;
+                //RunMage(mageFilePath, args);
 
                 // rename all files to have a .deploy
                 RenameFiles(toFile);
 
                 // Sign Application Manifest
-                args = "-Sign \"" + toFile + "\\" + applicationName + ".exe.manifest\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg;
+                args = "-Sign \"" + toFile + "\\" + applicationName + ".exe.manifest\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg + " " + timestampUriArg;
+                
                 RunMage(mageFilePath, args);
 
-                CreateDeploymentManifest(version, applicationName, publishLocation, targetFrameworkVersion);
+                CreateDeploymentManifest(version, applicationName, publishLocation, targetFrameworkVersion, createDesktopShortcut);
 
                 // Sign Deployment Manifest
-                args = "-Sign \"" + publishLocation + "\\" + applicationName + ".application\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg;
+                args = "-Sign \"" + publishLocation + "\\" + applicationName + ".application\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg + " " + timestampUriArg;
                 RunMage(mageFilePath, args);
 
                 // Copy Deploy Manifest to parent folder
@@ -213,7 +227,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             }
         }
 
-        private static void CreateDeploymentManifest(string version, string applicationName, string publishLocation, string targetFrameworkVersion)
+        private static void CreateDeploymentManifest(string version, string applicationName, string publishLocation, string targetFrameworkVersion, bool createDesktopShortcut)
         {
             Dictionary<string, string> metadata = new Dictionary<string, string>();
             metadata.Add("TargetPath", "Application Files\\" + applicationName + "_" + version + "\\" + applicationName + ".exe.manifest");
@@ -231,7 +245,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 OutputManifest = new TaskItem(publishLocation + "\\" + applicationName + ".application"),
                 MapFileExtensions = true,
                 EntryPoint = new TaskItem(publishLocation + @"\Application Files\" + applicationName + "_" + version + "\\" + applicationName + ".exe.manifest", metadata),
-                CreateDesktopShortcut = false,
+                CreateDesktopShortcut = createDesktopShortcut,
                 TargetFrameworkVersion = targetFrameworkVersion,
                 TargetFrameworkMoniker = ".NETFramework,Version=v" + targetFrameworkVersion,
                 MinimumRequiredVersion = version
