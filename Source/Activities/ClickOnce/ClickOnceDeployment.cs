@@ -30,7 +30,12 @@ namespace TfsBuildExtensions.Activities.ClickOnce
         /// Create a desktop shortcut for the Application
         /// </summary>
         public InArgument<bool> CreateDesktopShortcut { get; set; }
-        
+
+        /// <summary>
+        /// Name of Icon File
+        /// </summary>
+        public InArgument<string> IconFile { get; set; }
+
         /// <summary>
         /// Timestamp Server Location
         /// </summary>
@@ -121,6 +126,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             string timestampUri = this.TimestampUri.Get(this.ActivityContext);
             bool createDesktopShortcut = this.CreateDesktopShortcut.Get(this.ActivityContext);
             string publisher = this.Publisher.Get(this.ActivityContext);
+            string iconFile = this.IconFile.Get(this.ActivityContext);
 
             try
             {
@@ -141,10 +147,10 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 string certFilePathArg = !string.IsNullOrEmpty(certFilePath) ? "-CertFile " + certFilePath : string.Empty;
                 string certPasswordArg = !string.IsNullOrEmpty(certPassword) ? "-Password " + certPassword : string.Empty;
                 string timestampUriArg = !string.IsNullOrEmpty(timestampUri) ? "-TimestampUri " + timestampUri : string.Empty;
-                string publisherArg = !string.IsNullOrEmpty(publisher) ? "-Publisher " + publisher : string.Empty;
+                string iconFileArg = !string.IsNullOrEmpty(iconFile) ? " -IconFile " + iconFile : string.Empty;
 
                 // Create Application Manifest
-                string args = "-New Application -Processor " + this.Processor.Get(this.ActivityContext) + " -ToFile \"" + toFile + "\\" + applicationName + ".exe.manifest\" -name " + applicationName + " -Version " + version + " -FromDirectory \"" + toFile + "\"" + " -publisher " + publisher;
+                string args = "-New Application -Processor " + this.Processor.Get(this.ActivityContext) + " -ToFile \"" + toFile + "\\" + applicationName + ".exe.manifest\" -name " + applicationName + " -Version " + version + " -FromDirectory \"" + toFile + "\"" + iconFileArg;
                 RunMage(mageFilePath, args);
 
                 // Sign Application Manifest
