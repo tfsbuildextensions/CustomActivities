@@ -1,18 +1,19 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="ClickOnceDeployment.cs">(c) http://TfsBuildExtensions.codeplex.com/. This source is subject to the Microsoft Permissive License. See http://www.microsoft.com/resources/sharedsource/licensingbasics/sharedsourcelicenses.mspx. All other rights reserved.</copyright>
 //-----------------------------------------------------------------------
+
+using System;
+using System.Activities;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using Microsoft.Build.Tasks;
+using Microsoft.Build.Utilities;
+using Microsoft.TeamFoundation.Build.Client;
+
 namespace TfsBuildExtensions.Activities.ClickOnce
 {
-    using System;
-    using System.Activities;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
-    using Microsoft.Build.Tasks;
-    using Microsoft.Build.Utilities;
-    using Microsoft.TeamFoundation.Build.Client;
-
     /// <summary>
     /// ClickOnceDeployment
     /// </summary>
@@ -165,7 +166,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 
                 RunMage(mageFilePath, args);
 
-                CreateDeploymentManifest(version, applicationName, publishLocation, targetFrameworkVersion, createDesktopShortcut, publisher);
+                CreateDeploymentManifest(version, applicationName, publishLocation, installLocation, targetFrameworkVersion, createDesktopShortcut, publisher);
 
                 // Sign Deployment Manifest
                 args = "-Sign \"" + publishLocation + "\\" + applicationName + ".application\" " + manifestCertificateThumbprintArg + " " + certFilePathArg + " " + certPasswordArg + " " + timestampUriArg;
@@ -240,7 +241,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
             }
         }
 
-        private static void CreateDeploymentManifest(string version, string applicationName, string publishLocation, string targetFrameworkVersion, bool createDesktopShortcut, string publisher)
+        private static void CreateDeploymentManifest(string version, string applicationName, string publishLocation, string installLocation, string targetFrameworkVersion, bool createDesktopShortcut, string publisher)
         {
             Dictionary<string, string> metadata = new Dictionary<string, string>();
             metadata.Add("TargetPath", "Application Files\\" + applicationName + "_" + version + "\\" + applicationName + ".exe.manifest");
@@ -252,7 +253,7 @@ namespace TfsBuildExtensions.Activities.ClickOnce
                 Product = applicationName,
                 Publisher = publisher,
 
-                // DeploymentUrl = installLocation,
+                DeploymentUrl = installLocation + applicationName + ".application",
                 Install = true,
                 UpdateEnabled = true,
                 UpdateMode = "Foreground",
