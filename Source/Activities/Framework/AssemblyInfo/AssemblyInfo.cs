@@ -9,6 +9,7 @@ namespace TfsBuildExtensions.Activities.Framework
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.TeamFoundation.Build.Client;
 
@@ -524,7 +525,7 @@ namespace TfsBuildExtensions.Activities.Framework
                         attributesChanged = true;
                     }
 
-                    using (var sw = new StreamWriter(path))
+                    using (var sw = new StreamWriter(path, false, Encoding.UTF8))
                     {
                         this.file.Write(sw);
                     }
