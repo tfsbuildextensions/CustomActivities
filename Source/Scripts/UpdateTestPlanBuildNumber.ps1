@@ -11,7 +11,13 @@
 # Convenience option so you can debug this script or disable it in 
 # your build definition without having to remove it from
 # the 'Post-build script path' build process parameter.
-param([switch]$Disable)
+#
+# Username/password parameters
+# Optional parameters to authenticate against TFS/VSO
+# if a Personal Access Token is to be used (preferred option) 
+# then leave username blank.
+param([switch]$Disable, $username, $password)
+
 if ($PSBoundParameters.ContainsKey('Disable'))
 {
 	Write-Verbose "Script disabled; no actions will be taken on the files."
@@ -61,7 +67,21 @@ Write-Verbose "TF_BUILD_BUILDDEFINITIONNAME: $Env:TF_BUILD_BUILDDEFINITIONNAME"
 [Reflection.Assembly]::LoadWithPartialName('Microsoft.TeamFoundation.Build.Client')
 
 # Find all test plans using this build definition
-$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTeamProjectCollection($env:TF_BUILD_COLLECTIONURI)
+if (-not $password)
+{
+	Write-Verbose "Authenticating using service identity."
+	$tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection($env:TF_BUILD_COLLECTIONURI)
+}
+else
+{
+	Write-Verbose "Authenticating with credentials."
+	$netCred = New-Object System.Net.NetworkCredential($username,$password)
+	$basicCred = New-Object Microsoft.TeamFoundation.Client.BasicAuthCredential($netCred)
+	$tfsCred = New-Object Microsoft.TeamFoundation.Client.TfsClientCredentials($basicCred)
+	$tfsCred.AllowInteractive = $false
+	$tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection($env:TF_BUILD_COLLECTIONURI,$tfsCred)
+	$tpc.EnsureAuthenticated()
+}
 $tcm = $tpc.GetService([Microsoft.TeamFoundation.TestManagement.Client.ITestManagementService])
 $buildServer = $tpc.GetService([Microsoft.TeamFoundation.Build.Client.IBuildServer])
 $teamProject = $buildServer.GetBuild($Env:TF_BUILD_BUILDURI);
