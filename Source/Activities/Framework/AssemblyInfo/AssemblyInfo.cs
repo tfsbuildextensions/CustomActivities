@@ -9,6 +9,7 @@ namespace TfsBuildExtensions.Activities.Framework
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.TeamFoundation.Build.Client;
 
@@ -70,7 +71,7 @@ namespace TfsBuildExtensions.Activities.Framework
 
         // version parser.
         private static readonly Regex VersionParser = new Regex(
-            @"\d+\.\d+\.\d+\.\d+",
+            @"\d+\.\d+(\.\d+(\.\d+)?)?",
             RegexOptions.Compiled);
 
         // AssemblyInfo file access helper.
@@ -605,18 +606,38 @@ namespace TfsBuildExtensions.Activities.Framework
 
             // update version
             var tokens = format.Split('.');
-            if (tokens.Length != 4)
+            if (tokens.Length < 2 || tokens.Length > 4)
             {
                 throw new FormatException("Specified value for attribute '" + attributeName + "'  is not a correct version format.");
             }
 
-            version = new Version(
-                Convert.ToInt32(this.ReplaceTokens(tokens[0], version.Major)),
-                Convert.ToInt32(this.ReplaceTokens(tokens[1], version.Minor)),
-                Convert.ToInt32(this.ReplaceTokens(tokens[2], version.Build)),
-                Convert.ToInt32(this.ReplaceTokens(tokens[3], version.Revision)));
+            var versionBuilder = new StringBuilder(this.ReplaceTokens(tokens[0], version.Major));
+            versionBuilder.Append(".");
+            versionBuilder.Append(this.ReplaceTokens(tokens[1], version.Minor));
 
-            this.file[attributeName] = string.Format(versionPattern, version.Major, version.Minor, version.Build, version.Revision);
+            if (tokens.Length > 2)
+            {
+                versionBuilder.Append(".");
+                versionBuilder.Append(this.ReplaceTokens(tokens[2], version.Build != -1 ? version.Build : 0));
+
+                if (tokens.Length > 3)
+                {
+                    versionBuilder.Append(".");
+                    versionBuilder.Append(this.ReplaceTokens(tokens[3], version.Revision != -1 ? version.Revision : 0));
+                }
+            }
+
+            var versionString = versionBuilder.ToString();
+            version = new Version(versionString);
+
+            if (containsWildcard)
+            {
+                this.file[attributeName] = string.Format(versionPattern, version.Major, version.Minor, version.Build, version.Revision);
+            }
+            else
+            {
+                this.file[attributeName] = versionString;
+            }
 
             if (version > maxVersion.Get(this.ActivityContext))
             {
